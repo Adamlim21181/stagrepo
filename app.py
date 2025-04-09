@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 
 # Define the Item model
 class Item(db.Model):
+    __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -24,7 +25,7 @@ class Item(db.Model):
 @app.route('/')
 def index():
     # Use the text() function to declare a textual SQL query
-    result = db.session.execute(text("SELECT * FROM item"))
+    result = db.session.execute(text("SELECT * FROM items"))
     items = result.fetchall()  # Fetch all results from the query
     return render_template('index.html', items=items)
 
