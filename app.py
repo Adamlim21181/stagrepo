@@ -24,7 +24,7 @@ class Item(db.Model):
 @app.route('/')
 def index():
     # Use the text() function to declare a textual SQL query
-    result = db.session.execute(text("SELECT * FROM item"))
+    result = db.session.execute(text("SELECT * FROM items"))
     items = result.fetchall()  # Fetch all results from the query
     return render_template('index.html', items=items)
 
@@ -38,7 +38,6 @@ def add_item():
             new_item = Item(name=name, description=description)
             db.session.add(new_item)
             db.session.commit()
-            db.session.remove()  # Remove session after commit
             return redirect(url_for('index'))
     return render_template('add_item.html')
 
@@ -50,7 +49,6 @@ def edit_item(item_id):
         item.name = request.form['name']
         item.description = request.form['description']
         db.session.commit()
-        db.session.remove()  # Remove session after commit
         return redirect(url_for('index'))
     return render_template('edit_item.html', item=item)
 
@@ -60,7 +58,6 @@ def delete_item(item_id):
     item = Item.query.get_or_404(item_id)
     db.session.delete(item)
     db.session.commit()
-    db.session.remove()  # Remove session after commit
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
