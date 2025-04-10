@@ -10,21 +10,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqldb://STAGNASTICS:gyM!2025_Sc
 # Set pool_recycle to prevent connection timeouts
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
 
-
 # Initialize the database
 db = SQLAlchemy(app)
-
-# Define the Item model
-class Item(db.Model):
-    __tablename__ = 'items'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
 
 # Home route to display all items
 @app.route('/')
 def index():
-    # Use the text() function to declare a textual SQL query
+    # Use raw SQL to fetch all items
     result = db.session.execute(text("SELECT * FROM items"))
     items = result.fetchall()  # Fetch all results from the query
     return render_template('index.html', items=items)
@@ -36,8 +28,9 @@ def add_item():
         name = request.form['name']
         description = request.form['description']
         if name:  # Check if name is provided
-            new_item = Item(name=name, description=description)
-            db.session.add(new_item)
+            # Use raw SQL to insert a new item
+            query = text("INSERT INTO items (name, description) VALUES (:name, :description)")
+            db.session.execute(query, {"name": name, "description": description})
             db.session.commit()
             return redirect(url_for('index'))
     return render_template('add_item.html')
@@ -45,19 +38,30 @@ def add_item():
 # Route to edit an item
 @app.route('/edit/<int:item_id>', methods=['GET', 'POST'])
 def edit_item(item_id):
-    item = Item.query.get_or_404(item_id)
+    # Fetch the item to be edited
+    result = db.session.execute(text("SELECT * FROM items WHERE id = :id"), {"id": item_id})
+    item = result.fetchone()
+
+    if not item:
+        return "Item not found", 404
+
     if request.method == 'POST':
-        item.name = request.form['name']
-        item.description = request.form['description']
+        name = request.form['name']
+        description = request.form['description']
+        # Update the item using raw SQL
+        query = text("UPDATE items SET name = :name, description = :description WHERE id = :id")
+        db.session.execute(query, {"name": name, "description": description, "id": item_id})
         db.session.commit()
         return redirect(url_for('index'))
+
     return render_template('edit_item.html', item=item)
 
 # Route to delete an item
-@app.route('/delete/<int:item_id>', methods=['POST'])  # Change method to POST for deletion
+@app.route('/delete/<int:item_id>', methods=['POST'])
 def delete_item(item_id):
-    item = Item.query.get_or_404(item_id)
-    db.session.delete(item)
+    # Delete the item using raw SQL
+    query = text("DELETE FROM items WHERE id = :id")
+    db.session.execute(query, {"id": item_id})
     db.session.commit()
     return redirect(url_for('index'))
 
