@@ -51,27 +51,24 @@ def levels():
 
 @app.route('/results', methods=['GET'])
 def results():
-    result = db_query(text("SELECT score.score_id, gymnasts.gymnast_name, "
-                      "gymnasts.level, competitions.competition_name, "
-                      "seasons.year, clubs.club_name, "
-                      "apparatus.apparatus_name, score.difficulty, "
-                      "score.execution, score.penalty, ROUND"
-                      "(score.difficulty + score.execution - score.penalty) "
-                      "AS total, RANK() OVER "
-                      "(PARTITION BY competitions.competition_id "
-                      "ORDER BY "
-                      "(score.difficulty + score.execution - score.penalty) "
-                      "DESC AS rank_in_competition FROM score "
-                      "JOIN entries ON score.entries_id = entries.entries_id "
-                      "JOIN gymnasts "
-                      "ON entries.gymnast_id = gymnasts.gymnast_id "
-                      "JOIN competitions "
-                      "ON entries.competition_id = competitions.competition_id"
-                      "JOIN seasons "
-                      "ON competitions.season_id = seasons.season_id "
-                      "JOIN clubs ON gymnasts.club_id = clubs.club_id "
-                      "JOIN apparatus "
-                      "ON score.apparatus_id = apparatus.apparatus_id;"))
+    result = db_query(text(
+        "SELECT score.score_id, gymnasts.gymnast_name, gymnasts.level, "
+        "competitions.competition_name, seasons.year, clubs.club_name, "
+        "apparatus.apparatus_name, score.difficulty, score.execution, "
+        "score.penalty, "
+        "ROUND(score.difficulty + score.execution - score.penalty) "
+        "AS total, "
+        "RANK() OVER (PARTITION BY competitions.competition_id ORDER BY "
+        "(score.difficulty + score.execution - score.penalty) DESC) "
+        "AS rank_in_competition "
+        "FROM score "
+        "JOIN entries ON score.entries_id = entries.entries_id "
+        "JOIN gymnasts ON entries.gymnast_id = gymnasts.gymnast_id "
+        "JOIN competitions "
+        "ON entries.competition_id = competitions.competition_id "
+        "JOIN seasons ON competitions.season_id = seasons.season_id "
+        "JOIN clubs ON gymnasts.club_id = clubs.club_id "
+        "JOIN apparatus ON score.apparatus_id = apparatus.apparatus_id;"))
     return render_template('results.html', result=result)
 
 
