@@ -68,7 +68,8 @@ def results():
         "ON entries.competition_id = competitions.competition_id "
         "JOIN seasons ON competitions.season_id = seasons.season_id "
         "JOIN clubs ON gymnasts.club_id = clubs.club_id "
-        "JOIN apparatus ON score.apparatus_id = apparatus.apparatus_id;"))
+        "JOIN apparatus ON score.apparatus_id = apparatus.apparatus_id;", single=False))
+
     return render_template('results.html', result=result)
 
 
