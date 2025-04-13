@@ -14,7 +14,9 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Level</th>
+                <th>club</th>
                 <th>Competition</th>
+                <th>Year</th>
                 <th>Execution</th>
                 <th>Difficulty</th>
                 <th>Penalty</th>
@@ -23,20 +25,24 @@
 
             </tr>
 
-            {% for score_id, gymnast_name, level, competition_name, execution, difficulty, penalty, total,
-            rank in result %}
+            {% for score_id, gymnast_name, level, competition_name, year, club_name, apparatus_name, difficulty,
+            execution, penalty, total, rank_in_competition in result %}
             <tr>
                 <td>{{ score_id }}</td>
                 <td>{{ gymnast_name }}</td>
                 <td>{{ level }}</td>
                 <td>{{ competition_name }}</td>
-                <td>{{ execution }}</td>
+                <td>{{ year }}</td>
+                <td>{{ club_name }}</td>
+                <td>{{ apparatus_name }}</td>
                 <td>{{ difficulty }}</td>
+                <td>{{ execution }}</td>
                 <td>{{ penalty }}</td>
                 <td>{{ total }}</td>
-                <td>{{ rank }}</td>
+                <td>{{ rank_in_competition }}</td>
             </tr>
             {% endfor %}
+
 
 
         </table>
