@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1>RESULTS</h1>
+
+<div class="content">
+
+    <div class="leaderboards">
+
+        <table>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Competition</th>
+                <th>Execution</th>
+                <th>Difficulty</th>
+                <th>Penalty</th>
+                <th>Total</th>
+                <th>Rank</th>
+
+            </tr>
+
+            {$ for row in result %}
+            <tr>
+
+                {% for col in row %}
+                <td>{{ col }}</td>
+
+            </tr>
+            {% endfor %}
+
+        </table>
+
+    </div><!--leaderboards-->
+
+</div><!--content-->
+
+
+{% endblock %}
