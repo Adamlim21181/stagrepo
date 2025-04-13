@@ -1,11 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
 app = Flask(__name__)
 
 # Configure the MySQL connection
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+mysqldb://STAGNASTICS:gyM!2025_Score$NZ@STAGNASTICS.mysql.pythonanywhere-services.com/STAGNASTICS$stagdata"
+app.config['SQLALCHEMY_DATABASE_URI'] = ("mysql+mysqldb://STAGNASTICS:"
+                                         "gyM!2025_Score$NZ"
+                                         "@STAGNASTICS.mysql.pythonanywhere-"
+                                         "services.com/STAGNASTICS$stagdata")
 
 # Set pool_recycle to prevent connection timeouts
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
@@ -13,57 +16,84 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 280}
 # Initialize the database
 db = SQLAlchemy(app)
 
-# Home route to display all items
-@app.route('/')
-def index():
-    # Use raw SQL to fetch all items
-    result = db.session.execute(text("SELECT * FROM items"))
-    items = result.fetchall()  # Fetch all results from the query
-    return render_template('index.html', items=items)
 
-# Route to add an item
-@app.route('/add', methods=['GET', 'POST'])
-def add_item():
-    if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
-        if name:  # Check if name is provided
-            # Use raw SQL to insert a new item
-            query = text("INSERT INTO items (name, description) VALUES (:name, :description)")
-            db.session.execute(query, {"name": name, "description": description})
-            db.session.commit()
-            return redirect(url_for('index'))
-    return render_template('add_item.html')
+# Connecting to databse and executing queries
+def db_query(query_string, params=(), single=True, commit=False):
 
-# Route to edit an item
-@app.route('/edit/<int:item_id>', methods=['GET', 'POST'])
-def edit_item(item_id):
-    # Fetch the item to be edited
-    result = db.session.execute(text("SELECT * FROM items WHERE id = :id"), {"id": item_id})
-    item = result.fetchone()
+    result = db.session.execute(query_string, params)
 
-    if not item:
-        return "Item not found", 404
+    if single:
+        return result.fetchone()
 
-    if request.method == 'POST':
-        name = request.form['name']
-        description = request.form['description']
-        # Update the item using raw SQL
-        query = text("UPDATE items SET name = :name, description = :description WHERE id = :id")
-        db.session.execute(query, {"name": name, "description": description, "id": item_id})
+    else:
+        return result.fetchall()
+
+    if commit:
         db.session.commit()
-        return redirect(url_for('index'))
 
-    return render_template('edit_item.html', item=item)
+    return result
 
-# Route to delete an item
-@app.route('/delete/<int:item_id>', methods=['POST'])
-def delete_item(item_id):
-    # Delete the item using raw SQL
-    query = text("DELETE FROM items WHERE id = :id")
-    db.session.execute(query, {"id": item_id})
-    db.session.commit()
-    return redirect(url_for('index'))
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/gymnasts')
+def gymnasts():
+    return render_template('gymnasts.html')
+
+
+@app.route('/levels')
+def levels():
+    return render_template('levels.html')
+
+
+@app.route('/results', methods=['GET'])
+def results():
+    result = db_query(text("SELECT score.score_id, gymnasts.gymnast_name, "
+                      "gymnasts.level, competitions.competition_name, "
+                      "seasons.year, clubs.club_name, "
+                      "apparatus.apparatus_name, score.difficulty, "
+                      "score.execution, score.penalty, ROUND"
+                      "(score.difficulty + score.execution - score.penalty) "
+                      "AS total, RANK() OVER "
+                      "(PARTITION BY competitions.competition_id "
+                      "ORDER BY "
+                      "(score.difficulty + score.execution - score.penalty) "
+                      "DESC AS rank_in_competition FROM score "
+                      "JOIN entries ON score.entries_id = entries.entries_id "
+                      "JOIN gymnasts "
+                      "ON entries.gymnast_id = gymnasts.gymnast_id "
+                      "JOIN competitions "
+                      "ON entries.competition_id = competitions.competition_id"
+                      "JOIN seasons "
+                      "ON competitions.season_id = seasons.season_id "
+                      "JOIN clubs ON gymnasts.club_id = clubs.club_id "
+                      "JOIN apparatus "
+                      "ON score.apparatus_id = apparatus.apparatus_id;"))
+    return render_template('results.html', result=result)
+
+
+@app.route('/scoring')
+def scoring():
+    return render_template('scoring.html')
+
+
+@app.route('/live')
+def live():
+    return render_template('live.html')
+
+
+@app.route('/calander')
+def calander():
+    return render_template('calander.html')
+
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
