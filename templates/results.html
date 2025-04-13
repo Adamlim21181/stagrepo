@@ -23,15 +23,21 @@
 
             </tr>
 
-            {% for row in result %}
+            {% for score_id, gymnast_name, level, competition_name, execution, difficulty, penalty, total,
+            rank in result %}
             <tr>
-
-                {% for col in row %}
-                <td>{{ col }}</td>
-                {% endfor %}
-
+                <td>{{ score_id }}</td>
+                <td>{{ gymnast_name }}</td>
+                <td>{{ level }}</td>
+                <td>{{ competition_name }}</td>
+                <td>{{ execution }}</td>
+                <td>{{ difficulty }}</td>
+                <td>{{ penalty }}</td>
+                <td>{{ total }}</td>
+                <td>{{ rank }}</td>
             </tr>
             {% endfor %}
+
 
         </table>
 
