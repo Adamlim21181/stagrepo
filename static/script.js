@@ -1,8 +1,8 @@
-function filterTable() {
+function filter_table() {
     let checkboxes = document.querySelectorAll("input[name='filter']:checked");
     let selectedFilters = Array.from(checkboxes).map(cb => cb.value.toLowerCase());
 
-    let table = document.getElementById("resultsTable");
+    let table = document.getElementById("results_table");
     let rows = table.querySelectorAll("tbody tr");
 
     rows.forEach(row => {
