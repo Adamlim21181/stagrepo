@@ -5,20 +5,15 @@
 
 <div class="content">
 
-    <div class="filter_results">
-
-        <form id="filter_form">
-
-            <label><input type="checkbox" name="filter" value="level"></label>
-            <label><input type="checkbox" name="filter" value="clubs"></label>
-            <label><input type="checkbox" name="filter" value="competitions"></label>
-            <label><input type="checkbox" name="filter" value="seasons"></label>
-            <label><input type="checkbox" name="filter" value="apparatus"></label>
-            <button type="button" onclick="filter_table()">Apply Filters</button>
-
-        </form>
-
-    </div><!--filter_results-->
+    <div id="toggle-columns">
+        <label><input type="checkbox" checked data-col="0"> ID</label>
+        <label><input type="checkbox" checked data-col="1"> Name</label>
+        <label><input type="checkbox" checked data-col="2"> Level</label>
+        <label><input type="checkbox" checked data-col="3"> Club</label>
+        <label><input type="checkbox" checked data-col="4"> Competition</label>
+        <label><input type="checkbox" checked data-col="5"> Year</label>
+        <label><input type="checkbox" checked data-col="6"> Apparatus</label>
+    </div>
 
     <div class="leaderboards">
 

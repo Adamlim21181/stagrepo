@@ -1,16 +1,11 @@
-function filter_table() {
-    let checkboxes = document.querySelectorAll("input[name='filter']:checked");
-    let selectedFilters = Array.from(checkboxes).map(cb => cb.value.toLowerCase());
+document.querySelectorAll("#toggle-columns input").forEach(checkbox => {
+    checkbox.addEventListener("change", function() {
+        let columnIndex = this.dataset.col; // Get the column index from the checkbox
+        let cells = document.querySelectorAll(`#resultsTable th:nth-child(${+columnIndex+1}), #resultsTable td:nth-child(${+columnIndex+1})`);
 
-    let table = document.getElementById("results_table");
-    let rows = table.querySelectorAll("tbody tr");
-
-    rows.forEach(row => {
-        let cells = row.getElementsByTagName("td");
-        let matchesFilter = selectedFilters.some(filter => {
-            return row.innerText.toLowerCase().includes(filter);
+        // Show or hide the column based on checkbox state
+        cells.forEach(cell => {
+            cell.style.display = this.checked ? "" : "none";
         });
-
-        row.style.display = matchesFilter || selectedFilters.length === 0 ? "" : "none";
     });
-}
+});
