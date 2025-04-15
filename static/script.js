@@ -1,4 +1,4 @@
-var btns = document.querySelectorAll("#toggle-columns .btn");
+var btns = document.querySelectorAll("#toggle-columns .button");
 
 // Attach listeners to column filter buttons
 btns.forEach(function(btn) {
@@ -36,7 +36,7 @@ function show_all() {
   }
 
   // Remove 'active' class from all buttons
-  var btns = document.querySelectorAll("#toggle-columns .btn");
+  var btns = document.querySelectorAll("#toggle-columns .button");
   btns.forEach(function(btn) {
     btn.classList.remove("active");
   });
