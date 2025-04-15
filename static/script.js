@@ -2,17 +2,18 @@ var btns = document.querySelectorAll("#toggle-columns .button");
 
 // Attach listeners to column filter buttons
 btns.forEach(function(btn) {
-  if (!btn.hasAttribute("onclick")) {  // skip 'Show All' button
-    btn.classList.add("active"); // Set initial state to active
-    
-    btn.addEventListener("click", function() {
-      var colIndex = parseInt(this.getAttribute("data-col"));
-      toggleColumn(colIndex);
-
-      this.classList.toggle("active");
-    });
-  }
-});
+    if (!btn.hasAttribute("onclick")) {  // skip 'Show All' button
+      btn.classList.add("active"); // Set initial state to active
+      
+      btn.addEventListener("click", function() {
+        this.classList.toggle("active"); // toggle 
+  
+        var colIndex = parseInt(this.getAttribute("data-col"));
+        toggleColumn(colIndex);          //  hide/show
+      });
+    }
+  });
+  
 
 // Function to show/hide a column by index
 function toggleColumn(index) {
