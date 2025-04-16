@@ -170,8 +170,7 @@ th {
    padding: 2px - slight internal spacing
 */
 .column-filter {
-    min-width: 100px;
-    padding: 2px;
+    all: unset; /* Resets all styles */
 }
 
 /* ============================================ */
