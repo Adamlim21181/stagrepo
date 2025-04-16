@@ -119,40 +119,40 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="1">
                                         {% for score in result|sort(attribute='1')|unique(attribute='1') %}
                                         <option value="{{ score.1 }}">{{ score.1 }}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="sort-buttons">
-                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
-                                    </div>
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons">
+                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
                                 </div>
                             </div>
                         </div>
                     </th>
 
-                    {# Column #}
+                    {# Level Column #}
                     <th data-sort-type="alpha" data-col-index="1">
                         <div class="header-container">
                             <div>
-                                <span>Name</span>
+                                <span>Level</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="1">
                                         {% for score in result|sort(attribute='2')|unique(attribute='2') %}
                                         <option value="{{ score.2 }}">{{ score.2 }}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="sort-buttons">
-                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
-                                    </div>
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons">
+                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
                                 </div>
                             </div>
                         </div>
@@ -162,22 +162,22 @@ This template displays competition results with:
                     <th data-sort-type="alpha" data-col-index="1">
                         <div class="header-container">
                             <div>
-                                <span>Name</span>
+                                <span>Club</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="1">
                                         {% for score in result|sort(attribute='3')|unique(attribute='3') %}
                                         <option value="{{ score.3 }}">{{ score.3 }}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="sort-buttons">
-                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
-                                    </div>
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons">
+                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
                                 </div>
                             </div>
                         </div>
@@ -187,27 +187,26 @@ This template displays competition results with:
                     <th data-sort-type="alpha" data-col-index="1">
                         <div class="header-container">
                             <div>
-                                <span>Name</span>
+                                <span>Competition</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="1">
                                         {% for score in result|sort(attribute='4')|unique(attribute='4') %}
                                         <option value="{{ score.4 }}">{{ score.4 }}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="sort-buttons">
-                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
-                                    </div>
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons">
+                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
                                 </div>
                             </div>
                         </div>
                     </th>
-
 
                     {# Year Column #}
                     <th data-sort-type="numeric" data-col-index="5">
@@ -221,54 +220,52 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="5">
                                         {% for score in result|sort(attribute='5')|unique(attribute='5') %}
                                         <option value="{{ score.5 }}">{{ score.5 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
                                 </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
+                                </div>
+
                             </div>
                         </div>
                     </th>
-
 
                     {# Apparatus Column #}
                     <th data-sort-type="alpha" data-col-index="1">
                         <div class="header-container">
                             <div>
-                                <span>Name</span>
+                                <span>Apparatus</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="1">
                                         {% for score in result|sort(attribute='6')|unique(attribute='6') %}
                                         <option value="{{ score.6 }}">{{ score.6 }}</option>
                                         {% endfor %}
                                     </select>
-                                    <div class="sort-buttons">
-                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
-                                    </div>
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons">
+                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
                                 </div>
                             </div>
                         </div>
                     </th>
 
-                    {# Execution Column (numeric sorting example) #}
+                    {# Execution Column #}
                     <th data-sort-type="numeric" data-col-index="5">
                         <div class="header-container">
                             <div>
-                                <span>Year</span>
+                                <span>Execution</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
@@ -276,18 +273,16 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="5">
                                         {% for score in result|sort(attribute='7')|unique(attribute='7') %}
                                         <option value="{{ score.7 }}">{{ score.7 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
                                 </div>
                             </div>
                         </div>
@@ -298,7 +293,7 @@ This template displays competition results with:
                     <th data-sort-type="numeric" data-col-index="5">
                         <div class="header-container">
                             <div>
-                                <span>Year</span>
+                                <span>Difficulty</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
@@ -306,18 +301,16 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="5">
                                         {% for score in result|sort(attribute='8')|unique(attribute='8') %}
                                         <option value="{{ score.8 }}">{{ score.8 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
                                 </div>
                             </div>
                         </div>
@@ -328,7 +321,7 @@ This template displays competition results with:
                     <th data-sort-type="numeric" data-col-index="5">
                         <div class="header-container">
                             <div>
-                                <span>Year</span>
+                                <span>Penalty</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
@@ -336,18 +329,16 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="5">
                                         {% for score in result|sort(attribute='9')|unique(attribute='9') %}
                                         <option value="{{ score.9 }}">{{ score.9 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
                                 </div>
                             </div>
                         </div>
@@ -358,32 +349,28 @@ This template displays competition results with:
                     <th data-sort-type="numeric" data-col-index="5">
                         <div class="header-container">
                             <div>
-                                <span>Year</span>
+                                <span>Total</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
 
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
+                                <button class="reset-btn">Reset</button>
                                 <div class="filter-content">
                                     <select class="column-filter" multiple data-column="5">
                                         {% for score in result|sort(attribute='10')|unique(attribute='10') %}
                                         <option value="{{ score.10 }}">{{ score.10 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
                                 </div>
                             </div>
                         </div>
                     </th>
-
-
 
                     {# Rank Column #}
                     <th data-sort-type="numeric" data-col-index="11">
@@ -397,18 +384,16 @@ This template displays competition results with:
                             <div class="filter-dropdown">
                                 <button class="filter-toggle">Filter ▼</button>
                                 <div class="filter-content">
+                                    <button class="reset-btn">Reset</button>
                                     <select class="column-filter" multiple data-column="11">
                                         {% for score in result|sort(attribute='11')|unique(attribute='11') %}
                                         <option value="{{ score.11 }}">{{ score.11 }}</option>
                                         {% endfor %}
                                     </select>
-
-                                    <div class="sort-buttons numeric">
-                                        <button class="sort-btn" data-sort="asc">↑</button>
-                                        <button class="sort-btn" data-sort="desc">↓</button>
-                                    </div>
-
-                                    <button class="reset-btn">Reset</button>
+                                </div>
+                                <div class="sort-buttons numeric">
+                                    <button class="sort-btn" data-sort="asc">↑</button>
+                                    <button class="sort-btn" data-sort="desc">↓</button>
                                 </div>
                             </div>
                         </div>
