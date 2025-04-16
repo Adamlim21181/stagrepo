@@ -343,17 +343,32 @@ document.querySelectorAll('.column-filter').forEach(function(selectEl) {
     });
 });
 
-document.querySelectorAll('.filter-toggle').forEach(button => {
+// ================================
+// 8. FILTER DROPDOWN TOGGLE HANDLERS
+// ================================
+
+// Handle click on Filter ▼ buttons to show/hide their dropdown content
+document.querySelectorAll('.filter-toggle').forEach(function (button) {
     button.addEventListener('click', function (e) {
-      e.stopPropagation();
-      this.closest('.filter-dropdown').classList.toggle('open');
+      e.stopPropagation(); // Stop the click from bubbling up
+      // Close any other open dropdowns first
+      document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
+        if (dropdown !== button.closest('.filter-dropdown')) {
+          dropdown.classList.remove('open');
+        }
+      });
+      // Toggle this dropdown open/closed
+      button.closest('.filter-dropdown').classList.toggle('open');
     });
   });
   
-  // Close dropdowns if clicked outside
+  // Close dropdowns if clicking outside anywhere on the page
   document.addEventListener('click', function () {
-    document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
+      dropdown.classList.remove('open');
+    });
   });
+  
   
 
 

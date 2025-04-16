@@ -238,23 +238,26 @@ This template displays competition results with:
 
 
                     {# Apparatus Column #}
-                    <th data-sort-type="alpha" data-col-index="6">
+                    <th data-sort-type="alpha" data-col-index="1">
                         <div class="header-container">
                             <div>
-                                <span>Apparatus</span>
+                                <span>Name</span>
                                 <span class="filter-indicator"></span>
                                 <span class="sort-indicator"></span>
                             </div>
-                            <div class="filter-controls">
-                                <select class="column-filter" multiple data-column="6">
-                                    {% for score in result|sort(attribute='6')|unique(attribute='6') %}
-                                    <option value="{{ score.6 }}">{{ score.6 }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="sort-buttons">
-                                    <button class="sort-btn" data-sort="alpha">A-Z</button>
+                            <div class="filter-dropdown">
+                                <button class="filter-toggle">Filter ▼</button>
+                                <div class="filter-content">
+                                    <select class="column-filter" multiple data-column="1">
+                                        {% for score in result|sort(attribute='6')|unique(attribute='6') %}
+                                        <option value="{{ score.6 }}">{{ score.6 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="sort-buttons">
+                                        <button class="sort-btn" data-sort="alpha">A-Z</button>
+                                    </div>
+                                    <button class="reset-btn">Reset</button>
                                 </div>
-                                <button class="reset-btn">Reset</button>
                             </div>
                         </div>
                     </th>
