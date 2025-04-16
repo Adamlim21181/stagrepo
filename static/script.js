@@ -1,158 +1,333 @@
-// Select all buttons inside the #toggle-columns container
-var btns = document.querySelectorAll("#toggle-columns .button");
+/**
+ * ============================================
+ * TABLE CONTROLLER - COMPLETE EXPLANATION
+ * ============================================
+ * 
+ * This script controls an interactive table with:
+ * - Column show/hide toggles
+ * - Multi-select filters per column
+ * - Sorting (numeric and alphabetical)
+ * - Reset functionality
+ */
 
-// Loop through each button to set up its initial state and click behavior
-btns.forEach(function(btn) {
-
-  // Skip the "Show All" button (it has an inline 'onclick' attribute)
-  if (!btn.hasAttribute("onclick")) {
-
-        // Add the 'active' class to mark the button as ON (column is visible)
-        btn.classList.add("active");
-
-        // When the user clicks the button:
-        btn.addEventListener("click", function () {
-
-            // Toggle the 'active' class (green = active = column shown)
-            this.classList.toggle("active");
-
-            // Get the column number from the data-col attribute (e.g., data-col="2" for 2nd column)
-            var colIndex = parseInt(this.getAttribute("data-col"));
-
-            // Show or hide the column based on its new state
-            toggleColumn(colIndex);
-
-            // Recalculate the ranks after a column has been toggled
-            updateRanks();
+// Wait until the HTML document is fully loaded before running our script
+document.addEventListener('DOMContentLoaded', function() {
+    // =================================
+    // 1. SETUP AND INITIALIZATION
+    // =================================
+    
+    // Get reference to our data table in the HTML
+    const table = document.getElementById('data-table');
+    
+    /**
+     * filters object will track active filters like this:
+     * {
+     *   0: ["value1", "value2"], // Filters for column 0
+     *   1: ["valueA"]            // Filters for column 1
+     * }
+     */
+    const filters = {};
+    
+    /**
+     * currentSort tracks which column is sorted and direction:
+     * {
+     *   column: 2,       // Column index being sorted
+     *   direction: "asc" // Sort direction (asc/desc/alpha)
+     * }
+     */
+    let currentSort = { column: null, direction: null };
+    
+    // =================================
+    // 2. COLUMN VISIBILITY SYSTEM
+    // =================================
+    
+    // Find all column toggle buttons in the HTML
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    
+    // Loop through each toggle button to set it up
+    toggleButtons.forEach(function(button) {
+        // Add click event listener to each button
+        button.addEventListener('click', function() {
+            // Toggle the 'active' class - adds it if missing, removes if present
+            this.classList.toggle('active');
+            
+            // Get which column this button controls from data attribute
+            const colIndex = this.dataset.colIndex;
+            
+            // Check if button is now active (column should be visible)
+            const isVisible = this.classList.contains('active');
+            
+            // Call function to actually show/hide the column
+            toggleColumnVisibility(colIndex, isVisible);
         });
+    });
+    
+    /**
+     * Shows or hides an entire table column
+     * @param {string} colIndex - Which column to toggle (0-based index)
+     * @param {boolean} show - true to show, false to hide
+     */
+    function toggleColumnVisibility(colIndex, show) {
+        // Find the table header for this column
+        const header = table.querySelector(`th[data-col-index="${colIndex}"]`);
+        
+        // If header exists, set its display style
+        if (header) {
+            header.style.display = show ? '' : 'none';
+        }
+        
+        // Find all data cells in this column
+        const cells = table.querySelectorAll(`td[data-col-index="${colIndex}"]`);
+        
+        // Loop through each cell and set visibility
+        cells.forEach(function(cell) {
+            cell.style.display = show ? '' : 'none';
+        });
+        
+        // If we're hiding the column that's currently sorted...
+        if (!show && currentSort.column === parseInt(colIndex)) {
+            // Clear the current sort
+            resetSort();
+        }
+    }
+    
+    // =================================
+    // 3. FILTERING SYSTEM SETUP
+    // =================================
+    
+    // Find all filter dropdown menus in the table headers
+    const filterSelects = table.querySelectorAll('.column-filter');
+    
+    // Set up each filter dropdown
+    filterSelects.forEach(function(select) {
+        // Get which column this filter controls (from data-column attribute)
+        const columnIndex = parseInt(select.dataset.column);
+        
+        // Initialize empty filter array for this column
+        filters[columnIndex] = [];
+        
+        // Add event listener for when selection changes
+        select.addEventListener('change', function() {
+            // Get all selected options (as array)
+            const selectedOptions = Array.from(this.selectedOptions);
+            
+            // Extract just the values from selected options
+            filters[columnIndex] = selectedOptions.map(option => option.value);
+            
+            // Re-apply filters and sorting with new selections
+            applyFiltersAndSort();
+        });
+    });
+    
+    // =================================
+    // 4. SORTING SYSTEM SETUP
+    // =================================
+    
+    // Find all sort buttons in the table
+    const sortButtons = table.querySelectorAll('.sort-btn');
+    
+    // Set up each sort button
+    sortButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            // Get column index - closest('th') finds the header cell containing this button
+            // cellIndex gives us the column number (0-based)
+            const columnIndex = this.closest('th').cellIndex;
+            
+            // Get sort direction from data-sort attribute (asc/desc/alpha)
+            const sortType = this.dataset.sort;
+            
+            // Find all sort buttons in this column and remove 'active' class
+            this.closest('.sort-buttons')
+                .querySelectorAll('.sort-btn')
+                .forEach(btn => btn.classList.remove('active'));
+            
+            // Mark clicked button as active
+            this.classList.add('active');
+            
+            // Update global sort state
+            currentSort = { 
+                column: columnIndex, 
+                direction: sortType 
+            };
+            
+            // Re-apply filters and sorting
+            applyFiltersAndSort();
+        });
+    });
+    
+    // =================================
+    // 5. RESET FUNCTIONALITY
+    // =================================
+    
+    // Find all reset buttons (except "Reset All")
+    const resetButtons = table.querySelectorAll('.reset-btn:not(.reset-all)');
+    
+    // Set up individual column reset buttons
+    resetButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            // Get column index from parent header
+            const columnIndex = this.closest('th').cellIndex;
+            
+            // Call reset function for this column
+            resetColumn(columnIndex);
+        });
+    });
+    
+    // Set up "Reset All" button
+    document.querySelector('.reset-all').addEventListener('click', function() {
+        // Reset all filter dropdowns
+        table.querySelectorAll('.column-filter').forEach(function(select) {
+            // Unselect all options
+            select.querySelectorAll('option').forEach(option => {
+                option.selected = false;
+            });
+        });
+        
+        // Reset all column visibility toggles
+        document.querySelectorAll('.toggle-btn').forEach(function(btn) {
+            if (!btn.classList.contains('active')) {
+                btn.classList.add('active');
+                toggleColumnVisibility(btn.dataset.colIndex, true);
+            }
+        });
+        
+        // Reset sorting
+        resetSort();
+        
+        // Re-apply filters/sorting (will show all data in original order)
+        applyFiltersAndSort();
+    });
+    
+    /**
+     * Resets a single column's filter and sort state
+     * @param {number} columnIndex - Index of column to reset (0-based)
+     */
+    function resetColumn(columnIndex) {
+        // Find filter dropdown for this column
+        const select = table.querySelector(`.column-filter[data-column="${columnIndex}"]`);
+        
+        // If dropdown exists, clear selections
+        if (select) {
+            select.querySelectorAll('option').forEach(option => {
+                option.selected = false;
+            });
+            
+            // Clear filter for this column
+            filters[columnIndex] = [];
+        }
+        
+        // Find all sort buttons in this column
+        const sortButtons = table.querySelectorAll('th')[columnIndex]
+                          .querySelectorAll('.sort-btn');
+        
+        // Remove active class from all sort buttons
+        sortButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // If this column was being sorted, clear sort state
+        if (currentSort.column === columnIndex) {
+            resetSort();
+        }
+    }
+    
+    /**
+     * Clears the current sort state
+     */
+    function resetSort() {
+        currentSort = { column: null, direction: null };
+    }
+    
+    // =================================
+    // 6. CORE FILTER/SORT LOGIC
+    // =================================
+    
+    /**
+     * Main function that applies all active filters and sorting
+     * This does the heavy lifting of actually modifying the table
+     */
+    function applyFiltersAndSort() {
+        // Get all table rows (convert NodeList to Array for easier manipulation)
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        
+        // ======================
+        // A. APPLY FILTERS
+        // ======================
+        rows.forEach(function(row) {
+            // Start by assuming row should be visible
+            let shouldShow = true;
+            
+            // Check against all active filters
+            for (const [columnIndex, filterValues] of Object.entries(filters)) {
+                // Skip if no filters for this column
+                if (filterValues && filterValues.length > 0) {
+                    // Get cell value for this column
+                    const cellValue = row.cells[columnIndex].textContent.trim();
+                    
+                    // If cell value isn't in filter values, hide row
+                    if (!filterValues.includes(cellValue)) {
+                        shouldShow = false;
+                        break; // No need to check other filters
+                    }
+                }
+            }
+            
+            // Set row visibility
+            row.style.display = shouldShow ? '' : 'none';
+        });
+        
+        // ======================
+        // B. APPLY SORTING
+        // ======================
+        if (currentSort.column !== null && currentSort.direction !== null) {
+            // Get only visible rows after filtering
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            
+            // Get sort type (numeric or alpha) from column header
+            const sortType = table.querySelectorAll('th')[currentSort.column].dataset.sortType;
+            
+            // Sort the visible rows
+            visibleRows.sort(function(a, b) {
+                // Get values from the cells we're sorting by
+                const aValue = a.cells[currentSort.column].textContent.trim();
+                const bValue = b.cells[currentSort.column].textContent.trim();
+                
+                // Numeric sorting (for Execution, Difficulty, etc.)
+                if (sortType === 'numeric') {
+                    // Convert to numbers
+                    const aNum = parseFloat(aValue);
+                    const bNum = parseFloat(bValue);
+                    
+                    // Handle ascending/descending order
+                    if (currentSort.direction === 'asc') {
+                        return aNum - bNum; // Lower numbers first
+                    } else {
+                        return bNum - aNum; // Higher numbers first
+                    }
+                }
+                // Text sorting (for Name, Club, etc.)
+                else {
+                    // Use localeCompare for proper string comparison
+                    return aValue.localeCompare(bValue);
+                }
+            });
+            
+            // ======================
+            // C. REBUILD TABLE
+            // ======================
+            
+            // Get reference to table body
+            const tbody = table.querySelector('tbody');
+            
+            // First remove all existing rows
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            
+            // Add back sorted rows
+            visibleRows.forEach(function(row) {
+                tbody.appendChild(row);
+            });
+        }
     }
 });
-
-// Show or hide a table column based on its index (1-based)
-function toggleColumn(index) {
-    var table = document.getElementById("results_table");
-    var rows = table.rows; // Includes header row and all data rows
-  
-    // Get the corresponding button to check its state
-    var btn = document.querySelector(`.button[data-col="${index}"]`);
-  
-    // If the button has the 'active' class, we want to show the column
-    var show = btn.classList.contains("active");
-  
-    // Loop through all rows in the table (header + data)
-    for (var i = 0; i < rows.length; i++) {
-        var cell = rows[i].cells[index - 1]; // Index is 1-based, JavaScript uses 0-based
-        if (cell) {
-            // If show = true, make cell visible; otherwise, hide it
-            cell.style.display = show ? "" : "none";
-        }
-    }
-}
-
-  // Reset the table to show all columns and reset all buttons
-function show_all() {
-    var table = document.getElementById("results_table");
-    var rows = table.rows;
-  
-    // Loop through all rows and cells to make every cell visible
-    for (var i = 0; i < rows.length; i++) {
-        for (var j = 0; j < rows[i].cells.length; j++) {
-            rows[i].cells[j].style.display = "";
-        }
-    }
-  
-    // Re-activate all toggle buttons
-    btns.forEach(function(btn) {
-        if (!btn.hasAttribute("onclick")) {
-            btn.classList.add("active");
-        }
-    });
-  
-        // Update the ranks since all data is now visible again
-        updateRanks();
-  }
-
-  // Update the ranking column dynamically based on visible columns
-function updateRanks() {
-    const table = document.getElementById("results_table");
-    const tbody = table.querySelector("tbody");
-    const rows = Array.from(tbody.rows); // Convert rows from HTMLCollection to an array
-  
-    // If there are no rows, stop the function
-    if (rows.length === 0) return;
-  
-    // Use the first row to determine which columns are currently visible
-    const sampleRow = rows[0];
-    const visibleCols = sampleRow.cells;
-  
-    // Define which columns we can use to rank people
-    // Each has an index and sort order (desc = higher is better, asc = lower is better)
-    const metricOptions = [
-        { index: 10, order: "desc" }, // Total Score
-        { index: 8, order: "desc" },  // Execution
-        { index: 9, order: "desc" },  // Difficulty
-        { index: 7, order: "asc" }    // Penalty (smaller is better)
-    ];
-  
-    let metricIndex = null;  // Column we'll use to rank
-    let sortOrder = "desc";  // Sort order (default is descending)
-  
-    // Find the first visible ranking column based on priority
-    for (const option of metricOptions) {
-        if (visibleCols[option.index].style.display !== "none") {
-            metricIndex = option.index;
-            sortOrder = option.order;
-            break;
-        }
-    }
-  
-    // If no ranking metric column is visible, clear ranks and stop
-    if (metricIndex === null) {
-        rows.forEach(row => row.cells[11].textContent = "");
-        return;
-    }
-  
-    // Check if we should group rankings (by Club or Competition)
-    let groupBy = null;
-    if (visibleCols[3].style.display !== "none") groupBy = 3; // Club column
-    if (visibleCols[4].style.display !== "none") groupBy = 4; // Competition column
-  
-    // Organize rows into groups
-    const groups = {};
-    rows.forEach(row => {
-        // Skip rows that are hidden
-        if (row.style.display === "none") return;
-    
-        // Group key is either the club/competition name or "all" if no grouping
-        const key = groupBy !== null ? row.cells[groupBy].textContent : "all";
-    
-        // Add the row to the appropriate group
-        if (!groups[key]) groups[key] = [];
-        groups[key].push(row);
-    });
-  
-    // Sort and rank each group individually
-    Object.values(groups).forEach(groupRows => {
-  
-        // Sort rows within the group based on the ranking metric
-        groupRows.sort((a, b) => {
-            const valA = parseFloat(a.cells[metricIndex].textContent);
-            const valB = parseFloat(b.cells[metricIndex].textContent);
-    
-            if (isNaN(valA) || isNaN(valB)) return 0;
-    
-            // Ascending or descending order
-            return sortOrder === "asc" ? valA - valB : valB - valA;
-        });
-  
-        // Assign rank numbers (1-based)
-        groupRows.forEach((row, index) => {
-            row.cells[11].textContent = index + 1; // Rank column is index 11
-        });
-    });
-}
-  
-// Call the updateRanks function once when the page loads
-document.addEventListener("DOMContentLoaded", updateRanks);
 
   
