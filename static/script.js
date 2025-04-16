@@ -13,7 +13,7 @@
 // Wait until the HTML document is fully loaded before running our script
 document.addEventListener('DOMContentLoaded', function() {
     // =================================
-    // 1. SETUP AND INITIALIZATION
+    // 1. SETUP AND INITIALIZATION  
     // =================================
     
     // Get reference to our data table in the HTML
@@ -328,48 +328,34 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-});
 
-// =================================
-// 7. ENHANCE FILTER DROPDOWNS USING CHOICES.JS
-// =================================
+    // ================================
+    // 8. FILTER DROPDOWN TOGGLE HANDLERS
+    // ================================
 
-document.querySelectorAll('.column-filter').forEach(function(selectEl) {
-    new Choices(selectEl, {
-        removeItemButton: true,
-        shouldSort: false,
-        placeholderValue: 'Filter...',
-        searchEnabled: false
-    });
-});
-
-// ================================
-// 8. FILTER DROPDOWN TOGGLE HANDLERS
-// ================================
-
-// Handle click on Filter ▼ buttons to show/hide their dropdown content
-document.querySelectorAll('.filter-toggle').forEach(function (button) {
+    // Handle click on Filter ▼ buttons to show/hide their dropdown content
+    document.querySelectorAll('.filter-toggle').forEach(function (button) {
     button.addEventListener('click', function (e) {
-      e.stopPropagation(); // Stop the click from bubbling up
-      // Close any other open dropdowns first
-      document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
+        e.stopPropagation(); // Stop the click from bubbling up
+        // Close any other open dropdowns first
+        document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
         if (dropdown !== button.closest('.filter-dropdown')) {
-          dropdown.classList.remove('open');
+            dropdown.classList.remove('open');
         }
-      });
-      // Toggle this dropdown open/closed
-      button.closest('.filter-dropdown').classList.toggle('open');
+        });
+        // Toggle this dropdown open/closed
+        button.closest('.filter-dropdown').classList.toggle('open');
     });
-  });
-  
-  // Close dropdowns if clicking outside anywhere on the page
-  document.addEventListener('click', function () {
-    document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
-      dropdown.classList.remove('open');
     });
-  });
-  
-  
 
+    // Close dropdowns if clicking outside anywhere on the page
+    document.addEventListener('click', function () {
+    document.querySelectorAll('.filter-dropdown').forEach(function (dropdown) {
+        dropdown.classList.remove('open');
+    });
+    });
+
+  
+});
 
   
