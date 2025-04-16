@@ -343,5 +343,18 @@ document.querySelectorAll('.column-filter').forEach(function(selectEl) {
     });
 });
 
+document.querySelectorAll('.filter-toggle').forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.stopPropagation();
+      this.closest('.filter-dropdown').classList.toggle('open');
+    });
+  });
+  
+  // Close dropdowns if clicked outside
+  document.addEventListener('click', function () {
+    document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('open'));
+  });
+  
+
 
   
