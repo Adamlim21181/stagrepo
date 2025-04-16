@@ -330,4 +330,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// =================================
+// 7. ENHANCE FILTER DROPDOWNS USING CHOICES.JS
+// =================================
+
+document.querySelectorAll('.column-filter').forEach(function(selectEl) {
+    new Choices(selectEl, {
+        removeItemButton: true,
+        shouldSort: false,
+        placeholderValue: 'Filter...',
+        searchEnabled: false
+    });
+});
+
+
   
