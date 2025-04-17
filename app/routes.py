@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from app import db
+from . import db
 
 import app.models as models
 # Blueprint allows me to create multiple route files,
