@@ -1,20 +1,11 @@
-from app.create_app import app
-from flask import Blueprint, render_template, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Blueprint, render_template
+from app import db  # Import db from the app, not from models
 
-from app.models import models
-# Blueprint allows me to create multiple route files,
-# helps to keep the routes organised instead of haveing everything in one file
+import app.models as models  # Models will be used here
 
 main = Blueprint('main', __name__)
-db = SQLAlchemy()
-SQLALCHEMY_DATABASE_URI = ( 
-        "mysql+mysqldb://STAGNASTICS:gyM!2025_Score$NZ"
-        "@STAGNASTICS.mysql.pythonanywhere-services.com/STAGNASTICS$stagdata"
-    )
-SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle': 280}
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-db.init_app(app)
+
+# Your route handlers go here
 
 
 @main.route('/')
