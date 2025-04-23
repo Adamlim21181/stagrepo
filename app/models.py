@@ -1,5 +1,4 @@
-from . import db
-
+from app.routes import db
 
 class Apparatus(db.Model):
     __tablename__ = "apparatus"
