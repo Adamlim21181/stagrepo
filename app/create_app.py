@@ -10,7 +10,11 @@ def create_app():
     app = Flask(__name__)
 
     # Set up app configurations
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your-database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        "mysql+mysqldb://STAGNASTICS:gyM!2025_Score$NZ"
+        "@STAGNASTICS.mysql.pythonanywhere-services.com/STAGNASTICS$stagdata"
+    )
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize db with app

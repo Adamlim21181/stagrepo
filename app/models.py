@@ -1,5 +1,6 @@
 from app import db
 
+
 class Apparatus(db.Model):
     __tablename__ = "apparatus"
     apparatus_id = db.Column(db.Integer, primary_key=True)
