@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from app import db  # Import db from the app, not from models
+from app.create_app import db  # Import db from the app, not from models
 
 import app.models as models  # Models will be used here
 
