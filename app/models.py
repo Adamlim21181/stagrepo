@@ -43,7 +43,9 @@ class Gymnast(db.Model):
 class Entry(db.Model):
     __tablename__ = "entries"
     entries_id = db.Column(db.Integer, primary_key=True)
-    competition_id = db.Column(db.Integer, db.ForeignKey('competitions.competition_id'))
+    competition_id = db.Column
+    (db.Integer, db.ForeignKey('competitions.competition_id'))
+
     gymnast_id = db.Column(db.Integer, db.ForeignKey('gymnasts.gymnast_id'))
 
     competition = db.relationship("Competition", backref="entries")
@@ -69,4 +71,3 @@ class User(db.Model):
     code = db.Column(db.String(255))
     password = db.Column(db.String(255))
     role = db.Column(db.String(255))
-
