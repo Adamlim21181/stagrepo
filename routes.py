@@ -3,8 +3,6 @@ from flask import Blueprint, render_template
 
 main = Blueprint('main', __name__)
 
-# Your route handlers go here
-
 
 @main.route('/')
 def home():
