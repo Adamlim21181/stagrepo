@@ -1,4 +1,5 @@
-from app import create_app, models, db
+from create_app import db
+import models
 
 from faker import Faker
 import random
