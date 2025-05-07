@@ -112,4 +112,12 @@ def add_scores():
             db.session.add(score)
     db.session.commit()
         
-    
+def create_random_data():
+    add_users()
+    add_seasons()
+    add_clubs()
+    add_apparatus()
+    add_competitions()
+    add_gymnasts()
+    add_entries()
+    add_scores()
