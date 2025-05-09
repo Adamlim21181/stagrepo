@@ -114,6 +114,7 @@ def add_scores():
     db.session.commit()
 
 def create_random_data():
+    db.create_all()
     add_users()
     add_seasons()
     add_clubs()
