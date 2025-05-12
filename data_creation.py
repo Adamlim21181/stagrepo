@@ -108,8 +108,9 @@ def add_entries():
         competition_id = random.choice(competitions)
         gymnast_id = random.choice(gymnasts)
 
+        existing_entry = models.Entries.query.filter_by(competition_id=competition_id, gymnast_id=gymnast_id).firtst()
         # first() gets the first row that matches the filter, or None is returned if no match is found
-        if not models.Entries.query.filter_by(competition_id=competition_id, gymnast_id=gymnast_id).first():
+        if not existing_entry:
             entry = models.Entries(
                 competition_id = competition_id,
                 gymnast_id = gymnast_id
