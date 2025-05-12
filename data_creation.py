@@ -18,7 +18,7 @@ def add_roles():
 def add_users():
     roles = {
         "admin": "admin",
-        "judge": "judge",
+        "judges": "judges",
         "public": None
     }
     for username, role_name in roles.items():
