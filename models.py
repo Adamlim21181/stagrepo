@@ -54,6 +54,7 @@ class Scores(db.Model):
     e_score = db.Column(db.Float, nullable=False)
     d_score = db.Column(db.Float, nullable=False)
     penalty = db.Column(db.Float, nullable=False)
+    total = db.Column(db.Float, nullable=False)
     
     apparatus = db.relationship('Apparatus', backref = 'scores')
     
