@@ -108,10 +108,6 @@ def add_entries():
         competition_id = random.choice(competitions)
         gymnast_id = random.choice(gymnasts)
 
-        # sends all pending changes in the current session to the database
-        # fush ensures that the session is synced with the database
-        db.session.flush()
-
         existing_entry = models.Entries.query.filter_by(competition_id=competition_id, gymnast_id=gymnast_id).first()
         # first() gets the first row that matches the filter, or None is returned if no match is found
         if not existing_entry:

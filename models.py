@@ -40,9 +40,11 @@ class Gymnasts(db.Model):
     
 class Entries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    competition_id = db.Column(db.Integer, db.ForeignKey('competitions.id'), nullable=False, unique=True)
-    gymnast_id = db.Column(db.Integer, db.ForeignKey('gymnasts.id'), nullable=False, unique=True)
+    competition_id = db.Column(db.Integer, db.ForeignKey('competitions.id'), nullable=False)
+    gymnast_id = db.Column(db.Integer, db.ForeignKey('gymnasts.id'), nullable=False)
 
+    __table_args__ = (db.UniqueConstraint('competition_id', 'gymnast_id', name='_competition_gymnast_uc'),)
+    
 class Scores(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     entries_id = db.Column(db.Integer, db.ForeignKey('entries.id'), nullable=False)
