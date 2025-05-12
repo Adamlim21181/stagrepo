@@ -133,7 +133,7 @@ def add_scores():
             total = round(e_score + d_score - penalty, 2)
 
             score = models.Scores(
-                entry_id = entry_id,
+                entries_id = entry_id,
                 apparatus_id = app.id,
                 e_score = e_score,
                 d_score = d_score,

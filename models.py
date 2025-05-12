@@ -43,6 +43,8 @@ class Entries(db.Model):
     competition_id = db.Column(db.Integer, db.ForeignKey('competitions.id'), nullable=False)
     gymnast_id = db.Column(db.Integer, db.ForeignKey('gymnasts.id'), nullable=False)
 
+    # __table_args is how to define additional configurations
+    # so for this case, I am defining a unique constraint 
     __table_args__ = (db.UniqueConstraint('competition_id', 'gymnast_id', name='_competition_gymnast_uc'),)
     
 class Scores(db.Model):
