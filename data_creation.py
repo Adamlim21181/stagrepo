@@ -110,7 +110,7 @@ def add_entries():
 
         # first() gets the first row that matches the filter, or None is returned if no match is found
         if not models.Entries.query.filter_by(competition_id=competition_id, gymnast_id=gymnast_id).first():
-            entry = models.Entries()(
+            entry = models.Entries(
                 competition_id = competition_id,
                 gymnast_id = gymnast_id
             )
