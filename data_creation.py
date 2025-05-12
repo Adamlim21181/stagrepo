@@ -6,19 +6,32 @@ import random
 
 fake = Faker("en_NZ")
 
-def add_users():
-    roles = ["admin", "judge", None]
-    codes = ["1234", "abcd", None]
-
-    # zip() is used to match each role with its corresponding code
-    for role, code in zip(roles, codes):
-        user = models.Users(
-            role = role,
-            code = code
+def add_roles():
+    role_names = ["admin", "judges", "public"]
+    for name in role_names:
+        role = models.Roles(
+            name = name
         )
+        db.session.add(role)
+    db.session.commit()
+    
+def add_users():
+    roles = {
+        "admin": admin,
+        "judges": judges,
+        "public": None
+    }
+    for username, role_name in roles.items():
+        user = models.Users(
+            username=username
+        )
+        
+        if role_name:
+            role = models.Roles.query.filter_by(name=role_name).first()
+            user.roles.append(role)
         db.session.add(user)
     db.session.commit()
-
+    
 def add_seasons():
     for _ in range(5):
         season = models.Seasons(

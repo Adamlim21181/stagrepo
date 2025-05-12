@@ -1,9 +1,18 @@
 from create_app import db
 
+class Roles(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    role = db.Column(db.String(50), nullable=False, unique=True)
-    code = db.Column(db.String(50))
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    code = db.Column(db.String(50), nullable=True)
+    roles = relationship("Roles", secondary="user_roles", backref="users")
+    
+class UserRoles(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), primary_key=True)
     
 class Seasons(db.Model):
     id = db.Column(db.Integer, primary_key=True)
