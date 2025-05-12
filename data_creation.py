@@ -128,6 +128,7 @@ def add_scores():
 
 def create_random_data():
     db.create_all()
+    add_roles()
     add_users()
     add_seasons()
     add_clubs()
