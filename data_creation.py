@@ -9,11 +9,13 @@ fake = Faker("en_NZ")
 def add_roles():
     role_names = ["admin", "judges", "public"]
     for name in role_names:
-        role = models.Roles(
-            name = name
-        )
-        db.session.add(role)
+        if not models.Roles.query.filter_by(name=name).first():
+            role = models.Roles(
+                name = name
+            )
+            db.session.add(role)
     db.session.commit()
+    print("Roles added successfully.")
     
 def add_users():
     roles = {
@@ -22,40 +24,51 @@ def add_users():
         "public": None
     }
     for username, role_name in roles.items():
-        user = models.Users(
-            username=username
-        )
-        
-        if role_name:
-            role = models.Roles.query.filter_by(name=role_name).first()
-            user.roles.append(role)
-        db.session.add(user)
+        if not models.Users.query.filter_by(username=username).first():
+            user = models.Users(
+                username=username
+            )
+            
+            if role_name:
+                role = models.Roles.query.filter_by(name=role_name).first()
+                if role:
+                    user.roles.append(role)
+                    
+            db.session.add(user)
     db.session.commit()
+    print("Users added successfully.")
     
 def add_seasons():
     for _ in range(5):
-        season = models.Seasons(
-            year = random.randint(2010, 2025)
-        )
-        db.session.add(season)
+        year = random.randint(2010, 2025)
+        if not models.Seasons.query.filter_by(year=year).first():
+            season = models.Seasons(
+                year=year
+            )
+            db.session.add(season)
     db.session.commit()
+    print("Seasons added successfully.")
 
 def add_clubs():
+    name = fake.company()
     for _ in range(15):
-        club = models.Clubs(
-            name = fake.company()
-        )
-        db.session.add(club)
+        if not models.Clubs.query.filter_by(name=name).first():
+            club = models.Clubs(
+                name=name
+            )
+            db.session.add(club)
     db.session.commit()
+    print("Clubs added successfully.")
 
 def add_apparatus():
     apparatus = ["Floor", "Pommel Horse", "Still Rings", "Vault", "Parallel Bars", "Horizontal Bar"]
-    for app in apparatus:
+    for name in apparatus:
         apparatus = models.Apparatus(
-            name = app
+            name = name
         )
         db.session.add(apparatus)
     db.session.commit()
+    print("Apparatus added successfully.")
 
 def add_competitions():
     seasons = [season.id for season in models.Seasons.query.all()]
@@ -68,6 +81,7 @@ def add_competitions():
         )
         db.session.add(competition)
     db.session.commit()
+    print("Competitions added successfully.")
 
 def add_gymnasts():
     clubs = [club.id for club in models.Clubs.query.all()]
@@ -81,6 +95,7 @@ def add_gymnasts():
         )
         db.session.add(gymnast)
     db.session.commit()
+    print("Gymnasts added successfully.")
 
 def add_entries():
     competitions = [competition.id for competition in models.Competitions.query.all()]
@@ -103,6 +118,7 @@ def add_entries():
             entries += 1
 
     db.session.commit()
+    print("Entries added successfully.")
 
 def add_scores():
     entries = [entry.id for entry in models.Entries.query.all()]
@@ -125,6 +141,7 @@ def add_scores():
             )
             db.session.add(score)
     db.session.commit()
+    print("Scores added successfully.")
 
 def create_random_data():
     db.create_all()
@@ -137,3 +154,4 @@ def create_random_data():
     add_gymnasts()
     add_entries()
     add_scores()
+    print("Random data created successfully.")
