@@ -74,7 +74,7 @@ def add_competitions():
     seasons = [season.id for season in models.Seasons.query.all()]
 
     for _ in range(20):
-        name = fake.colour_name()
+        name = fake.color_name()
         
         street_address = fake.street_address()
         city = fake.city()
