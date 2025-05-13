@@ -50,8 +50,8 @@ def add_seasons():
     print("Seasons added successfully.")
 
 def add_clubs():
-    name = fake.company()
-    for _ in range(15):
+    for _ in range(15): 
+        name = fake.company()
         if not models.Clubs.query.filter_by(name=name).first():
             club = models.Clubs(
                 name=name
@@ -74,10 +74,16 @@ def add_competitions():
     seasons = [season.id for season in models.Seasons.query.all()]
 
     for _ in range(20):
+        name = fake.colour_name()
+        
+        street_address = fake.street_address()
+        city = fake.city()
+        address = f"{street_address}, {city}"
+        
         competition = models.Competitions(
             season_id = random.choice(seasons),
             name = fake.color_name(),
-            address = fake.address()
+            address = address
         )
         db.session.add(competition)
     db.session.commit()
@@ -104,7 +110,7 @@ def add_entries():
     entries = 0
 
     # prevent duplicate gymnasts in the same competition
-    while entries <= 1000:
+    while entries < 1100:
         competition_id = random.choice(competitions)
         gymnast_id = random.choice(gymnasts)
 
@@ -155,4 +161,4 @@ def create_random_data():
     add_gymnasts()
     add_entries()
     add_scores()
-    print("Random data created successfully.")
+    print("All data created successfully.")
