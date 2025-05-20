@@ -1,44 +1,42 @@
-from flask import Blueprint, render_template
+from flask import render_template
+from create_app import app
 
 
-main = Blueprint('main', __name__)
-
-
-@main.route('/')
+@app.route('/')
 def home():
     return render_template('home.html')
 
 
-@main.route('/gymnasts')
+@app.route('/gymnasts')
 def gymnasts():
     return render_template('gymnasts.html')
 
 
-@main.route('/levels')
+@app.route('/levels')
 def levels():
     return render_template('levels.html')
 
 
-@main.route('/scoring')
+@app.route('/scoring')
 def scoring():
     return render_template('scoring.html')
 
 
-@main.route('/live')
+@app.route('/live')
 def live():
     return render_template('live.html')
 
 
-@main.route('/calendar')
+@app.route('/calendar')
 def calendar():
     return render_template('calendar.html')
 
-
-@main.route('/login')
+    
+@app.route('/login')
 def login():
     return render_template('login.html')
 
 
-@main.route('/results')
+@app.route('/results')
 def results():
     return render_template('results.html')

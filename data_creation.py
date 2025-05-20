@@ -6,17 +6,19 @@ import random
 
 fake = Faker("en_NZ")
 
+
 def add_roles():
     role_names = ["admin", "judges", "public"]
     for name in role_names:
         if not models.Roles.query.filter_by(name=name).first():
             role = models.Roles(
-                name = name
+                name=name
             )
             db.session.add(role)
     db.session.commit()
     print("Roles added successfully.")
-    
+
+
 def add_users():
     roles = {
         "admin": "admin",
@@ -28,16 +30,17 @@ def add_users():
             user = models.Users(
                 username=username
             )
-            
+
             if role_name:
                 role = models.Roles.query.filter_by(name=role_name).first()
                 if role:
                     user.roles.append(role)
-                    
+
             db.session.add(user)
     db.session.commit()
     print("Users added successfully.")
-    
+
+
 def add_seasons():
     for _ in range(5):
         year = random.randint(2010, 2025)
@@ -49,8 +52,9 @@ def add_seasons():
     db.session.commit()
     print("Seasons added successfully.")
 
+
 def add_clubs():
-    for _ in range(15): 
+    for _ in range(15):
         name = fake.company()
         if not models.Clubs.query.filter_by(name=name).first():
             club = models.Clubs(
@@ -60,51 +64,59 @@ def add_clubs():
     db.session.commit()
     print("Clubs added successfully.")
 
+
 def add_apparatus():
-    apparatus = ["Floor", "Pommel Horse", "Still Rings", "Vault", "Parallel Bars", "Horizontal Bar"]
+    apparatus = ["Floor", "Pommel Horse", "Still Rings", "Vault",
+                 "Parallel Bars", "Horizontal Bar"]
     for name in apparatus:
         apparatus = models.Apparatus(
-            name = name
+            name=name
         )
         db.session.add(apparatus)
     db.session.commit()
     print("Apparatus added successfully.")
 
+
 def add_competitions():
     seasons = [season.id for season in models.Seasons.query.all()]
 
     for _ in range(20):
-        name = fake.color_name()
-        
+
         street_address = fake.street_address()
         city = fake.city()
         address = f"{street_address}, {city}"
-        
+
         competition = models.Competitions(
-            season_id = random.choice(seasons),
-            name = fake.color_name(),
-            address = address
+            season_id=random.choice(seasons),
+            name=fake.color_name(),
+            address=address
         )
         db.session.add(competition)
     db.session.commit()
     print("Competitions added successfully.")
 
+
 def add_gymnasts():
     clubs = [club.id for club in models.Clubs.query.all()]
-    levels = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9", "Junior International", "Senior International"]
+    levels = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
+              "Level 6", "Level 7", "Level 8", "Level 9",
+              "Junior International", "Senior International"]
 
     for _ in range(55):
         gymnast = models.Gymnasts(
-            club_id = random.choice(clubs),
-            name = fake.name(),
-            level = random.choice(levels)
+            club_id=random.choice(clubs),
+            name=fake.name(),
+            level=random.choice(levels)
         )
         db.session.add(gymnast)
     db.session.commit()
     print("Gymnasts added successfully.")
 
+
 def add_entries():
-    competitions = [competition.id for competition in models.Competitions.query.all()]
+    competitions = [competition.id
+                    for competition in models.Competitions.query.all()]
+
     gymnasts = [gymnast.id for gymnast in models.Gymnasts.query.all()]
 
     entries = 0
@@ -114,12 +126,16 @@ def add_entries():
         competition_id = random.choice(competitions)
         gymnast_id = random.choice(gymnasts)
 
-        existing_entry = models.Entries.query.filter_by(competition_id=competition_id, gymnast_id=gymnast_id).first()
-        # first() gets the first row that matches the filter, or None is returned if no match is found
+        existing_entry = models.Entries.query.filter_by(
+            competition_id=competition_id, gymnast_id=gymnast_id
+        ).first()
+
+        # first() gets the first row that matches the filter,
+        # or None is returned if no match is found
         if not existing_entry:
             entry = models.Entries(
-                competition_id = competition_id,
-                gymnast_id = gymnast_id
+                competition_id=competition_id,
+                gymnast_id=gymnast_id
             )
             db.session.add(entry)
             entries += 1
@@ -127,28 +143,30 @@ def add_entries():
     db.session.commit()
     print("Entries added successfully.")
 
+
 def add_scores():
     entries = [entry.id for entry in models.Entries.query.all()]
     apparatus = models.Apparatus.query.all()
 
     for entry_id in entries:
         for app in apparatus:
-            e_score = round(fake.random.uniform(0.00,10.00), 2)
-            d_score = round(fake.random.uniform(0.00,10.00), 2)
-            penalty = round(fake.random.uniform(0.00,2.00), 2)
+            e_score = round(fake.random.uniform(0.00, 10.00), 2)
+            d_score = round(fake.random.uniform(0.00, 10.00), 2)
+            penalty = round(fake.random.uniform(0.00, 2.00), 2)
             total = round(e_score + d_score - penalty, 2)
 
             score = models.Scores(
-                entries_id = entry_id,
-                apparatus_id = app.id,
-                e_score = e_score,
-                d_score = d_score,
-                penalty = penalty,
-                total = total
+                entries_id=entry_id,
+                apparatus_id=app.id,
+                e_score=e_score,
+                d_score=d_score,
+                penalty=penalty,
+                total=total
             )
             db.session.add(score)
     db.session.commit()
     print("Scores added successfully.")
+
 
 def create_random_data():
     db.create_all()
