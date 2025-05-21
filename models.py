@@ -2,6 +2,9 @@ from extensions import db
 
 
 class Roles(db.Model):
+    
+    __table_name__ = 'roles'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -12,6 +15,9 @@ class Roles(db.Model):
 
 
 class Users(db.Model):
+    
+    __table_name__ = 'users'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -30,6 +36,9 @@ class Users(db.Model):
 
 
 class UserRoles(db.Model):
+    
+    __table_name__ = 'user_roles'
+    
     user_id = db.Column(
         db.Integer, db.ForeignKey('users.id'), primary_key=True
     )
@@ -40,6 +49,9 @@ class UserRoles(db.Model):
 
 
 class Seasons(db.Model):
+    
+    __table_name__ = 'seasons'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -50,6 +62,9 @@ class Seasons(db.Model):
 
 
 class Clubs(db.Model):
+    
+    __table_name__ = 'clubs'
+    
     id = db.Column(
         db.Integer, primary_key=True
         )
@@ -58,8 +73,15 @@ class Clubs(db.Model):
         db.String(50), nullable=False
     )
 
+    gymnasts = db.relationship(
+        'Gymnasts', backref='clubs'
+    )
+
 
 class Apparatus(db.Model):
+
+    __table_name__ = 'apparatus'
+
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -70,6 +92,9 @@ class Apparatus(db.Model):
 
 
 class Competitions(db.Model):
+    
+    __table_name__ = 'competitions'    
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -88,6 +113,9 @@ class Competitions(db.Model):
 
 
 class Gymnasts(db.Model):
+    
+    __table_name__ = 'gymnasts'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -106,6 +134,9 @@ class Gymnasts(db.Model):
 
 
 class Entries(db.Model):
+    
+    __table_name__ = 'entries'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )
@@ -127,6 +158,9 @@ class Entries(db.Model):
 
 
 class Scores(db.Model):
+    
+    __table_name__ = 'scores'
+    
     id = db.Column(
         db.Integer, primary_key=True
     )

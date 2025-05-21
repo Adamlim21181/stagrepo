@@ -11,6 +11,7 @@ def home():
 @main.route('/gymnasts')
 def gymnasts():
     gymnasts = models.Gymnasts.query.all()
+
     return render_template('gymnasts.html', gymnasts=gymnasts)
 
 
