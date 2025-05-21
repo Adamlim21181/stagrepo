@@ -7,14 +7,14 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Club ID</th>
+            <th>Club</th>
             <th>Name</th>
             <th>Level</th>
         </tr>
         {% for row in gymnasts %}
         <tr>
             <td>{{ row.id }}</td>
-            <td>{{ row.club_id }}</td>
+            <td>{{ row.club.name}}</td>
             <td>{{ row.name }}</td>
             <td>{{ row.level }}</td>
         </tr>
