@@ -1,5 +1,5 @@
 from flask import render_template, Blueprint
-
+import models
 main = Blueprint('main', __name__)
 
 
@@ -10,7 +10,8 @@ def home():
 
 @main.route('/gymnasts')
 def gymnasts():
-    return render_template('gymnasts.html')
+    gymnasts = models.Gymnasts.query.all()
+    return render_template('gymnasts.html', gymnasts=gymnasts)
 
 
 @main.route('/levels')
@@ -29,8 +30,8 @@ def live():
 
 
 @main.route('/calendar')
-def calendar():
-    return render_template('calendar.html')
+def calander():
+    return render_template('calander.html')
 
 
 @main.route('/login')

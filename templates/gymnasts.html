@@ -3,6 +3,23 @@
 
 <body>
     <h1>Gymnasts</h1>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Club ID</th>
+            <th>Name</th>
+            <th>Level</th>
+        </tr>
+        {% for row in gymnasts %}
+        <tr>
+            {%for i in row %}
+            <td>{{ i }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
 </body>
 
 </html>
