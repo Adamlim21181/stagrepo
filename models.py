@@ -1,4 +1,4 @@
-from create_app import db
+from extensions import db
 
 
 class Roles(db.Model):
