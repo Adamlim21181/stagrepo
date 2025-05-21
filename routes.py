@@ -29,7 +29,7 @@ def live():
     return render_template('live.html')
 
 
-@main.route('/calendar')
+@main.route('/calander')
 def calander():
     return render_template('calander.html')
 
