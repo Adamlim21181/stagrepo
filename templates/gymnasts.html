@@ -13,9 +13,10 @@
         </tr>
         {% for row in gymnasts %}
         <tr>
-            {%for i in row %}
-            <td>{{ i }}</td>
-            {% endfor %}
+            <td>{{ row.id }}</td>
+            <td>{{ row.club_id }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.level }}</td>
         </tr>
         {% endfor %}
     </table>
