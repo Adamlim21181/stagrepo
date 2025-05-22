@@ -90,6 +90,10 @@ class Apparatus(db.Model):
         db.String(50), nullable=False, unique=True
     )
 
+    scores = db.relationship(
+        'Scores', backref='apparatus'
+    )
+
 
 class Competitions(db.Model):
 

@@ -7,18 +7,16 @@
     <table>
         <tr>
             <th>ID</th>
-            <th>Entries ID</th>
-            <th>Apparatus ID</th>
-            <th>Execution Score</th>
-            <th>Difficulty Score</th>
-            <th>Penalty Score</th>
+            <th>Apparatus</th>
+            <th>Execution</th>
+            <th>Difficulty</th>
+            <th>Penalty</th>
             <th>Total</th>
         </tr>
         {% for row in scores %}
         <tr>
             <td>{{ row.id }}</td>
-            <td>{{ row.entries_id }}</td>
-            <td>{{ row.apparatus_id }}</td>
+            <td>{{ row.apparatus.name }}</td>
             <td>{{ row.e_score }}</td>
             <td>{{ row.d_score }}</td>
             <td>{{ row.penalty }}</td>
