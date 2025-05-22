@@ -192,5 +192,3 @@ class Scores(db.Model):
     total = db.Column(
         db.Float, nullable=False
     )
-
-    apparatus = db.relationship('Apparatus', backref='scores')
