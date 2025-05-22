@@ -22,7 +22,9 @@ def levels():
 
 @main.route('/scoring')
 def scoring():
-    return render_template('scoring.html')
+    scores = models.Scores.query.all()
+
+    return render_template('scoring.html', scores=scores)
 
 
 @main.route('/live')
