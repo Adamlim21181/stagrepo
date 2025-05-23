@@ -4,27 +4,6 @@
 <body>
     <h1>SCORING</h1>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Apparatus</th>
-            <th>Execution</th>
-            <th>Difficulty</th>
-            <th>Penalty</th>
-            <th>Total</th>
-        </tr>
-        {% for row in scores %}
-        <tr>
-            <td>{{ row.id }}</td>
-            <td>{{ row.apparatus.name }}</td>
-            <td>{{ row.e_score }}</td>
-            <td>{{ row.d_score }}</td>
-            <td>{{ row.penalty }}</td>
-            <td>{{ row.total }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
 </body>
 
 </html>
