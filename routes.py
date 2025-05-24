@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint
 from extensions import db
 import models
+import forms
 main = Blueprint('main', __name__)
 
 
@@ -12,7 +13,7 @@ def home():
 @main.route('/gymnasts', methods=['GET', 'POST'])
 def gymnasts():
 
-    form = models.AddGymnast()
+    form = forms.AddGymnast()
 
     if form.validate_on_submit():
         name = form.name.data
