@@ -9,6 +9,7 @@ def create_app():
         '@STAGNASTICS.mysql.pythonanywhere-services.com/STAGNASTICS$stagdata')
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = 'secretstagkey2025!'
 
     db.init_app(app)
 
