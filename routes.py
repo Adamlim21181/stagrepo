@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, redirect, url_for
 from extensions import db
 import models
 import forms
@@ -29,7 +29,7 @@ def gymnasts():
         db.session.add(new_gymnast)
         db.session.commit()
 
-        form = forms.AddGymnast()
+        return redirect(url_for('main.gymnasts'))
 
     gymnasts = models.Gymnasts.query.all()
 
