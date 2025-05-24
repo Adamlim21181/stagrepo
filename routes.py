@@ -1,4 +1,5 @@
 from flask import render_template, Blueprint
+from extensions import db
 import models
 main = Blueprint('main', __name__)
 
@@ -8,11 +9,34 @@ def home():
     return render_template('home.html')
 
 
-@main.route('/gymnasts')
+@main.route('/gymnasts', methods=['GET', 'POST'])
 def gymnasts():
+
+    form = models.AddGymnast()
+
+    if form.validate_on_submit():
+        name = form.name.data
+        club_id = form.club_id.data
+        level = form.level.data
+
+        new_gymnast = models.Gymnasts(
+            name=name,
+            club_id=club_id,
+            level=level
+        )
+
+        db.session.add(new_gymnast)
+        db.session.commit()
+
     gymnasts = models.Gymnasts.query.all()
 
-    return render_template('gymnasts.html', gymnasts=gymnasts)
+    form = models.AddGymnasts(formdata=None)
+
+    return render_template(
+        'gymnasts.html',
+        gymnasts=gymnasts,
+        form=form
+    )
 
 
 @main.route('/levels')
