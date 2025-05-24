@@ -29,9 +29,9 @@ def gymnasts():
         db.session.add(new_gymnast)
         db.session.commit()
 
-    gymnasts = models.Gymnasts.query.all()
+        form = forms.AddGymnast()
 
-    form = models.AddGymnasts(formdata=None)
+    gymnasts = models.Gymnasts.query.all()
 
     return render_template(
         'gymnasts.html',
