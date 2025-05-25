@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, InputRequired
 from wtforms_sqlalchemy.fields import QuerySelectField
 import models
 
 
 class AddGymnast(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired('Please enter a name')])
 
     club = QuerySelectField(
         'Club',
@@ -19,10 +19,11 @@ class AddGymnast(FlaskForm):
 
         get_label='name',
         allow_blank=True,
-        validators=[DataRequired()]
+        validators=[InputRequired('Please select a club')]
     )
 
     level = SelectField('Level', choices=[
+        ('', 'Select Level'),
         ('Level 1', 'Level 1'),
         ('Level 2', 'Level 2'),
         ('Level 3', 'Level 3'),
@@ -35,6 +36,6 @@ class AddGymnast(FlaskForm):
         ('Junior International', 'Junior International'),
         ('Senior International', 'Senior International')
     ],
-                        validators=[DataRequired()]
+                        validators=[InputRequired('Please select a level')]
     )
     submit = SubmitField('Add Gymnast')

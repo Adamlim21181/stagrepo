@@ -23,7 +23,7 @@
         <p>
 
             {{ form.club.label }}
-            {{ form.club(size=32) }}
+            {{ form.club() }}
             {% if form.club.errors %}
         <ul>
             {% for error in form.club.errors %}
