@@ -19,6 +19,7 @@ class AddGymnast(FlaskForm):
 
         get_label='name',
         allow_blank=True,
+        blank_text='Select Club',
         validators=[InputRequired('Please select a club')]
     )
 
