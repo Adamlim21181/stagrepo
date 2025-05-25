@@ -1,11 +1,27 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField
+from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import DataRequired
+from wtforms_sqlalchemy.fields import QuerySelectField
+import models
 
 
 class AddGymnast(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    club_id = IntegerField('Club ID', validators=[DataRequired()])
+
+    club = QuerySelectField(
+        'Club',
+
+        # query_factory is a callable that is required by QuerySelectField.
+
+        # lambda is just a wuick way to create a function inline
+        # without having to define the full def function.
+        query_factory=lambda: models.Clubs.query.all(),
+
+        get_label='name',
+        allow_blank=True,
+        validators=[DataRequired()]
+    )
+
     level = SelectField('Level', choices=[
         ('Level 1', 'Level 1'),
         ('Level 2', 'Level 2'),

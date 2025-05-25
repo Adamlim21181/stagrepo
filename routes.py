@@ -17,7 +17,7 @@ def gymnasts():
 
     if form.validate_on_submit():
         name = form.name.data
-        club_id = form.club_id.data
+        club_id = form.club.data.id
         level = form.level.data
 
         new_gymnast = models.Gymnasts(
