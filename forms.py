@@ -20,7 +20,7 @@ class AddGymnast(FlaskForm):
         get_label='name',
         allow_blank=True,
         blank_text='Select Club',
-        validators=[InputRequired('Select Club')]
+        validators=[DataRequired('Select Club')]
     )
 
     level = SelectField('Level', choices=[
@@ -37,6 +37,6 @@ class AddGymnast(FlaskForm):
         ('Junior International', 'Junior International'),
         ('Senior International', 'Senior International')
     ],
-                        validators=[InputRequired('Please select a level')]
+                        validators=[DataRequired('Please select a level')]
     )
     submit = SubmitField('Add Gymnast')
