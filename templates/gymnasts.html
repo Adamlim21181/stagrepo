@@ -22,11 +22,11 @@
 
         <p>
 
-            {{ form.club_id.label }}
-            {{ form.club_id(size=32) }}
-            {% if form.club_id.errors %}
+            {{ form.club.label }}
+            {{ form.club(size=32) }}
+            {% if form.club.errors %}
         <ul>
-            {% for error in form.club_id.errors %}
+            {% for error in form.club.errors %}
             <li style="color: red;">{{ error }}</li>
             {% endfor %}
         </ul>
