@@ -13,12 +13,12 @@ def home():
 @main.route('/gymnasts', methods=['GET', 'POST'])
 def gymnasts():
 
-    form = forms.AddGymnast()
+    gymnast_form = forms.AddGymnast()
 
-    if form.validate_on_submit():
-        name = form.name.data
-        club_id = form.club.data.id
-        level = form.level.data
+    if gymnast_form.validate_on_submit():
+        name = gymnast_form.name.data
+        club_id = gymnast_form.club.data.id
+        level = gymnast_form.level.data
 
         new_gymnast = models.Gymnasts(
             name=name,
@@ -31,12 +31,27 @@ def gymnasts():
 
         return redirect(url_for('main.gymnasts'))
 
+    club_form = forms.AddClub()
+
+    if club_form.validate_on_submit():
+        name = club_form.name.data
+
+        new_club = models.Clubs(
+            name=name
+        )
+
+        db.session.add(new_club)
+        db.session.commit()
+
+        return redirect(url_for('main.gymnasts'))
+
     gymnasts = models.Gymnasts.query.all()
 
     return render_template(
         'gymnasts.html',
         gymnasts=gymnasts,
-        form=form
+        gymnast_form=gymnast_form,
+        club_form=club_form
     )
 
 

@@ -6,7 +6,10 @@ import models
 
 
 class AddGymnast(FlaskForm):
-    name = StringField('Name', validators=[DataRequired('Please enter a name')])
+    name = StringField(
+        'Name',
+        validators=[DataRequired('Please enter a name')]
+    )
 
     club = QuerySelectField(
         'Club',
@@ -40,3 +43,12 @@ class AddGymnast(FlaskForm):
                         validators=[DataRequired('Please select a level')]
     )
     submit = SubmitField('Add Gymnast')
+
+
+class AddClub(FlaskForm):
+    name = StringField(
+        'Name',
+        validators=[DataRequired('Please enter a club name')]
+    )
+
+    submit = SubmitField('Add Club')
