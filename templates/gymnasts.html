@@ -4,15 +4,16 @@
 <body>
 
     <form method='POST'>
-        {{ form.hidden_tag() }}
+        {{ gymnast_form.hidden_tag() }}
 
         <p>
 
-            {{ form.name.label }}
-            {{ form.name(size=32) }}
-            {% if form.name.errors %}
+            {{ gymnast_form.name.label }}
+            {{ gymnast_form.name(size=32) }}
+            {% if gymnast_form.name.errors %}
+
         <ul>
-            {% for error in form.name.errors %}
+            {% for error in gymnast_form.name.errors %}
             <li style="color: red;">{{ error }}</li>
             {% endfor %}
         </ul>
@@ -22,11 +23,11 @@
 
         <p>
 
-            {{ form.club.label }}
-            {{ form.club() }}
-            {% if form.club.errors %}
+            {{ gymnast_form.club.label }}
+            {{ gymnast_form.club() }}
+            {% if gymnast_form.club.errors %}
         <ul>
-            {% for error in form.club.errors %}
+            {% for error in gymnast_form.club.errors %}
             <li style="color: red;">{{ error }}</li>
             {% endfor %}
         </ul>
@@ -36,11 +37,11 @@
 
         <p>
 
-            {{ form.level.label }}
-            {{ form.level() }}
-            {% if form.level.errors %}
+            {{ gymnast_form.level.label }}
+            {{ gymnast_form.level() }}
+            {% if gymnast_form.level.errors %}
         <ul>
-            {% for error in form.level.errors %}
+            {% for error in gymnast_form.level.errors %}
             <li style="color: red;">{{ error }}</li>
             {% endfor %}
         </ul>
@@ -50,13 +51,30 @@
 
         <p>
 
-            {{ form.submit() }}
+            {{ gymnast_form.submit() }}
 
         </p>
     </form>
 
+    <form>
+        {{ club_form.hidden_tag() }}
 
-    <h1>Gymnasts</h1>
+        <p>
+
+            {{ club_form.name.label }}
+            {{ club_form.name(size=32) }}
+            {% if club_form.name.errors %}
+
+        <ul>
+            {% for error in club_form.name.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        </p>
+
+    </form>
 
     <table>
         <tr>
