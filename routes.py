@@ -15,7 +15,7 @@ def gymnasts():
 
     gymnast_form = forms.AddGymnast()
 
-    if gymnast_form.submit_button.data and gymnast_form.validate_on_submit():
+    if gymnast_form.submit.data and gymnast_form.validate_on_submit():
         name = gymnast_form.name.data
         club_id = gymnast_form.club.data.id
         level = gymnast_form.level.data
@@ -33,7 +33,7 @@ def gymnasts():
 
     club_form = forms.AddClub()
 
-    if club_form.submit_button.data and club_form.validate_on_submit():
+    if club_form.submit.data and club_form.validate_on_submit():
         name = club_form.name.data
 
         new_club = models.Clubs(
