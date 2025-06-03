@@ -136,6 +136,10 @@ class Gymnasts(db.Model):
         db.String(50), nullable=False
     )
 
+    Entries = db.relationship(
+        'Competitions', backref='gymnasts',
+    )
+
 
 class Entries(db.Model):
 

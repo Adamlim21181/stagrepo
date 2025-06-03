@@ -83,4 +83,5 @@ def login():
 
 @main.route('/results')
 def results():
-    return render_template('results.html')
+    results = models.Scores.query.all()
+    return render_template('results.html', results=results)
