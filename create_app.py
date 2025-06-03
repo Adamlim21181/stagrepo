@@ -10,6 +10,7 @@ def create_app():
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'secretstagkey2025!'
+    app.config['DEBUG'] = True
 
     db.init_app(app)
 
