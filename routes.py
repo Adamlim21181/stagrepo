@@ -68,6 +68,7 @@ def scoring():
 @main.route('/live')
 def live():
     scores = models.Scores.query.all()
+    
     return render_template('live.html', scores=scores)
 
 

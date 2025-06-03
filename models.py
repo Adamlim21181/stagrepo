@@ -137,7 +137,7 @@ class Gymnasts(db.Model):
     )
 
     Entries = db.relationship(
-        'Competitions', backref='gymnasts',
+        'Entries', backref='gymnasts',
     )
 
 
