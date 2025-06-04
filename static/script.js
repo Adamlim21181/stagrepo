@@ -1,5 +1,5 @@
 
-document.getElementById("searchInput").addEventListener("keyup", function() {
+document.getElementById("search").addEventListener("keyup", function() {
     let filter = this.value.toLowerCase();
     let rows = document.querySelectorAll("#resultsTable tbody tr");
 
