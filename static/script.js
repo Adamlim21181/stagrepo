@@ -1,18 +1,23 @@
+function myFunction() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("search");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("resultsTable");
+  tr = table.getElementsByTagName("tr");
 
-let searchTimeout;
-
-document.getElementById("search").addEventListener("keyup", function() {
-    clearTimeout(searchTimeout);  // Cancel previous timeout if typing continues
-
-    searchTimeout = setTimeout(() => {  // Delay execution to prevent overload
-        let filter = this.value.toLowerCase();
-        let rows = document.querySelectorAll("#resultsTable tbody tr");
-
-        rows.forEach(row => {
-            let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(filter) ? "" : "none";
-        });
-    }, 300);  // 300ms delay (adjust as needed)
-});
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
 
 
