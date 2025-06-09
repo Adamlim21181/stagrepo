@@ -45,17 +45,17 @@
     <div class="pagination">
 
         {% if results.has_prev %}
-        <a href="{{ url_for('results', page=results.prev_num, per_page=per_page) }}">Previous</a>
+        <a href="{{ url_for('main.results', page=results.prev_num, per_page=per_page) }}">Previous</a>
         {% endif %}
         {% for num in results.iter_pages() %}
         {% if num %}
-        <a href="{{ url_for('results', page=num, per_page=per_page) }}">{{ num }}</a>
+        <a href="{{ url_for('main.results', page=num, per_page=per_page) }}">{{ num }}</a>
         {% else %}
         ...
         {% endif %}
         {% endfor %}
         {% if results.has_next %}
-        <a href="{{url_for('results', page=results.next_num, per_page=per_page) }}">Next</a>
+        <a href="{{url_for('main.results', page=results.next_num, per_page=per_page) }}">Next</a>
         {% endif %}
 
     </div><!--content-->
