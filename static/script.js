@@ -33,7 +33,7 @@ function changeRowsPerPage() {
          * Ensures the page resets to the first page when changing row count.
          */
         let selectedRows = document.getElementById("rows_per_page").value;
-        window.location.href = "{{ url_for('main.results') }}?page=1&per_page=" + selectedRows;
+        window.location.href = "{{ url_for('main.results', page=1) }}?per_page=" + selectedRows;
     }
 
 
