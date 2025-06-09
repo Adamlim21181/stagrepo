@@ -16,7 +16,7 @@ class AddGymnast(FlaskForm):
 
         # query_factory is a callable that is required by QuerySelectField.
 
-        # lambda is just a wuick way to create a function inline
+        # lambda is just a quick way to create a function inline
         # without having to define the full def function.
         query_factory=lambda: models.Clubs.query.all(),
 
