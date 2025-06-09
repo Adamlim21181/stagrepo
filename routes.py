@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, redirect, url_for
+from flask import render_template, Blueprint, redirect, url_for, request
 from extensions import db
 import models
 import forms
@@ -68,7 +68,7 @@ def scoring():
 @main.route('/live')
 def live():
     scores = models.Scores.query.all()
-    
+
     return render_template('live.html', scores=scores)
 
 
@@ -84,5 +84,17 @@ def login():
 
 @main.route('/results')
 def results():
-    results = models.Scores.query.all()
-    return render_template('results.html', results=results)
+
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 5, type=int)
+
+    paginated_results = models.Result.query.paginate(
+        page=page,
+        per_page=per_page
+    )
+
+    return render_template(
+        'results.html',
+        results=paginated_results,
+        per_page=per_page
+    )

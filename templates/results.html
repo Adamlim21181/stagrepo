@@ -6,6 +6,17 @@
 <div class="content">
 
     <input type="text" id="search" onkeyup="myFunction()" placeholder="Search results" />
+
+    <label for="rows_per_page">Rows per page:</label>
+    <select id="rows_per_page" onchange="changeRowsPerPage()">
+        <option value="5" {% if per_page==5 %} selected {% endif %}>5</option>
+        <option value="10" {% if per_page==10 %} selected {% endif %}>10</option>
+        <option value="20" {% if per_page==20 %} selected {% endif %}>20</option>
+        <option value="50" {% if per_page==50 %} selected {% endif %}>50</option>
+        <option value="100" {% if per_page==100 %} selected {% endif %}>100</option>
+        <option value="1000" {% if per_page==1000 %} selected {% endif %}>1000</option>
+    </select>
+
     <table id="resultsTable">
         <tr>
             <th>ID</th>
@@ -17,7 +28,7 @@
             <th>Total</th>
         </tr>
 
-        {% for row in results %}
+        {% for row in results.items %}
 
         <tr>
             <td>{{ row.id}}</td>
@@ -31,5 +42,21 @@
         {% endfor %}
     </table>
 
-</div><!--content-->
-{% endblock %}
+    <div class="pagination">
+
+        {% if results.has_prev %}
+        <a href="{{ url_for('results', page=results.prev_num, per_page=per_page) }}">Previous</a>
+        {% endif %}
+        {% for num in results.iter_pages() %}
+        {% if num %}
+        <a href="{{ url_for('results', page=num, per_page=per_page) }}">{{ num }}</a>
+        {% else %}
+        ...
+        {% endif %}
+        {% endfor %}
+        {% if results.has_next %}
+        <a href="{{url_for('results', page=results.next_num, per_page=per_page) }}">Next</a>
+        {% endif %}
+
+    </div><!--content-->
+    {% endblock %}
