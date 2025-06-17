@@ -4,12 +4,11 @@ from extensions import db
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = (
-        'mysql+pymysql://STAGNASTICS:stagweb2025_secure'
-        '@STAGNASTICS.mysql.pythonanywhere-services.com/STAGNASTICS$stagdata')
+    app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///stagdata.db')
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'secretstagkey2025!'
+    app.config['DEBUG'] = True
 
     db.init_app(app)
 

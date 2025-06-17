@@ -60,9 +60,32 @@ def levels():
     return render_template('levels.html')
 
 
-@main.route('/scoring')
+@main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
-    return render_template('scoring.html')
+
+    scoring_form = forms.AddScores()
+
+    if scoring_form.submit.data and scoring_form.validate_on_submit():
+        id = scoring_form.id.data
+        apparatus = scoring_form.apparatus.data
+        execution = scoring_form.execution.data
+        difficulty = scoring_form.difficulty.data
+        penalty = scoring_form.penalty.data
+
+        new_score = models.Scores(
+            id=id,
+            apparatus=apparatus,
+            execution=execution,
+            difficulty=difficulty,
+            penalty=penalty
+        )
+
+        db.session.add(new_score)
+        db.session.commit()
+
+        return redirect(url_for('main.scoring'))
+
+    return render_template('scoring.html', scoring_form=scoring_form)
 
 
 @main.route('/live')

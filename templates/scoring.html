@@ -1,11 +1,86 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<body>
-    <h1>SCORING</h1>
+<h1>SCORING</h1>
 
-</body>
+<div class="content">
 
-</html>
+    <form method="POST">
+        {{ scoring_form.hidden_tag() }}
+
+        <p>
+
+            {{ scoring_form.id.label }}
+            {{ scoring_form.id(size=32) }}
+            {% if scoring_form.id.errors %}
+
+        <ul>
+            {% for error in scoring_form.ID.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+
+        </p>
+
+        <p>
+            {{ scoring_form.apparatus.label }}
+            {{ scoring_form.apparatus() }}
+            {% if scoring_form.apparatus.errors %}
+        <ul>
+            {% for error in scoring_form.apparatus.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        </p>
+
+        <p>
+            {{ scoring_form.execution.label }}
+            {{ scoring_form.execution(size=32) }}
+            {% if scoring_form.execution.errors %}
+
+        <ul>
+            {% for error in scoring_form.execution.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        </p>
+
+        <p>
+            {{ scoring_form.difficulty.label }}
+            {{ scoring_form.difficulty(size=32) }}
+            {% if scoring_form.difficulty.errors %}
+        <ul>
+            {% for error in scoring_form.difficulty.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        </p>
+
+        <p>
+            {{ scoring_form.penalty.label }}
+            {{ scoring_form.penalty(size=32) }}
+            {% if scoring_form.penalty.errors %}
+        <ul>
+            {% for error in scoring_form.penalty.errors %}
+            <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        </p>
+
+        <p>
+            {{ scoring_form.submit() }}
+        </p>
+
+    </form>
+
+</div>
 
 {% endblock %}

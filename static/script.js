@@ -1,4 +1,3 @@
-
 function myFunction() {
   // Get input field and table
   var input = document.getElementById("search");
@@ -28,13 +27,40 @@ function myFunction() {
 }
 
 function changeRowsPerPage() {
-        /**
-         * Redirects to the results page while modifying the 'per_page' parameter.
-         * Ensures the page resets to the first page when changing row count.
-         */
-        let selectedRows = document.getElementById("rows_per_page").value;
-        window.location.href = "{{ url_for('main.results', page=1) }}?per_page=" + selectedRows;
+    /**
+     * Redirects to the results page while modifying the 'per_page' parameter.
+     * Ensures the page resets to the first page when changing row count.
+     */
+    let selectedRows = document.getElementById("rows_per_page").value;
+
+    // Debugging: Log selected value
+    console.log("Selected Rows Per Page:", selectedRows);
+
+    // Build the URL manually since we can't use url_for in separate JS files
+    let newUrl = "/results?page=1&per_page=" + selectedRows;
+    console.log("Redirecting to URL:", newUrl);
+
+    window.location.href = newUrl;
+}
+
+
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function gymnastSelection() {
+  document.getElementById("gymnastDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+  const input = document.getElementById("myInput");
+  const filter = input.value.toUpperCase();
+  const div = document.getElementById("myDropdown");
+  const a = div.getElementsByTagName("a");
+  for (let i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
     }
-
-
-
+  }
+}

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
+from wtforms import StringField, SelectField, IntegerField, SubmitField
 from wtforms.validators import DataRequired
 from wtforms_sqlalchemy.fields import QuerySelectField
 import models
@@ -52,3 +52,43 @@ class AddClub(FlaskForm):
     )
 
     submit = SubmitField('Add Club')
+
+
+class AddScores(FlaskForm):
+    id = IntegerField(
+        'id',
+        validators=[DataRequired('Please Enter a gymnast ID')],
+    )
+
+    apparatus = SelectField(
+        'Apparatus',
+        coerce=int,
+        choices=[
+            (0, 'Select Apparatus'),
+            (1, 'Floor'),
+            (2, 'Pommel Horse'),
+            (3, 'Rings'),
+            (4, 'Vault'),
+            (5, 'Parallel Bars'),
+            (6, 'High Bar')
+        ],
+        validators=[DataRequired('Please select an apparatus')]
+    )
+
+    execution = IntegerField(
+        'Execution',
+        validators=[DataRequired('Please enter an execution score')]
+    )
+
+    difficulty = IntegerField(
+        'Difficulty',
+        validators=[DataRequired('Please enter a difficulty score')]
+    )
+
+    penalty = IntegerField(
+        'Penalty',
+        default=0,
+        validators=[DataRequired('Please enter a penalty score')]
+    )
+
+    submit = SubmitField('Add Score')

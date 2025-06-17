@@ -115,6 +115,10 @@ class Competitions(db.Model):
         db.String(100), nullable=False
     )
 
+    entries = db.relationship(
+        'Entries', backref='competitions'
+    )
+
 
 class Gymnasts(db.Model):
 
@@ -136,7 +140,7 @@ class Gymnasts(db.Model):
         db.String(50), nullable=False
     )
 
-    Entries = db.relationship(
+    entries = db.relationship(
         'Entries', backref='gymnasts',
     )
 
@@ -155,6 +159,10 @@ class Entries(db.Model):
 
     gymnast_id = db.Column(
         db.Integer, db.ForeignKey('gymnasts.id'), nullable=False
+    )
+
+    scores = db.relationship(
+        'Scores', backref='entry'
     )
 
     # __table_args is how to define additional configurations
