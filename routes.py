@@ -1,4 +1,5 @@
-from flask import render_template, Blueprint, redirect, url_for, request
+from flask import (render_template, Blueprint,
+                   redirect, url_for, request, flash, session)
 from extensions import db
 import models
 import forms
@@ -12,6 +13,9 @@ def home():
 
 @main.route('/gymnasts', methods=['GET', 'POST'])
 def gymnasts():
+
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
 
     gymnast_form = forms.AddGymnast()
 
@@ -63,6 +67,9 @@ def levels():
 @main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
 
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
+
     scoring_form = forms.AddScores()
 
     if scoring_form.submit.data and scoring_form.validate_on_submit():
@@ -100,9 +107,24 @@ def calander():
     return render_template('calander.html')
 
 
-@main.route('/login')
+@main.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    form = forms.LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        code = form.code.data
+        user = models.Users.query.filter_by(username=username).first()
+
+        if user and user.code == code:
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['roles'] = [role.name for role in user.roles]
+            return redirect(url_for('main.home'))
+        else:
+            flash('Invalid username or code', 'danger')
+            return redirect(url_for('main.login'))
+
+    return render_template('login.html', form=form)
 
 
 @main.route('/results')
@@ -121,3 +143,9 @@ def results():
         results=paginated_results,
         per_page=per_page
     )
+
+
+@main.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('main.home'))

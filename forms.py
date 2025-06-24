@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, IntegerField, SubmitField
+from wtforms import StringField, SelectField, IntegerField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
 from wtforms_sqlalchemy.fields import QuerySelectField
 import models
@@ -92,3 +92,17 @@ class AddScores(FlaskForm):
     )
 
     submit = SubmitField('Add Score')
+
+
+class LoginForm(FlaskForm):
+    username = StringField(
+        'Username',
+        validators=[DataRequired('Please enter a username')]
+    )
+
+    code = PasswordField(
+        'code',
+        validators=[DataRequired('Please enter a code')]
+    )
+
+    submit = SubmitField('Login')

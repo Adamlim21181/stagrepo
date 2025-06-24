@@ -181,7 +181,7 @@ class Scores(db.Model):
         db.Integer, primary_key=True
     )
 
-    entries_id = db.Column(
+    entry_id = db.Column(
         db.Integer, db.ForeignKey('entries.id'), nullable=False
     )
 

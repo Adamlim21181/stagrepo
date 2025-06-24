@@ -2,7 +2,7 @@
 
 body,
 html {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   background-color: #eaeaea;
   display: grid;
@@ -20,6 +20,7 @@ html {
   display: grid;
   background-color: #ffffff;
   border-radius: 25px;
+  width: fit-content;
 }
 
 

@@ -25,10 +25,18 @@ def add_users():
         "judges": "judges",
         "public": None
     }
+
+    codes = {
+        "admin": "admin123",
+        "judges": "judge123",
+        "public": "public123"
+    }
+
     for username, role_name in roles.items():
         if not models.Users.query.filter_by(username=username).first():
             user = models.Users(
-                username=username
+                username=username,
+                code=codes[username]
             )
 
             if role_name:
@@ -156,7 +164,7 @@ def add_scores():
             total = round(e_score + d_score - penalty, 2)
 
             score = models.Scores(
-                entries_id=entry_id,
+                entry_id=entry_id,
                 apparatus_id=app.id,
                 e_score=e_score,
                 d_score=d_score,
