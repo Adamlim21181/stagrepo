@@ -1,12 +1,35 @@
-<ul>
-    <li id="image"><a href="/"><img src="/static/images/Logo.png" width="70%" height="170%" alt="logo"></a></li>
-    <li><a href="/">Home</a></li>
-    <li><a href="/results">Results</a></li>
-    <li><a href="/live">Live Leaderboard</a></li>
-    <li><a href="/scoring">Score Management</a></li>
-    <li><a href="/gymnasts">Gymnast Management</a></li>
-    <li><a href="/calander">Calander</a></li>
-    <li><a href="/login">Login</a></li>
-    <li><a href="/logout">Logout</a></li>
+<nav>
+    <div class="nav-container">
+        <!-- Left: Logo -->
+        <div class="nav-left">
+            <a href="/"><img src="/static/images/Logo.png" alt="Logo"></a>
+        </div>
 
-</ul>
+        <!-- Center: Main Navigation Links -->
+        <ul class="nav-center">
+            <li><a href="/">Home</a></li>
+            <li><a href="/results">Results</a></li>
+            <li><a href="/live">Live Leaderboard</a></li>
+
+            {% if is_admin or is_judge %}
+            <li><a href="/scoring">Score Management</a></li>
+            {% endif %}
+
+            {% if is_admin %}
+            <li><a href="/gymnasts">Gymnast Management</a></li>
+            {% endif %}
+
+            <li><a href="/calander">Calander</a></li>
+        </ul>
+
+        <!-- Right: Login/Logout -->
+        <ul class="nav-right">
+            {% if not logged_in %}
+            <li><a href="/login">Login</a></li>
+            {% endif %}
+            {% if logged_in %}
+            <li><a href="/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
