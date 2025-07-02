@@ -2,80 +2,114 @@
 {% block content %}
 
 <div class="content">
-    <div class="search-controls">
+    <!-- Top section: Search and Column Controls side by side -->
+    <div class="top-controls">
+        <div class="search-controls">
+            <form method="GET" action="{{ url_for('main.results') }}" id="searchForm">
+                <input type="text" name="search" id="search" placeholder="Search results" autocomplete="off" />
+                
+                <label for="per_page">Rows per page:</label>
+                <select name="per_page" id="per_page" onchange="document.getElementById('searchForm').submit();">
+                    {% for value, label in pagination_options %}
+                    <option value="{{ value }}" {{ 'selected' if per_page==value else '' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                
+                <button type="submit">Search</button>
+            </form>
+            
+            {% if search_query %}
+            <p>Search query: <strong>{{ search_query }}</strong></p>
+            {% endif %}
+        </div>
 
-        <form method="GET" action="{{ url_for('main.results') }}" id="searchForm">
-            <input type="text" name="search" id="search" placeholder="Search results" autocomplete="off" />
+        <div class="column_controls">
+            <div class="controls-grid">
+                <label><input type="checkbox" class="column-toggle" data-column="id" checked> ID</label>
+                <label><input type="checkbox" class="column-toggle" data-column="entry" checked> Entry ID</label>
+                <label><input type="checkbox" class="column-toggle" data-column="competition" checked> Competition</label>
+                <label><input type="checkbox" class="column-toggle" data-column="name" checked> Name</label>
+                <label><input type="checkbox" class="column-toggle" data-column="club" checked> Club</label>
+                <label><input type="checkbox" class="column-toggle" data-column="apparatus" checked> Apparatus</label>
+                <label><input type="checkbox" class="column-toggle" data-column="execution" checked> Execution</label>
+                <label><input type="checkbox" class="column-toggle" data-column="difficulty" checked> Difficulty</label>
+                <label><input type="checkbox" class="column-toggle" data-column="penalty" checked> Penalty</label>
+                <label><input type="checkbox" class="column-toggle" data-column="total" checked> Total</label>
+            </div>
+        </div>
+    </div>
 
-            <label for="rows_per_page">Rows per page:</label>
-            <select name="per_page" id="per_page" onchange="document.getElementById('searchForm').submit();">
-                {% for value, label in pagination_options %}
-                <option value="{{ value }}" {{ 'selected' if per_page==value else '' }}>{{ label }}</option>
+    <!-- Results header with info -->
+    <div class="results-header">
+        <div class="results-info-left">
+            {% if search_query %}
+            <p style="margin: 0; font-weight: 600; color: #2c3e50;">Search results for: "<strong>{{ search_query }}</strong>"</p>
+            <p style="margin: 5px 0 0 0; color: #666;">{{ results.total }} result(s) found</p>
+            {% else %}
+            <p style="margin: 0; font-weight: 600; color: #2c3e50;">All Results</p>
+            <p style="margin: 5px 0 0 0; color: #666;">{{ results.total }} total results</p>
+            {% endif %}
+        </div>
+        <div class="results-info-right">
+            <p style="margin: 0;">Page {{ results.page }} of {{ results.pages }}</p>
+            <p style="margin: 5px 0 0 0;">({{ results.per_page }} per page)</p>
+        </div>
+    </div>
+
+    <!-- Table section -->
+    <div class="table-section">
+        <div class="tables">
+            <table id="resultsTable">
+                <tr>
+                    <th class="col-id">ID</th>
+                    <th class="col-entry">Entries_id</th>
+                    <th class="col-competition">Competition</th>
+                    <th class="col-name">Name</th>
+                    <th class="col-club">Club</th>
+                    <th class="col-apparatus">Apparatus</th>
+                    <th class="col-execution">Execution</th>
+                    <th class="col-difficulty">Difficulty</th>
+                    <th class="col-penalty">Penalty</th>
+                    <th class="col-total">Total</th>
+                </tr>
+            
+                {% for row in results.items %}
+                <tr>
+                    <td class="col-id">{{ row.id }}</td>
+                    <td class="col-entry">{{ row.entry_id }}</td>
+                    <td class="col-competition">{{ row.entry.competitions.name }}</td>
+                    <td class="col-name">{{ row.entry.gymnasts.name }}</td>
+                    <td class="col-club">{{ row.entry.gymnasts.clubs.name }}</td>
+                    <td class="col-apparatus">{{ row.apparatus_name.name }}</td>
+                    <td class="col-execution">{{ row.e_score }}</td>
+                    <td class="col-difficulty">{{ row.d_score }}</td>
+                    <td class="col-penalty">{{ row.penalty }}</td>
+                    <td class="col-total">{{ row.total }}</td>
+                </tr>
                 {% endfor %}
-            </select>
+            </table>
+        </div>
 
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if results.has_prev %}
+            <a href="{{ url_for('main.results', page=results.prev_num, per_page=per_page) }}">‹ Prev</a>
+            {% endif %}
+            
+            {% for num in results.iter_pages() %}
+                {% if num %}
+                    <a href="{{ url_for('main.results', page=num, per_page=per_page) }}"
+                       {% if num == results.page %}style="background-color: #4CAF50; color: white; border-color: #4CAF50;"{% endif %}>{{ num }}</a>
+                {% else %}
+                    <span style="padding: 6px; color: #999;">…</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if results.has_next %}
+            <a href="{{url_for('main.results', page=results.next_num, per_page=per_page) }}">Next ›</a>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="results_info">
-
-        {% if search_query %}
-        <p>Search results for: "<strong>{{ search_query }}</strong>" - {{ results.total }} result(s) found</p>
-        {% else %}
-        <p>Showing {{ results.total }} total results</p>
-        {% endif %}
-
-        <p>
-            Page {{ results.page }} of {{ results.pages }}
-            (showing {{ results.per_page }} per page)
-        </p>
-    </div>
-    <table id="resultsTable">
-        <tr>
-            <th>ID</th>
-            <th>Entries_id</th>
-            <th>Competition</th>
-            <th>Name</th>
-            <th>Club</th>
-            <th>Apparatus</th>
-            <th>Execution</th>
-            <th>Difficulty</th>
-            <th>Penalty</th>
-            <th>Total</th>
-        </tr>
-
-        {% for row in results.items %}
-
-        <tr>
-            <td>{{ row.id}}</td>
-            <td>{{ row.entries_id }}</td>
-            <td>{{ row.entry.competitions.name }}</td>
-            <td>{{ row.entry.gymnasts.name }}</td>
-            <td>{{ row.entry.gymnasts.clubs.name }}</td>
-            <td>{{ row.apparatus_name.name }}</td>
-            <td>{{ row.e_score }}</td>
-            <td>{{ row.d_score }}</td>
-            <td>{{ row.penalty }}</td>
-            <td>{{ row.total }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <div class="pagination">
-
-        {% if results.has_prev %}
-        <a href="{{ url_for('main.results', page=results.prev_num, per_page=per_page) }}">Previous</a>
-        {% endif %}
-        {% for num in results.iter_pages() %}
-        {% if num %}
-        <a href="{{ url_for('main.results', page=num, per_page=per_page) }}">{{ num }}</a>
-        {% else %}
-        ...
-        {% endif %}
-        {% endfor %}
-        {% if results.has_next %}
-        <a href="{{url_for('main.results', page=results.next_num, per_page=per_page) }}">Next</a>
-        {% endif %}
-
-    </div>
 </div><!--content-->
 {% endblock %}

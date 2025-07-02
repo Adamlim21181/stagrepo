@@ -18,3 +18,20 @@ function filterFunction() {
     }
   }
 }
+
+/*Hiding columns */
+document.addEventListener('DOMContentLoaded', function() {
+  const toggles = document.querySelectorAll('.column-toggle');
+  
+  toggles.forEach(toggle => {
+      toggle.addEventListener('change', function() {
+          const columnClass = 'col-' + this.dataset.column;
+          const elements = document.querySelectorAll('.' + columnClass);
+          const isVisible = this.checked;
+          
+          elements.forEach(el => {
+              el.style.display = isVisible ? '' : 'none';
+          });
+      });
+  });
+});

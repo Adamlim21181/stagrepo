@@ -118,9 +118,44 @@ def scoring():
 
 @main.route('/live')
 def live():
-    scores = models.Scores.query.all()
+    selected_level = request.args.get('level')
+    selected_apparatus_id = request.args.get('apparatus')
 
-    return render_template('live.html', scores=scores)
+    # Fetch all distinct levels for the sidebar
+    levels = db.session.query(
+        models.Gymnasts.level
+        ).distinct().order_by(models.Gymnasts.level).all()
+    levels = [lvl[0] for lvl in levels]
+
+    # Fetch all apparatus for top buttons
+    apparatus_list = models.Apparatus.query.order_by(
+        models.Apparatus.name
+        ).all()
+
+    leaderboard_data = []
+
+    if selected_level and selected_apparatus_id:
+        leaderboard_data = (
+            db.session.query(models.Scores, models.Gymnasts, models.Clubs)
+            .join(models.Entries, models.Scores.entry_id == models.Entries.id)
+            .join(models.Gymnasts,
+                  models.Entries.gymnast_id == models.Gymnasts.id
+                  )
+            .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
+            .filter(models.Gymnasts.level == selected_level)
+            .filter(models.Scores.apparatus_id == selected_apparatus_id)
+            .order_by(models.Scores.total.desc())
+            .all()
+        )
+
+    return render_template(
+        'live.html',
+        levels=levels,
+        selected_level=selected_level,
+        apparatus_list=apparatus_list,
+        selected_apparatus_id=selected_apparatus_id,
+        leaderboard_data=leaderboard_data
+    )
 
 
 @main.route('/calander')
@@ -155,7 +190,13 @@ def results():
     per_page = request.args.get('per_page', 5, type=int)
 
     # Define pagination options
-    pagination_options = [(5, '5'), (10, '10'), (20, '20'), (50, '50'), (100, '100'), (1000, '1000'), (-1, 'All')]
+    pagination_options = [(5, '5'),
+                          (10, '10'),
+                          (20, '20'),
+                          (50, '50'),
+                          (100, '100'),
+                          (1000, '1000'),
+                          (-1, 'All')]
 
     # Start with base query including necessary joins
     query = models.Scores.query\
@@ -187,13 +228,14 @@ def results():
                 models.Apparatus.name.contains(search_query)
             )
         )
-    
+
     # Handle "All" option vs normal pagination
     if per_page == -1:
         # Show all results, no pagination
         all_results = query.all()
-        
-        # Create a mock pagination object with all necessary attributes and methods
+
+        # Create a mock pagination object with
+        # all necessary attributes and methods
         class MockPagination:
             def __init__(self, items):
                 self.items = items

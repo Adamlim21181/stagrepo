@@ -113,24 +113,183 @@ nav {
   width: 100%;
 }
 
-/* Content box */
+/* Content box - more compact */
 .content {
   margin: 0 auto;                
-  padding: 50px;
+  padding: 20px;
   font-weight: 300;
   color: #000000;
   background-color: #ffffff;
   border-radius: 25px;
-
   width: 100%;
-  max-width: 90%;
+  max-width: 95%;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
+/* Top section with search and controls side by side - unified styling */
+.top-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: stretch; /* Make both sections same height */
+}
+
+/* Unified styling for both search and column controls */
+.search-controls,
+.column_controls {
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex children to shrink */
+}
+
+/* Search controls styling */
+.search-controls {
+  justify-content: center;
+}
+
+.search-controls form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.search-controls input[type="text"] {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  margin: 0;
+}
+
+.search-controls label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.search-controls select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 120px;
+  margin: 0;
+}
+
+.search-controls button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-controls button:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
+}
+
+.search-controls p {
+  margin: 8px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+/* Column Controls - Compact Grid */
+.column_controls {
+  position: relative;
+}
+
+.column_controls::before {
+  content: "Show/Hide Columns";
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.column_controls .controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  flex: 1;
+}
+
+/* Individual label styling - more compact */
+.column_controls label {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.column_controls label:hover {
+  background-color: #f0f8f0;
+  border-color: #4CAF50;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.15);
+}
+
+/* Checkbox styling within labels */
+.column_controls input[type="checkbox"] {
+  margin: 0 8px 0 0;
+  width: 16px;
+  height: 16px;
+  accent-color: #4CAF50;
+  cursor: pointer;
+}
+
+/* Results header section - more compact */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #f0f8f0, #e8f5e8);
+  border-radius: 10px;
+  border-left: 4px solid #4CAF50;
+}
+
+.results-info-left {
+  flex: 1;
+}
+
+.results-info-right {
+  font-size: 14px;
+  color: #666;
+}
 
 /* Forms */
 form {
@@ -182,7 +341,7 @@ input[type="submit"]:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
+  margin: 0;
   background-color: #ffffff;
   border-radius: 5px;
   overflow: hidden;
@@ -190,7 +349,7 @@ table {
 
 td,
 th {
-  padding: 15px;
+  padding: 12px;
   border: 1px solid #dddddd;
   color: #333333;
 }
@@ -204,17 +363,60 @@ th {
   z-index: 1;
 }
 
+/* Table section - remove excessive spacing */
 .tables {
   border-radius: 5px;
   background-color: #ffffff;
-  padding: 20px;
-  overflow-y: scroll;
-  max-height: 400px;
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-top: 3%;
+  padding: 15px;
+  margin: 0;
 }
 
 #tableheader {
   font-size: 20px;
+}
+
+/* Results info styling - integrated into header */
+.results_info {
+  display: none; /* Hide original, we'll use the new header */
+}
+
+/* Bottom section with table and pagination - more compact */
+.table-section {
+  margin-top: 0;
+}
+
+/* Pagination styling - more compact */
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-top: 3px solid #4CAF50;
+}
+
+.pagination a {
+  padding: 6px 10px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 32px;
+  text-align: center;
+}
+
+.pagination a:hover {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
 }
