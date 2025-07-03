@@ -2,34 +2,35 @@
     <div class="nav-container">
         <!-- Left: Logo -->
         <div class="nav-left">
-            <a href="/"><img src="/static/images/Logo.png" alt="Logo"></a>
+            <a href="{{ url_for('main.home') }}"><img src="/static/images/Logo.png" alt="Logo"></a>
         </div>
 
         <!-- Center: Main Navigation Links -->
         <ul class="nav-center">
-            <li><a href="/">Home</a></li>
-            <li><a href="/results">Results</a></li>
-            <li><a href="/live">Live Leaderboard</a></li>
+            <li><a href="{{ url_for('main.home') }}">Home</a></li>
+            <li><a href="{{ url_for('main.results') }}">Results</a></li>
+            <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
 
             {% if is_admin or is_judge %}
-            <li><a href="/scoring">Score Management</a></li>
+            <li><a href="{{ url_for('main.scoring') }}">Score Management</a></li>
             {% endif %}
 
             {% if is_admin %}
-            <li><a href="/gymnasts">Gymnast Management</a></li>
-            <a href="/competition">Manage Competitions</a>
+            <li><a href="{{ url_for('main.gymnasts') }}">Gymnast Management</a></li>
+            <li><a href="{{ url_for('main.competitions') }}">Manage Competitions</a></li>
+            <li><a href="{{ url_for('main.entries') }}">Manage Entries</a></li>
             {% endif %}
 
-            <li><a href="/calander">Calander</a></li>
+            <li><a href="{{ url_for('main.calendar') }}">Calendar</a></li>
         </ul>
 
         <!-- Right: Login/Logout -->
         <ul class="nav-right">
             {% if not logged_in %}
-            <li><a href="/login">Login</a></li>
+            <li><a href="{{ url_for('main.login') }}">Login</a></li>
             {% endif %}
             {% if logged_in %}
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
             {% endif %}
         </ul>
     </div>

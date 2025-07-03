@@ -229,9 +229,9 @@ def live():
     )
 
 
-@main.route('/calander')
-def calander():
-    return render_template('calander.html')
+@main.route('/calendar')
+def calendar():
+    return render_template('calendar.html')
 
 
 @main.route('/login', methods=['GET', 'POST'])
@@ -355,7 +355,7 @@ def logout():
 
 # Add gymnasts to competitions
 @main.route('/admin/entries', methods=['GET', 'POST'])
-def admin_entries():
+def entries():
     if 'user_id' not in session:
         return render_template('nologin.html')
 
@@ -386,7 +386,7 @@ def admin_entries():
             db.session.commit()
             flash('Entry added successfully!', 'success')
 
-        return redirect(url_for('main.admin_entries'))
+        return redirect(url_for('main.entries'))
 
     # Get all competitions and gymnasts
     competitions = models.Competitions.query.all()
@@ -404,7 +404,7 @@ def admin_entries():
         .all()
 
     return render_template(
-        'admin_entries.html',
+        'entries.html',
         competitions=competitions,
         gymnasts=gymnasts,
         entries=entries
@@ -412,7 +412,7 @@ def admin_entries():
 
 
 @main.route('/admin/competitions', methods=['GET', 'POST'])
-def admin_competitions():
+def competitions():
     if 'user_id' not in session:
         return render_template('nologin.html')
 
@@ -436,14 +436,14 @@ def admin_competitions():
         db.session.add(new_competition)
         db.session.commit()
         flash('Competition added successfully!', 'success')
-        return redirect(url_for('main.admin_competitions'))
+        return redirect(url_for('main.competitions'))
 
     # Get all competitions
     competitions = models.Competitions.query.all()
     seasons = models.Seasons.query.all()
 
     return render_template(
-        'admin_competitions.html',
+        'competitions.html',
         competitions=competitions,
         seasons=seasons
     )
@@ -468,7 +468,7 @@ def start_competition(competition_id):
 
     db.session.commit()
     flash(f'Competition "{competition.name}" is now live!', 'success')
-    return redirect(url_for('main.admin_competitions'))
+    return redirect(url_for('main.competitions'))
 
 
 @main.route('/admin/competition/<int:competition_id>/end')
@@ -483,4 +483,4 @@ def end_competition(competition_id):
 
     db.session.commit()
     flash(f'Competition "{competition.name}" has ended.', 'success')
-    return redirect(url_for('main.admin_competitions'))
+    return redirect(url_for('main.competitions'))

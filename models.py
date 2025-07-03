@@ -91,7 +91,7 @@ class Apparatus(db.Model):
     )
 
     scores = db.relationship(
-        'Scores', backref='apparatus_name'
+        'Scores', backref='apparatus'
     )
 
 
