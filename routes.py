@@ -75,13 +75,7 @@ def gymnasts():
     )
 
 
-@main.route('/levels')
-def levels():
-    return render_template('levels.html')
-
-
 # Replace your existing /scoring route with this:
-
 @main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
     if 'user_id' not in session:

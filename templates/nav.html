@@ -16,9 +16,14 @@
             {% endif %}
 
             {% if is_admin %}
-            <li><a href="{{ url_for('main.gymnasts') }}">Gymnast Management</a></li>
-            <li><a href="{{ url_for('main.competitions') }}">Manage Competitions</a></li>
-            <li><a href="{{ url_for('main.entries') }}">Manage Entries</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Admin</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('main.gymnasts') }}">Gymnast Management</a>
+                    <a href="{{ url_for('main.competitions') }}">Manage Competitions</a>
+                    <a href="{{ url_for('main.entries') }}">Manage Entries</a>
+                </div>
+            </li>
             {% endif %}
 
             <li><a href="{{ url_for('main.calendar') }}">Calendar</a></li>
