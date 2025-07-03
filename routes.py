@@ -80,9 +80,10 @@ def levels():
     return render_template('levels.html')
 
 
+# Replace your existing /scoring route with this:
+
 @main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
-
     if 'user_id' not in session:
         return render_template('nologin.html')
 
@@ -91,39 +92,95 @@ def scoring():
         flash('Access denied.', 'danger')
         return render_template('nologin.html')
 
-    scoring_form = forms.AddScores()
+    # Get the live competition
+    live_competition = models.Competitions.query.filter_by(
+        status='live'
+        ).first()
 
-    if scoring_form.submit.data and scoring_form.validate_on_submit():
-        id = scoring_form.id.data
-        apparatus = scoring_form.apparatus.data
-        execution = scoring_form.execution.data
-        difficulty = scoring_form.difficulty.data
-        penalty = scoring_form.penalty.data
+    if not live_competition:
+        flash('No live competition is currently running. '
+              'Please contact an admin.', 'warning')
+        return render_template('scoring.html', no_live_competition=True)
 
-        new_score = models.Scores(
-            id=id,
-            apparatus=apparatus,
-            execution=execution,
-            difficulty=difficulty,
-            penalty=penalty
-        )
+    # Get all entries for the live competition (gymnasts who are competing)
+    entries = db.session.query(models.Entries, models.Gymnasts, models.Clubs)\
+        .join(models.Gymnasts,
+              models.Entries.gymnast_id == models.Gymnasts.id)\
+        .join(models.Clubs,
+              models.Gymnasts.club_id == models.Clubs.id)\
+        .filter(models.Entries.competition_id == live_competition.id)\
+        .all()
 
-        db.session.add(new_score)
+    # Get all apparatus
+    apparatus_list = models.Apparatus.query.all()
+
+    if request.method == 'POST':
+        entry_id = request.form.get('entry_id')
+        apparatus_id = request.form.get('apparatus_id')
+        e_score = float(request.form.get('e_score'))
+        d_score = float(request.form.get('d_score'))
+        penalty = float(request.form.get('penalty'))
+
+        # Calculate total
+        total = e_score + d_score - penalty
+
+        # Check if score already exists for this entry/apparatus combination
+        existing_score = models.Scores.query.filter_by(
+            entry_id=entry_id,
+            apparatus_id=apparatus_id
+        ).first()
+
+        if existing_score:
+            # Update existing score
+            existing_score.e_score = e_score
+            existing_score.d_score = d_score
+            existing_score.penalty = penalty
+            existing_score.total = total
+            flash('Score updated successfully!', 'success')
+        else:
+            # Create new score
+            new_score = models.Scores(
+                entry_id=entry_id,
+                apparatus_id=apparatus_id,
+                e_score=e_score,
+                d_score=d_score,
+                penalty=penalty,
+                total=total
+            )
+            db.session.add(new_score)
+            flash('Score added successfully!', 'success')
+
         db.session.commit()
-
         return redirect(url_for('main.scoring'))
 
-    return render_template('scoring.html', scoring_form=scoring_form)
+    return render_template(
+        'scoring.html',
+        entries=entries,
+        apparatus_list=apparatus_list,
+        live_competition=live_competition
+    )
 
+
+# Replace your existing /live route with this:
 
 @main.route('/live')
 def live():
     selected_level = request.args.get('level')
     selected_apparatus_id = request.args.get('apparatus')
 
-    # Fetch all distinct levels
+    # Check if there's a live competition
+    live_competition = models.Competitions.query.filter_by(
+        status='live'
+        ).first()
+
+    if not live_competition:
+        return render_template('live.html', no_live_competition=True)
+
+    # Fetch all distinct levels from the live competition
     levels = db.session.query(
         models.Gymnasts.level
+    ).join(models.Entries).filter(
+        models.Entries.competition_id == live_competition.id
     ).distinct().order_by(models.Gymnasts.level).all()
     levels = [lvl[0] for lvl in levels]
 
@@ -135,7 +192,8 @@ def live():
     ]
 
     # Sort levels to match the desired order
-    levels = sorted(levels, key=lambda x: desired_order.index(x) if x in desired_order else 100)
+    levels = sorted(levels, key=lambda x: desired_order.index(x)
+                    if x in desired_order else 100)
 
     # Fetch all apparatus for top buttons
     apparatus_list = models.Apparatus.query.order_by(
@@ -152,6 +210,8 @@ def live():
                   models.Entries.gymnast_id == models.Gymnasts.id
                   )
             .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
+            # FILTER BY LIVE COMPETITION
+            .filter(models.Entries.competition_id == live_competition.id)
             .filter(models.Gymnasts.level == selected_level)
             .filter(models.Scores.apparatus_id == selected_apparatus_id)
             .order_by(models.Scores.total.desc())
@@ -164,7 +224,8 @@ def live():
         selected_level=selected_level,
         apparatus_list=apparatus_list,
         selected_apparatus_id=selected_apparatus_id,
-        leaderboard_data=leaderboard_data
+        leaderboard_data=leaderboard_data,
+        live_competition=live_competition
     )
 
 
@@ -290,3 +351,136 @@ def results():
 def logout():
     session.clear()
     return redirect(url_for('main.home'))
+
+
+# Add gymnasts to competitions
+@main.route('/admin/entries', methods=['GET', 'POST'])
+def admin_entries():
+    if 'user_id' not in session:
+        return render_template('nologin.html')
+
+    if 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return render_template('nologin.html')
+
+    # Handle adding new entry
+    if request.method == 'POST':
+        competition_id = request.form.get('competition_id')
+        gymnast_id = request.form.get('gymnast_id')
+
+        # Check if entry already exists
+        existing_entry = models.Entries.query.filter_by(
+            competition_id=competition_id,
+            gymnast_id=gymnast_id
+        ).first()
+
+        if existing_entry:
+            flash('This gymnast is already entered in this competition!',
+                  'warning')
+        else:
+            new_entry = models.Entries(
+                competition_id=competition_id,
+                gymnast_id=gymnast_id
+            )
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Entry added successfully!', 'success')
+
+        return redirect(url_for('main.admin_entries'))
+
+    # Get all competitions and gymnasts
+    competitions = models.Competitions.query.all()
+    gymnasts = models.Gymnasts.query.all()
+
+    # Get all entries with related data
+    entries = db.session.query(models.Entries, models.Competitions,
+                               models.Gymnasts, models.Clubs)\
+        .join(models.Competitions,
+              models.Entries.competition_id == models.Competitions.id)\
+        .join(models.Gymnasts,
+              models.Entries.gymnast_id == models.Gymnasts.id)\
+        .join(models.Clubs,
+              models.Gymnasts.club_id == models.Clubs.id)\
+        .all()
+
+    return render_template(
+        'admin_entries.html',
+        competitions=competitions,
+        gymnasts=gymnasts,
+        entries=entries
+    )
+
+
+@main.route('/admin/competitions', methods=['GET', 'POST'])
+def admin_competitions():
+    if 'user_id' not in session:
+        return render_template('nologin.html')
+
+    if 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return render_template('nologin.html')
+
+    # Handle adding new competition
+    if request.method == 'POST':
+        name = request.form.get('name')
+        address = request.form.get('address')
+        season_id = request.form.get('season_id')
+
+        new_competition = models.Competitions(
+            name=name,
+            address=address,
+            season_id=season_id,
+            status='draft'
+        )
+
+        db.session.add(new_competition)
+        db.session.commit()
+        flash('Competition added successfully!', 'success')
+        return redirect(url_for('main.admin_competitions'))
+
+    # Get all competitions
+    competitions = models.Competitions.query.all()
+    seasons = models.Seasons.query.all()
+
+    return render_template(
+        'admin_competitions.html',
+        competitions=competitions,
+        seasons=seasons
+    )
+
+
+@main.route('/admin/competition/<int:competition_id>/start')
+def start_competition(competition_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    # End any currently live competition
+    current_live = models.Competitions.query.filter_by(status='live').first()
+    if current_live:
+        current_live.status = 'ended'
+        current_live.ended_at = db.func.now()
+
+    # Start the selected competition
+    competition = models.Competitions.query.get_or_404(competition_id)
+    competition.status = 'live'
+    competition.started_at = db.func.now()
+
+    db.session.commit()
+    flash(f'Competition "{competition.name}" is now live!', 'success')
+    return redirect(url_for('main.admin_competitions'))
+
+
+@main.route('/admin/competition/<int:competition_id>/end')
+def end_competition(competition_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    competition = models.Competitions.query.get_or_404(competition_id)
+    competition.status = 'ended'
+    competition.ended_at = db.func.now()
+
+    db.session.commit()
+    flash(f'Competition "{competition.name}" has ended.', 'success')
+    return redirect(url_for('main.admin_competitions'))

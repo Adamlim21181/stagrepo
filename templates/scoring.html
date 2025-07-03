@@ -3,82 +3,105 @@
 
 <div class="content">
 
-    <form method="POST">
-        {{ scoring_form.hidden_tag() }}
+    {% if no_live_competition %}
+        <div class="no-live-competition">
+            <h2>No Live Competition</h2>
+            <p>There is currently no live competition running. Please contact an admin to start a competition.</p>
+        </div>
+    {% else %}
+        <div class="live-competition-header">
+            <h2>🔴 Scoring for: {{ live_competition.name }}</h2>
+            <p>{{ live_competition.address }}</p>
+        </div>
 
-        <p>
+        <div class="scoring-form">
+            <h3>Add/Update Score</h3>
+            <form method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="entry_id">Gymnast:</label>
+                        <select id="entry_id" name="entry_id" required>
+                            <option value="">Select a gymnast...</option>
+                            {% for entry, gymnast, club in entries %}
+                                <option value="{{ entry.id }}">
+                                    {{ gymnast.name }} - {{ club.name }} ({{ gymnast.level }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            {{ scoring_form.id.label }}
-            {{ scoring_form.id(size=32) }}
-            {% if scoring_form.id.errors %}
+                    <div class="form-group">
+                        <label for="apparatus_id">Apparatus:</label>
+                        <select id="apparatus_id" name="apparatus_id" required>
+                            <option value="">Select apparatus...</option>
+                            {% for apparatus in apparatus_list %}
+                                <option value="{{ apparatus.id }}">{{ apparatus.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
-        <ul>
-            {% for error in scoring_form.ID.errors %}
-            <li style="color: red;">{{ error }}</li>
-            {% endfor %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="e_score">Execution Score:</label>
+                        <input type="number" id="e_score" name="e_score" step="0.001" min="0" max="10" required>
+                    </div>
 
-        </ul>
-        {% endif %}
+                    <div class="form-group">
+                        <label for="d_score">Difficulty Score:</label>
+                        <input type="number" id="d_score" name="d_score" step="0.001" min="0" max="10" required>
+                    </div>
 
-        </p>
+                    <div class="form-group">
+                        <label for="penalty">Penalty:</label>
+                        <input type="number" id="penalty" name="penalty" step="0.001" min="0" max="10" value="0" required>
+                    </div>
+                </div>
 
-        <p>
-            {{ scoring_form.apparatus.label }}
-            {{ scoring_form.apparatus() }}
-            {% if scoring_form.apparatus.errors %}
-        <ul>
-            {% for error in scoring_form.apparatus.errors %}
-            <li style="color: red;">{{ error }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Submit Score</button>
+                </div>
+            </form>
+        </div>
 
-        </p>
-
-        <p>
-            {{ scoring_form.execution.label }}
-            {{ scoring_form.execution(size=32) }}
-            {% if scoring_form.execution.errors %}
-
-        <ul>
-            {% for error in scoring_form.execution.errors %}
-            <li style="color: red;">{{ error }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        </p>
-
-        <p>
-            {{ scoring_form.difficulty.label }}
-            {{ scoring_form.difficulty(size=32) }}
-            {% if scoring_form.difficulty.errors %}
-        <ul>
-            {% for error in scoring_form.difficulty.errors %}
-            <li style="color: red;">{{ error }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-        </p>
-
-        <p>
-            {{ scoring_form.penalty.label }}
-            {{ scoring_form.penalty(size=32) }}
-            {% if scoring_form.penalty.errors %}
-        <ul>
-            {% for error in scoring_form.penalty.errors %}
-            <li style="color: red;">{{ error }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        </p>
-
-        <p>
-            {{ scoring_form.submit() }}
-        </p>
-
-    </form>
+        <!-- Show existing scores for reference -->
+        <div class="existing-scores">
+            <h3>Recent Scores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Gymnast</th>
+                        <th>Club</th>
+                        <th>Level</th>
+                        <th>Apparatus</th>
+                        <th>E Score</th>
+                        <th>D Score</th>
+                        <th>Penalty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry, gymnast, club in entries %}
+                        {% for score in entry.scores %}
+                            <tr>
+                                <td>{{ gymnast.name }}</td>
+                                <td>{{ club.name }}</td>
+                                <td>{{ gymnast.level }}</td>
+                                <td>{{ score.apparatus_name.name }}</td>
+                                <td>{{ "%.3f"|format(score.e_score) }}</td>
+                                <td>{{ "%.3f"|format(score.d_score) }}</td>
+                                <td>{{ "%.3f"|format(score.penalty) }}</td>
+                                <td><strong>{{ "%.3f"|format(score.total) }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
 </div>
+
+
 
 {% endblock %}

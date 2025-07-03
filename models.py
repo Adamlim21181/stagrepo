@@ -95,8 +95,9 @@ class Apparatus(db.Model):
     )
 
 
-class Competitions(db.Model):
+# Add this to your existing Competitions model in models.py
 
+class Competitions(db.Model):
     __tablename__ = 'competitions'
 
     id = db.Column(
@@ -113,6 +114,18 @@ class Competitions(db.Model):
 
     address = db.Column(
         db.String(100), nullable=False
+    )
+
+    status = db.Column(
+        db.String(20), nullable=False, default='draft'
+    )  # Options: 'draft', 'live', 'ended'
+
+    started_at = db.Column(
+        db.DateTime, nullable=True
+    )
+
+    ended_at = db.Column(
+        db.DateTime, nullable=True
     )
 
     entries = db.relationship(
