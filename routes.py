@@ -121,16 +121,26 @@ def live():
     selected_level = request.args.get('level')
     selected_apparatus_id = request.args.get('apparatus')
 
-    # Fetch all distinct levels for the sidebar
+    # Fetch all distinct levels
     levels = db.session.query(
         models.Gymnasts.level
-        ).distinct().order_by(models.Gymnasts.level).all()
+    ).distinct().order_by(models.Gymnasts.level).all()
     levels = [lvl[0] for lvl in levels]
+
+    # Desired level order
+    desired_order = [
+        'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5',
+        'Level 6', 'Level 7', 'Level 8', 'Level 9',
+        'Junior International', 'Senior International'
+    ]
+
+    # Sort levels to match the desired order
+    levels = sorted(levels, key=lambda x: desired_order.index(x) if x in desired_order else 100)
 
     # Fetch all apparatus for top buttons
     apparatus_list = models.Apparatus.query.order_by(
         models.Apparatus.name
-        ).all()
+    ).all()
 
     leaderboard_data = []
 
