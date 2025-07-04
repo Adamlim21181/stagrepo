@@ -102,7 +102,7 @@ nav {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Admin Dropdown Styles - Add this to your style.css */
+/* Admin Dropdown Styles */
 .dropdown {
     position: relative;
 }
@@ -174,7 +174,7 @@ nav {
   overflow: visible; 
 }
 
-/* Content box - more compact */
+/* Content box */
 .content {
   margin: 0 auto;                
   padding: 20px;
@@ -190,7 +190,7 @@ nav {
   overflow: visible;
 }
 
-/* Top section with search and controls side by side - unified styling */
+/* Top section with search and controls side by side  */
 .top-controls {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -276,7 +276,7 @@ nav {
   color: #666;
 }
 
-/* Column Controls - Compact Grid */
+/* Column Controls*/
 .column_controls {
   position: relative;
 }
@@ -300,7 +300,7 @@ nav {
   flex: 1;
 }
 
-/* Individual label styling - more compact */
+/* Individual label styling  */
 .column_controls label {
   display: flex;
   align-items: center;
@@ -332,7 +332,7 @@ nav {
   cursor: pointer;
 }
 
-/* Results header section - more compact */
+/* Results header section */
 .results-header {
   display: flex;
   justify-content: space-between;
@@ -353,6 +353,28 @@ nav {
   color: #666;
 }
 
+.headerhover {
+  padding: 0; /* Remove th padding */
+  transition: all 0.3s ease;
+}
+
+.headerhover a {
+  display: block;
+  width: 100%;
+  padding: 12px; /* Move the padding to the link */
+  color: inherit;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.headerhover:hover {
+  background-color: #43a047; /* Or whatever color you choose */
+  color: #ffffff;
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 /* Forms */
 form {
   width: 100%;
@@ -361,20 +383,6 @@ form {
   display: flex;
   flex-direction: column;
   gap: 15px;
-}
-
-/* Override form styles specifically for live page apparatus */
-.live-page .apparatus-bar form {
-  display: flex !important;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0;
-  flex-wrap: nowrap !important; /* Prevent wrapping */
-  overflow-x: auto; /* Add horizontal scroll if needed */
-  flex-direction: row !important; /* Force horizontal layout */
 }
 
 input[type="number"],
@@ -498,7 +506,7 @@ th {
 }
 
 /* =============================================
-   LIVE PAGE - UPDATED LAYOUT
+   LIVE PAGE
    ============================================= */
 
 /* Main live page container */
@@ -523,18 +531,6 @@ th {
   overflow-y: auto;
   position: sticky;
   top: 100px; /* Account for navbar height */
-}
-
-.live-page .sidebar::before {
-  content: "Select Level";
-  display: block;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #4CAF50;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
 }
 
 /* Level selection form */
@@ -606,18 +602,6 @@ th {
   margin: 10px 0;
 }
 
-.live-page .apparatus-bar::before {
-  content: "Select Apparatus";
-  display: block;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #4CAF50;
-  padding-bottom: 10px;
-  margin-bottom: 20px; 
-  z-index: 1;
-}
 
 /* Apparatus form styling */
 .live-page .apparatus-bar form {
@@ -685,7 +669,9 @@ th {
 }
 
 
-/* scoring page */
+/* =============================================
+   SCORING PAGE
+   ============================================= */
 .live-competition-header {
     background-color: #ff4444;
     color: white;
@@ -700,6 +686,10 @@ th {
     padding: 50px;
     background-color: #f8f9fa;
     border-radius: 8px;
+    width: 1450px;  
+    flex: none;
+    margin: 0 auto;
+    
 }
 
 .scoring-form {
@@ -775,11 +765,128 @@ th {
     background-color: #f5f5f5;
 }
 
-/* competitions page */
+/* Progress Section Styling */
+.progress-section {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.progress-section h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Progress and Completion Badges */
+.progress-badge {
+    background: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.completion-badge {
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+/* Progress Bar Container */
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 20px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.progress-text {
+    font-weight: 600;
+    color: #495057;
+    min-width: 80px;
+    text-align: right;
+}
+
+/* Completion Message */
+.completion-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid #c3e6cb;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Status indicators in table */
+.status-complete {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-progress {
+    color: #007bff;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+/* Complete row styling */
+.complete-row {
+    background-color: #f8fff9;
+    border-left: 3px solid #28a745;
+}
+
+.complete-row:hover {
+    background-color: #f0fff1;
+}
+
+/* =============================================
+   COMPETITIONS PAGE
+   ============================================= */
+
 .status-badge {
     padding: 4px 8px;
     border-radius: 4px;
     font-weight: bold;
+}
+
+#addcomp {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#addcomp:hover {
+    background-color: #45a049;
 }
 
 .status-live {
@@ -802,6 +909,10 @@ th {
     padding: 5px 10px;
     text-decoration: none;
     border-radius: 4px;
+}
+
+.btn:hover {
+  background-color: #45a049;
 }
 
 .btn-success {

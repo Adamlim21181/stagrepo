@@ -14,6 +14,31 @@
             <p>{{ live_competition.address }}</p>
         </div>
 
+        <!-- Overall Progress Section -->
+        <div class="progress-section">
+            <h3>
+                Scoring Progress 
+                {% if overall_progress.is_complete %}
+                    <span class="completion-badge">✅ Complete</span>
+                {% else %}
+                    <span class="progress-badge">{{ overall_progress.fully_scored }}/{{ overall_progress.total_gymnasts }}</span>
+                {% endif %}
+            </h3>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ overall_progress.percentage }}%"></div>
+                </div>
+                <span class="progress-text">{{ "%.0f"|format(overall_progress.percentage) }}% Complete</span>
+            </div>
+            
+            {% if overall_progress.is_complete %}
+                <div class="completion-message">
+                    🎉 All {{ overall_progress.total_gymnasts }} gymnasts have been fully scored!
+                </div>
+            {% endif %}
+        </div>
+
         <div class="scoring-form">
             <h3>Add/Update Score</h3>
             <form method="POST">
@@ -24,7 +49,11 @@
                             <option value="">Select a gymnast...</option>
                             {% for entry, gymnast, club in entries %}
                                 <option value="{{ entry.id }}">
+                                    {% if scoring_progress[entry.id].is_complete %}✅{% endif %}
                                     {{ gymnast.name }} - {{ club.name }} ({{ gymnast.level }})
+                                    {% if not scoring_progress[entry.id].is_complete %}
+                                        - {{ scoring_progress[entry.id].scored_count }}/{{ scoring_progress[entry.id].total_count }}
+                                    {% endif %}
                                 </option>
                             {% endfor %}
                         </select>
@@ -70,6 +99,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Status</th>
                         <th>Gymnast</th>
                         <th>Club</th>
                         <th>Level</th>
@@ -83,7 +113,14 @@
                 <tbody>
                     {% for entry, gymnast, club in entries %}
                         {% for score in entry.scores %}
-                            <tr>
+                            <tr class="{% if scoring_progress[entry.id].is_complete %}complete-row{% endif %}">
+                                <td>
+                                    {% if scoring_progress[entry.id].is_complete %}
+                                        <span class="status-complete">✅</span>
+                                    {% else %}
+                                        <span class="status-progress">{{ scoring_progress[entry.id].scored_count }}/{{ scoring_progress[entry.id].total_count }}</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ gymnast.name }}</td>
                                 <td>{{ club.name }}</td>
                                 <td>{{ gymnast.level }}</td>
@@ -101,7 +138,5 @@
     {% endif %}
 
 </div>
-
-
 
 {% endblock %}

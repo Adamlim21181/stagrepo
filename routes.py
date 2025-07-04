@@ -75,7 +75,6 @@ def gymnasts():
     )
 
 
-# Replace your existing /scoring route with this:
 @main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
     if 'user_id' not in session:
@@ -107,6 +106,44 @@ def scoring():
 
     # Get all apparatus
     apparatus_list = models.Apparatus.query.all()
+
+    # Calculate scoring progress for each gymnast
+    scoring_progress = {}
+    total_gymnasts = len(entries)
+    fully_scored_gymnasts = 0
+
+    for entry, gymnast, club in entries:
+        scored_apparatus = set()
+        for score in entry.scores:
+            scored_apparatus.add(score.apparatus_id)
+
+        total_apparatus = len(apparatus_list)
+        scored_count = len(scored_apparatus)
+        is_complete = scored_count == total_apparatus
+
+        if is_complete:
+            fully_scored_gymnasts += 1
+
+        scoring_progress[entry.id] = {
+            'scored_count': scored_count,
+            'total_count': total_apparatus,
+            'is_complete': is_complete,
+            'percentage': (
+                (scored_count / total_apparatus * 100)
+                if total_apparatus > 0 else 0
+            )
+        }
+
+    # Overall competition progress
+    overall_progress = {
+        'total_gymnasts': total_gymnasts,
+        'fully_scored': fully_scored_gymnasts,
+        'percentage': (
+            (fully_scored_gymnasts / total_gymnasts * 100)
+            if total_gymnasts > 0 else 0
+        ),
+        'is_complete': fully_scored_gymnasts == total_gymnasts
+    }
 
     if request.method == 'POST':
         entry_id = request.form.get('entry_id')
@@ -145,13 +182,24 @@ def scoring():
             flash('Score added successfully!', 'success')
 
         db.session.commit()
+
+        # Check if this completed scoring for a gymnast
+        updated_entry = models.Entries.query.get(entry_id)
+        if updated_entry:
+            scored_apparatus_count = len(updated_entry.scores)
+            if scored_apparatus_count == len(apparatus_list):
+                gymnast_name = updated_entry.gymnast.name
+                flash(f'✅ {gymnast_name} scoring complete!', 'info')
+
         return redirect(url_for('main.scoring'))
 
     return render_template(
         'scoring.html',
         entries=entries,
         apparatus_list=apparatus_list,
-        live_competition=live_competition
+        live_competition=live_competition,
+        scoring_progress=scoring_progress,
+        overall_progress=overall_progress
     )
 
 
@@ -196,31 +244,62 @@ def live():
 
     leaderboard_data = []
 
-    if selected_level and selected_apparatus_id:
-        leaderboard_data = (
-            db.session.query(models.Scores, models.Gymnasts, models.Clubs)
-            .join(models.Entries, models.Scores.entry_id == models.Entries.id)
-            .join(models.Gymnasts,
-                  models.Entries.gymnast_id == models.Gymnasts.id
-                  )
-            .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
-            # FILTER BY LIVE COMPETITION
-            .filter(models.Entries.competition_id == live_competition.id)
-            .filter(models.Gymnasts.level == selected_level)
-            .filter(models.Scores.apparatus_id == selected_apparatus_id)
-            .order_by(models.Scores.total.desc())
-            .all()
-        )
+    if selected_level:
+        if selected_apparatus_id and selected_apparatus_id != 'all_around':
+            # Show scores for specific apparatus
+            leaderboard_data = (
+                db.session.query(models.Scores, models.Gymnasts, models.Clubs)
+                .join(models.Entries,
+                      models.Scores.entry_id == models.Entries.id)
+                .join(models.Gymnasts,
+                      models.Entries.gymnast_id == models.Gymnasts.id
+                      )
+                .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
+                .filter(models.Entries.competition_id == live_competition.id)
+                .filter(models.Gymnasts.level == selected_level)
+                .filter(models.Scores.apparatus_id == selected_apparatus_id)
+                .order_by(models.Scores.total.desc())
+                .all()
+            )
+        else:
+            # Show all-around scores (total of all apparatus)
+            # or when no apparatus selected
+            # Get all gymnasts for the selected level with their
+            # total scores across all apparatus
+            leaderboard_data = (
+                db.session.query(
+                    models.Gymnasts.id,
+                    models.Gymnasts.name,
+                    models.Gymnasts.level,
+                    models.Clubs.name.label('club_name'),
+                    db.func.sum(models.Scores.total).label('total_score')
+                )
+                .join(models.Entries,
+                      models.Entries.gymnast_id == models.Gymnasts.id)
+                .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
+                .join(models.Scores,
+                      models.Scores.entry_id == models.Entries.id)
+                .filter(models.Entries.competition_id == live_competition.id)
+                .filter(models.Gymnasts.level == selected_level)
+                .group_by(
+                    models.Gymnasts.id,
+                    models.Gymnasts.name,
+                    models.Gymnasts.level,
+                    models.Clubs.name
+                )
+                .order_by(db.func.sum(models.Scores.total).desc())
+                .all()
+            )
 
     return render_template(
-        'live.html',
-        levels=levels,
-        selected_level=selected_level,
-        apparatus_list=apparatus_list,
-        selected_apparatus_id=selected_apparatus_id,
-        leaderboard_data=leaderboard_data,
-        live_competition=live_competition
-    )
+            'live.html',
+            levels=levels,
+            selected_level=selected_level,
+            apparatus_list=apparatus_list,
+            selected_apparatus_id=selected_apparatus_id,
+            leaderboard_data=leaderboard_data,
+            live_competition=live_competition
+        )
 
 
 @main.route('/calendar')
@@ -254,6 +333,13 @@ def results():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 5, type=int)
 
+    # Add sorting parameters
+
+    # Default sort by total score
+    sort_by = request.args.get('sort_by', 'total', type=str)
+    # Default descending
+    sort_order = request.args.get('sort_order', 'desc', type=str)
+
     # Define pagination options
     pagination_options = [(5, '5'),
                           (10, '10'),
@@ -262,6 +348,21 @@ def results():
                           (100, '100'),
                           (1000, '1000'),
                           (-1, 'All')]
+
+    # Define sorting options for the template
+    sort_options = [
+        ('total', 'Total Score'),
+        ('e_score', 'Execution Score'),
+        ('d_score', 'Difficulty Score'),
+        ('penalty', 'Penalty'),
+        ('gymnast_name', 'Gymnast Name'),
+        ('club_name', 'Club Name'),
+        ('competition_name', 'Competition'),
+        ('apparatus_name', 'Apparatus'),
+        ('level', 'Level'),
+        ('id', 'ID'),
+        ('entry_id', 'Entry ID')
+    ]
 
     # Start with base query including necessary joins
     query = models.Scores.query\
@@ -293,6 +394,37 @@ def results():
                 models.Apparatus.name.contains(search_query)
             )
         )
+
+    # Add sorting logic
+    if sort_by == 'gymnast_name':
+        sort_column = models.Gymnasts.name
+    elif sort_by == 'club_name':
+        sort_column = models.Clubs.name
+    elif sort_by == 'competition_name':
+        sort_column = models.Competitions.name
+    elif sort_by == 'apparatus_name':
+        sort_column = models.Apparatus.name
+    elif sort_by == 'level':
+        sort_column = models.Gymnasts.level
+    elif sort_by == 'id':
+        sort_column = models.Scores.id
+    elif sort_by == 'entry_id':
+        sort_column = models.Scores.entry_id
+    elif sort_by == 'e_score':
+        sort_column = models.Scores.e_score
+    elif sort_by == 'd_score':
+        sort_column = models.Scores.d_score
+    elif sort_by == 'penalty':
+        sort_column = models.Scores.penalty
+    else:
+        # Default to total score
+        sort_column = models.Scores.total
+
+    # Apply sorting
+    if sort_order == 'desc':
+        query = query.order_by(sort_column.desc())
+    else:
+        query = query.order_by(sort_column.asc())
 
     # Handle "All" option vs normal pagination
     if per_page == -1:
@@ -337,7 +469,10 @@ def results():
         results=paginated_results,
         per_page=per_page,
         search_query=search_query,
-        pagination_options=pagination_options
+        pagination_options=pagination_options,
+        sort_options=sort_options,
+        current_sort_by=sort_by,
+        current_sort_order=sort_order
     )
 
 
