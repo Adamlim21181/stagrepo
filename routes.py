@@ -647,6 +647,16 @@ def competitions():
             flash('Invalid date format!', 'danger')
             return redirect(url_for('main.competitions'))
 
+        # If no season_id provided, use current year's season
+        if not season_id:
+            current_year = datetime.now().year
+            current_season = models.Seasons.query.filter_by(
+                year=current_year
+            ).first()
+
+            if current_season:
+                season_id = current_season.id
+
         new_competition = models.Competitions(
             name=name,
             address=address,

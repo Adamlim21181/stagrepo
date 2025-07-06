@@ -25,16 +25,16 @@ def create_app():
 def initialize_seasons():
     """Create seasons for current and future years if they don't exist"""
     from datetime import datetime
-    from models import Season  # Import your Season model
+    import models  # Import models the same way as in routes
 
     current_year = datetime.now().year
     created_count = 0
 
     # Current + 5 future years
     for year in range(current_year, current_year + 6):
-        existing = Season.query.filter_by(year=year).first()
+        existing = models.Seasons.query.filter_by(year=year).first()
         if not existing:
-            season = Season(year=year)
+            season = models.Seasons(year=year)
             db.session.add(season)
             created_count += 1
 

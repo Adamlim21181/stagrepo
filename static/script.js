@@ -37,34 +37,34 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showCompetitionModal(competitionId) {
-          document.getElementById('competitionModal').style.display = 'block';
-            
-          // Fetch competition details
-          fetch(`/competition/${competitionId}`)
-              .then(response => response.text())
-              .then(html => {
-                  document.getElementById('modalBody').innerHTML = html;
-              })
-              .catch(error => {
-                  document.getElementById('modalBody').innerHTML = '<p>Error loading competition details.</p>';
-              });
-      }
+    document.getElementById('competitionModal').style.display = 'block';
+      
+    // Fetch competition details
+    fetch(`/competition/${competitionId}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modalBody').innerHTML = html;
+        })
+        .catch(error => {
+            document.getElementById('modalBody').innerHTML = '<p>Error loading competition details.</p>';
+        });
+}
 
-      function closeModal() {
-          document.getElementById('competitionModal').style.display = 'none';
-      }
+function closeModal() {
+    document.getElementById('competitionModal').style.display = 'none';
+}
 
-      // Close modal when clicking outside
-      window.onclick = function(event) {
-          const modal = document.getElementById('competitionModal');
-          if (event.target == modal) {
-              modal.style.display = 'none';
-          }
-      }
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('competitionModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
 
-      // Close modal with Escape key
-      document.addEventListener('keydown', function(event) {
-          if (event.key === 'Escape') {
-              closeModal();
-          }
-      });w
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});
