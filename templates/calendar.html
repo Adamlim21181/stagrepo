@@ -2,7 +2,89 @@
 {% block content %}
 
 <div class="content">
-    <h1>CALANDER</h1>
+     <div class="container">
+        <div class="header">
+            <h1>🏆 Competition Calendar</h1>
+            <p>Track all your gymnastics competitions</p>
+        </div>
+
+        <div class="calendar-nav">
+            <a href="{{ url_for('main.calendar_view', year=prev_year, month=prev_month) }}" class="nav-btn">
+                ← Previous
+            </a>
+            <div class="current-month">{{ month_name }} {{ year }}</div>
+            <a href="{{ url_for('main.calendar_view', year=next_year, month=next_month) }}" class="nav-btn">
+                Next →
+            </a>
+        </div>
+
+        <div class="calendar-grid">
+            <!-- Calendar headers -->
+            <div class="calendar-header">Sun</div>
+            <div class="calendar-header">Mon</div>
+            <div class="calendar-header">Tue</div>
+            <div class="calendar-header">Wed</div>
+            <div class="calendar-header">Thu</div>
+            <div class="calendar-header">Fri</div>
+            <div class="calendar-header">Sat</div>
+
+            <!-- Calendar days -->
+            {% for week in calendar_data %}
+                {% for day in week %}
+                    {% if day == 0 %}
+                        <div class="calendar-day other-month"></div>
+                    {% else %}
+                        {% set is_today = (day == today.day and month == today.month and year == today.year) %}
+                        <div class="calendar-day {% if is_today %}today{% endif %}">
+                            <div class="day-number">{{ day }}</div>
+                            
+                            {% if day in competitions_by_date %}
+                                {% for competition in competitions_by_date[day] %}
+                                    <div class="competition {{ competition.status }}" onclick="showCompetitionModal('{{ competition.id }}')">
+                                        <div class="competition-title">{{ competition.name }}</div>
+                                        {% if competition.started_at %}
+                                            <div class="competition-time">
+                                                ⏰ {{ competition.started_at.strftime('%H:%M') }}
+                                            </div>
+                                        {% endif %}
+                                        <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #c6f6d5; border-color: #38a169;"></div>
+                <span>Live Competition</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ebf8ff; border-color: #3182ce;"></div>
+                <span>Upcoming Competition</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f7fafc; border-color: #718096;"></div>
+                <span>Ended Competition</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Competition Modal -->
+    <div id="competitionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle">Competition Details</h2>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Loading...
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

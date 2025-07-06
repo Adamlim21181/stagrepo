@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="content">
+    <!-- This template is loaded into the modal -->
+    <div class="competition-info">
+        <div class="info-item">
+            <div class="info-icon">📅</div>
+            <div>
+                <strong>{{ competition.name }}</strong>
+                <br>
+                <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
+            </div>
+        </div>
+        
+        {% if competition.started_at %}
+        <div class="info-item">
+            <div class="info-icon">⏰</div>
+            <div>
+                <strong>Date & Time:</strong><br>
+                {{ competition.started_at.strftime('%A, %B %d, %Y') }}<br>
+                {{ competition.started_at.strftime('%I:%M %p') }}
+                {% if competition.ended_at %}
+                    - {{ competition.ended_at.strftime('%I:%M %p') }}
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="info-item">
+            <div class="info-icon">📍</div>
+            <div>
+                <strong>Location:</strong><br>
+                {{ competition.address }}
+            </div>
+        </div>
+        
+        <div class="info-item">
+            <div class="info-icon">👥</div>
+            <div>
+                <strong>Participants:</strong><br>
+                {{ entries_count }} gymnasts registered
+            </div>
+        </div>
+    </div>
+
+    {% if entries %}
+    <div style="margin-top: 20px;">
+        <h3 style="margin-bottom: 15px; color: #2d3748;">Registered Gymnasts</h3>
+        <div style="max-height: 200px; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa; border-bottom: 2px solid #e2e8f0;">
+                        <th style="padding: 10px; text-align: left; font-weight: 600;">Name</th>
+                        <th style="padding: 10px; text-align: left; font-weight: 600;">Level</th>
+                        <th style="padding: 10px; text-align: left; font-weight: 600;">Club</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry, gymnast, club in entries %}
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 8px;">{{ gymnast.name }}</td>
+                        <td style="padding: 8px;">{{ gymnast.level }}</td>
+                        <td style="padding: 8px;">{{ club.name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if competition.status == 'live' %}
+    <div style="margin-top: 20px; padding: 15px; background: #c6f6d5; border-radius: 8px; border: 1px solid #38a169;">
+        <strong style="color: #2f855a;">🔴 This competition is currently live!</strong>
+        <br>
+        <a href="{{ url_for('main.live') }}" style="color: #2f855a; text-decoration: none; font-weight: 600;">
+            View Live Results →
+        </a>
+    </div>
+    {% endif %}
+
+    {% if competition.status == 'draft' %}
+    <div style="margin-top: 20px; padding: 15px; background: #ebf8ff; border-radius: 8px; border: 1px solid #3182ce;">
+        <strong style="color: #2b6cb0;">📋 This competition is in draft mode</strong>
+        <br>
+        <small style="color: #2b6cb0;">Registration and setup in progress</small>
+    </div>
+    {% endif %}
+
+    {% if competition.status == 'ended' %}
+    <div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; border: 1px solid #718096;">
+        <strong style="color: #4a5568;">✅ This competition has ended</strong>
+        <br>
+        <a href="{{ url_for('main.results') }}" style="color: #4a5568; text-decoration: none; font-weight: 600;">
+            View Results →
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
