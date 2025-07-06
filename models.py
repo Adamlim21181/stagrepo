@@ -116,6 +116,10 @@ class Competitions(db.Model):
         db.String(100), nullable=False
     )
 
+    competition_date = db.Column(
+        db.Date, nullable=True
+    )
+
     status = db.Column(
         db.String(20), nullable=False, default='draft'
     )  # Options: 'draft', 'live', 'ended'
@@ -130,6 +134,10 @@ class Competitions(db.Model):
 
     entries = db.relationship(
         'Entries', backref='competitions'
+    )
+
+    season = db.relationship(
+        'Seasons', backref='competitions'
     )
 
 

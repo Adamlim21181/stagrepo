@@ -19,13 +19,10 @@
             </div>
             
             <div class="form-group">
-                <label for="season_id">Season:</label>
-                <select id="season_id" name="season_id" required>
-                    {% for season in seasons %}
-                        <option value="{{ season.id }}">{{ season.year }}</option>
-                    {% endfor %}
-                </select>
+                <label for="competition_date">Competition Date:</label>
+                <input type="date" id="competition_date" name="competition_date" required>
             </div>
+
             
             <button id="addcomp" type="submit">Add Competition</button>
         </form>
@@ -39,6 +36,8 @@
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
+                    <th>Date</th>
+                    <th>Season</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -48,6 +47,20 @@
                     <tr class="competition-row {{ competition.status }}">
                         <td>{{ competition.name }}</td>
                         <td>{{ competition.address }}</td>
+                        <td>
+                            {% if competition.competition_date %}
+                                {{ competition.competition_date.strftime('%d/%m/%Y') }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if competition.season %}
+                                {{ competition.season.year }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </td>
                         <td>
                             <span class="status-badge status-{{ competition.status }}">
                                 {% if competition.status == 'live' %}
@@ -75,5 +88,27 @@
     </div>
 </div>
 
+<style>
+/* Style for the date input to make it look nice */
+input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+
+/* Optional: Style for past dates to show they're not selectable */
+input[type="date"]:invalid {
+    border-color: #dc3545;
+}
+</style>
 
 {% endblock %}

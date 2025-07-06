@@ -304,7 +304,6 @@ def live():
         )
 
 
-# Replace your existing /calendar route with this:
 @main.route('/calendar')
 def calendar_view():
     # Get current date or date from query parameters
@@ -323,22 +322,22 @@ def calendar_view():
     cal = calendar.monthcalendar(year, month)
     month_name = calendar.month_name[month]
 
-    # Get competitions for the current month
-    start_date = datetime(year, month, 1)
+    # Get competitions for the current month using competition_date
+    start_date = datetime(year, month, 1).date()
     if month == 12:
-        end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
+        end_date = datetime(year + 1, 1, 1).date() - timedelta(days=1)
     else:
-        end_date = datetime(year, month + 1, 1) - timedelta(days=1)
+        end_date = datetime(year, month + 1, 1).date() - timedelta(days=1)
 
     competitions = models.Competitions.query.filter(
-        models.Competitions.started_at.between(start_date, end_date)
+        models.Competitions.competition_date.between(start_date, end_date)
     ).all()
 
     # Group competitions by date
     competitions_by_date = {}
     for comp in competitions:
-        if comp.started_at:
-            day = comp.started_at.day
+        if comp.competition_date:
+            day = comp.competition_date.day
             if day not in competitions_by_date:
                 competitions_by_date[day] = []
             competitions_by_date[day].append(comp)
@@ -636,11 +635,22 @@ def competitions():
     if request.method == 'POST':
         name = request.form.get('name')
         address = request.form.get('address')
+        competition_date_str = request.form.get('competition_date')
         season_id = request.form.get('season_id')
+
+        # Convert string date to datetime object
+        try:
+            competition_date = datetime.strptime(
+                competition_date_str, '%Y-%m-%d').date()
+
+        except ValueError:
+            flash('Invalid date format!', 'danger')
+            return redirect(url_for('main.competitions'))
 
         new_competition = models.Competitions(
             name=name,
             address=address,
+            competition_date=competition_date,
             season_id=season_id,
             status='draft'
         )
@@ -650,14 +660,19 @@ def competitions():
         flash('Competition added successfully!', 'success')
         return redirect(url_for('main.competitions'))
 
-    # Get all competitions
-    competitions = models.Competitions.query.all()
+    # Get all competitions ordered by date (newest first)
+    competitions = models.Competitions.query.order_by(
+        models.Competitions.competition_date.desc()).all()
     seasons = models.Seasons.query.all()
+
+    # Pass today's date to the template for reference
+    today = datetime.now()
 
     return render_template(
         'competitions.html',
         competitions=competitions,
-        seasons=seasons
+        seasons=seasons,
+        today=today
     )
 
 

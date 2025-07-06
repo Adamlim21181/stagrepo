@@ -149,7 +149,7 @@ def add_entries():
             entries += 1
 
     db.session.commit()
-    print("Entries added successfully.")
+    print("Entries added successfully.") 
 
 
 def add_scores():
@@ -180,11 +180,7 @@ def create_random_data():
     db.create_all()
     add_roles()
     add_users()
-    add_seasons()
     add_clubs()
     add_apparatus()
-    add_competitions()
     add_gymnasts()
-    add_entries()
-    add_scores()
     print("All data created successfully.")
