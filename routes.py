@@ -9,6 +9,20 @@ import forms
 main = Blueprint('main', __name__)
 
 
+# Error handler for 404 (Not Found),
+# reroutes the user to a 404 page when an error occurs with the URL
+@main.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+
+# Error handler for 414 (Request-URI Too Long),
+# reroutes the user to a 414 page when the URL is too long
+@main.errorhandler(414)
+def url_too_long(e):
+    return render_template("414.html"), 414
+
+
 @main.context_processor  # Ensures this is run before any other routes
 def inject_user():
     return dict(
@@ -366,7 +380,7 @@ def calendar_view():
 # Add route for competition details modal/popup
 @main.route('/competition/<int:competition_id>')
 def competition_details(competition_id):
-    competition = models.Competitions.query.get_or_404(competition_id)
+    competition = models.Competitions(competition_id)
 
     # Get entries count for this competition
     entries_count = models.Entries.query.filter_by(
