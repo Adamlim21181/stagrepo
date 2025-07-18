@@ -1,52 +1,54 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="content">
-    <h1>Competition Entries Management</h1>
+<div class="entries-page">
+    <div class="content">
+        <h1>Competition Entries Management</h1>
 
-    <!-- Add New Entry Form -->
-    <div class="add-entry">
-        <h2>Add Gymnast to Competition</h2>
-        <form method="POST">
-            <div class="form-group">
-                <label for="competition_id">Competition:</label>
-                <select id="competition_id" name="competition_id" required>
-                    <option value="">Select Competition...</option>
-                    {% for competition in competitions %}
+        <!-- Add New Entry Form -->
+        <div class="add-entry">
+            <h2>Add Gymnast to Competition</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="competition_id">Competition:</label>
+                    <select id="competition_id" name="competition_id" required>
+                        <option value="">Select Competition...</option>
+                        {% for competition in competitions %}
                         <option value="{{ competition.id }}">{{ competition.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="gymnast_id">Gymnast:</label>
-                <select id="gymnast_id" name="gymnast_id" required>
-                    <option value="">Select Gymnast...</option>
-                    {% for gymnast in gymnasts %}
-                        <option value="{{ gymnast.id }}">{{ gymnast.name }} - {{ gymnast.clubs.name }} ({{ gymnast.level }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <button type="submit">Add Entry</button>
-        </form>
-    </div>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <!-- Existing Entries List -->
-    <div class="entries-list">
-        <h2>Current Entries</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Competition</th>
-                    <th>Gymnast</th>
-                    <th>Club</th>
-                    <th>Level</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry, competition, gymnast, club in entries %}
+                <div class="form-group">
+                    <label for="gymnast_id">Gymnast:</label>
+                    <select id="gymnast_id" name="gymnast_id" required>
+                        <option value="">Select Gymnast...</option>
+                        {% for gymnast in gymnasts %}
+                        <option value="{{ gymnast.id }}">{{ gymnast.name }} - {{ gymnast.clubs.name }} ({{ gymnast.level
+                            }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit">Add Entry</button>
+            </form>
+        </div>
+
+        <!-- Existing Entries List -->
+        <div class="entries-list">
+            <h2>Current Entries</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Competition</th>
+                        <th>Gymnast</th>
+                        <th>Club</th>
+                        <th>Level</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry, competition, gymnast, club in entries %}
                     <tr>
                         <td>{{ competition.name }}</td>
                         <td>{{ gymnast.name }}</td>
@@ -57,9 +59,10 @@
                             <a href="#" class="btn btn-danger btn-sm">Remove</a>
                         </td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

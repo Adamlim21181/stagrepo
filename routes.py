@@ -204,7 +204,7 @@ def scoring():
         if updated_entry:
             scored_apparatus_count = len(updated_entry.scores)
             if scored_apparatus_count == len(apparatus_list):
-                gymnast_name = updated_entry.gymnast.name
+                gymnast_name = updated_entry.gymnasts.name
                 flash(f'✅ {gymnast_name} scoring complete!', 'info')
 
         return redirect(url_for('main.scoring'))

@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="content">
-     <div class="container">
+    <div class="container">
         <div class="header">
             <h1>Competition Calendar</h1>
             <p>Track all your gymnastics competitions</p>
@@ -30,30 +30,31 @@
 
             <!-- Calendar days -->
             {% for week in calendar_data %}
-                {% for day in week %}
-                    {% if day == 0 %}
-                        <div class="calendar-day other-month"></div>
-                    {% else %}
-                        {% set is_today = (day == today.day and month == today.month and year == today.year) %}
-                        <div class="calendar-day {% if is_today %}today{% endif %}">
-                            <div class="day-number">{{ day }}</div>
-                            
-                            {% if day in competitions_by_date %}
-                                {% for competition in competitions_by_date[day] %}
-                                    <div class="competition {{ competition.status }}" onclick="showCompetitionModal('{{ competition.id }}')">
-                                        <div class="competition-title">{{ competition.name }}</div>
-                                        {% if competition.started_at %}
-                                            <div class="competition-time">
-                                                ⏰ {{ competition.started_at.strftime('%H:%M') }}
-                                            </div>
-                                        {% endif %}
-                                        <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+            {% for day in week %}
+            {% if day == 0 %}
+            <div class="calendar-day other-month"></div>
+            {% else %}
+            {% set is_today = (day == today.day and month == today.month and year == today.year) %}
+            <div class="calendar-day {% if is_today %}today{% endif %}">
+                <div class="day-number">{{ day }}</div>
+
+                {% if day in competitions_by_date %}
+                {% for competition in competitions_by_date[day] %}
+                <div class="competition {{ competition.status }}"
+                    onclick="showCompetitionModal('{{ competition.id }}')">
+                    <div class="competition-title">{{ competition.name }}</div>
+                    {% if competition.started_at %}
+                    <div class="competition-time">
+                        ⏰ {{ competition.started_at.strftime('%H:%M') }}
+                    </div>
                     {% endif %}
+                    <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
+                </div>
                 {% endfor %}
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
             {% endfor %}
         </div>
 
