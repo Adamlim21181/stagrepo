@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from extensions import db
 
 
@@ -10,6 +10,15 @@ def create_app():
     app.config['DEBUG'] = True
 
     db.init_app(app)
+
+    # Register error handlers on the main app
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("404.html"), 404
+
+    @app.errorhandler(414)
+    def url_too_long(e):
+        return render_template("414.html"), 414
 
     # take all the routes and add them to the main app
     from routes import main

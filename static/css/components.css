@@ -26,6 +26,8 @@
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
   color: white;
   box-shadow: var(--shadow-green);
+  font-weight: 600;
+  border: none;
 }
 
 .btn-primary:hover {
@@ -53,6 +55,61 @@
 
 .btn-success:hover {
   background-color: #218838;
+}
+
+.btn-secondary {
+  background: var(--background-section);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+  background: var(--background-section-alt);
+  color: var(--text-dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary-green);
+  border: 2px solid var(--primary-green);
+  font-weight: 600;
+}
+
+.btn-outline:hover {
+  background: var(--primary-green);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-green);
+}
+
+.btn-reset,
+.reset-btn {
+  background: var(--background-section);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: var(--transition-fast);
+  font-family: 'Lexend', sans-serif;
+}
+
+.btn-reset:hover,
+.reset-btn:hover {
+  background: var(--error-color);
+  color: white;
+  border-color: var(--error-color);
+  transform: translateY(-1px);
+}
+
+.btn-small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.8rem;
+  border-radius: var(--border-radius-sm);
 }
 
 .btn:hover {

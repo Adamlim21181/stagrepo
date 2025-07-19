@@ -29,11 +29,11 @@
                 <!-- Reset buttons -->
                 {% if search_query %}
                 <a href="{{ url_for('main.results', per_page=per_page, sort_by=current_sort_by, sort_order=current_sort_order) }}"
-                    class="reset-btn" style="margin-left: 10px;">Clear Search</a>
+                    class="btn-reset">Clear Search</a>
                 {% endif %}
 
                 {% if search_query or current_sort_by != 'total' or current_sort_order != 'desc' or per_page != 5 %}
-                <a href="{{ url_for('main.results') }}" class="reset-btn" style="margin-left: 10px;">Reset All</a>
+                <a href="{{ url_for('main.results') }}" class="btn-reset">Reset All</a>
                 {% endif %}
             </form>
 
@@ -50,20 +50,20 @@
                     {% if search_query %}
                     <span class="filter-tag">Search: "{{ search_query }}" <a
                             href="{{ url_for('main.results', per_page=per_page, sort_by=current_sort_by, sort_order=current_sort_order) }}"
-                            style="color: #dc3545; text-decoration: none; margin-left: 5px;">×</a></span>
+                            class="btn-small btn-reset">×</a></span>
                     {% endif %}
 
                     {% if current_sort_by != 'total' or current_sort_order != 'desc' %}
                     <span class="filter-tag">Sort: {{ dict(sort_options)[current_sort_by] }} ({{ 'A-Z/Low-High' if
                         current_sort_order == 'asc' else 'Z-A/High-Low' }}) <a
                             href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='total', sort_order='desc') }}"
-                            style="color: #dc3545; text-decoration: none; margin-left: 5px;">×</a></span>
+                            class="btn-small btn-reset">×</a></span>
                     {% endif %}
 
                     {% if per_page != 5 %}
                     <span class="filter-tag">Rows: {{ per_page }} <a
                             href="{{ url_for('main.results', search=search_query, sort_by=current_sort_by, sort_order=current_sort_order, per_page=5) }}"
-                            style="color: #dc3545; text-decoration: none; margin-left: 5px;">×</a></span>
+                            class="btn-small btn-reset">×</a></span>
                     {% endif %}
                 </div>
             </div>

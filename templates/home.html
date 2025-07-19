@@ -2,7 +2,165 @@
 {% block content %}
 
 <div class="content">
-    <h1>HOME</h1>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">STAGS Competition System</h1>
+            <p class="hero-subtitle">Comprehensive gymnastics competition management and live scoring</p>
+
+            {% if live_competitions %}
+            <div class="live-alert">
+                <span class="live-badge">🔴 LIVE</span>
+                {% for comp in live_competitions %}
+                <strong>{{ comp.name }} is currently running!</strong>
+                {% endfor %}
+                <a href="{{ url_for('main.live') }}" class="btn btn-primary">View Live Leaderboard</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <h2>Quick Access</h2>
+        <div class="action-grid">
+            <div class="action-card">
+                <h3>📊 Results</h3>
+                <p>View competition results and standings</p>
+                <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View Results</a>
+            </div>
+
+            <div class="action-card">
+                <h3>📺 Live Leaderboard</h3>
+                <p>Follow ongoing competitions in real-time</p>
+                <a href="{{ url_for('main.live') }}" class="btn btn-secondary">Live Scores</a>
+            </div>
+
+            <div class="action-card">
+                <h3>📅 Calendar</h3>
+                <p>Check upcoming competition dates</p>
+                <a href="{{ url_for('main.calendar_view') }}" class="btn btn-secondary">View Calendar</a>
+            </div>
+
+            {% if not logged_in %}
+            <div class="action-card official-login">
+                <h3>🔐 Officials Login</h3>
+                <p>Access scoring and administration tools</p>
+                <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Upcoming Competitions -->
+    {% if upcoming_competitions %}
+    <section class="upcoming-section">
+        <h2>Upcoming Competitions</h2>
+        <div class="competition-grid">
+            {% for competition in upcoming_competitions %}
+            <div class="competition-card">
+                <div class="competition-status {{ competition.status }}">
+                    {{ competition.status.title() }}
+                </div>
+                <h3>{{ competition.name }}</h3>
+                <div class="competition-details">
+                    <p><strong>📅 Date:</strong>
+                        {% if competition.competition_date %}
+                        {{ competition.competition_date.strftime('%B %d, %Y') }}
+                        {% else %}
+                        TBD
+                        {% endif %}
+                    </p>
+                    <p><strong>📍 Location:</strong> {{ competition.address }}</p>
+                </div>
+                <a href="{{ url_for('main.competition_details', competition_id=competition.id) }}"
+                    class="btn btn-outline">View Details</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Recent Results -->
+    {% if recent_results %}
+    <section class="recent-results">
+        <h2>Recent Results</h2>
+        <div class="results-grid">
+            {% for competition in recent_results %}
+            <div class="result-card">
+                <h3>{{ competition.name }}</h3>
+                <div class="result-info">
+                    <p><strong>Completed:</strong>
+                        {% if competition.ended_at %}
+                        {{ competition.ended_at.strftime('%B %d, %Y') }}
+                        {% else %}
+                        Recently
+                        {% endif %}
+                    </p>
+                    <p><strong>Location:</strong> {{ competition.address }}</p>
+                </div>
+                <a href="{{ url_for('main.competition_details', competition_id=competition.id) }}"
+                    class="btn btn-outline">View Results</a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="view-all">
+            <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View All Results</a>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- System Information -->
+    <section class="system-info">
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>About STAGS</h3>
+                <p>STAGS (Student Tracking and Gymnastics Scoring) is a comprehensive competition management system
+                    designed for gymnastics events. The system provides real-time scoring, athlete tracking, and
+                    comprehensive results management.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>For Officials</h3>
+                <p>Authorized judges and administrators can access scoring tools, manage competitions, and oversee
+                    athlete entries. Contact your competition coordinator for login credentials.</p>
+                {% if not logged_in %}
+                <a href="{{ url_for('main.login') }}" class="btn btn-primary">Official Login</a>
+                {% endif %}
+            </div>
+
+            <div class="info-card">
+                <h3>Features</h3>
+                <ul class="feature-list">
+                    <li>✅ Real-time live scoring</li>
+                    <li>✅ Competition management</li>
+                    <li>✅ Athlete tracking</li>
+                    <li>✅ Results publication</li>
+                    <li>✅ Calendar integration</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel Access -->
+    {% if logged_in %}
+    <section class="admin-panel">
+        <h2>Welcome back, {{ session.get('username', 'Official') }}!</h2>
+        <div class="admin-actions">
+            {% if is_admin %}
+            <a href="{{ url_for('main.gymnasts') }}" class="btn btn-primary">Manage Gymnasts</a>
+            <a href="{{ url_for('main.competitions') }}" class="btn btn-primary">Manage Competitions</a>
+            <a href="{{ url_for('main.entries') }}" class="btn btn-primary">Manage Entries</a>
+            {% endif %}
+
+            {% if is_admin or is_judge %}
+            <a href="{{ url_for('main.scoring') }}" class="btn btn-success">Score Management</a>
+            {% endif %}
+
+            <a href="{{ url_for('main.logout') }}" class="btn btn-outline">Logout</a>
+        </div>
+    </section>
+    {% endif %}
 </div>
 
 {% endblock %}
