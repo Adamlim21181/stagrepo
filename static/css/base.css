@@ -1,0 +1,54 @@
+/* =============================================
+   GLOBAL STYLES & RESETS
+   ============================================= */
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-light);
+  font-family: 'Lexend', sans-serif;
+  padding-top: var(--nav-height);
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================
+   TEXT UTILITIES
+   ============================================= */
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--text-light);
+}
+
+/* =============================================
+   SPACING UTILITIES
+   ============================================= */
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+/* =============================================
+   ERROR STYLES
+   ============================================= */
+.error-list {
+  margin: 5px 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.error-list li {
+  color: var(--error-color);
+  font-size: var(--font-size-sm);
+  margin: 2px 0;
+  padding: 4px 8px;
+  background: var(--error-background);
+  border-radius: 4px;
+  border-left: 3px solid var(--error-color);
+}
