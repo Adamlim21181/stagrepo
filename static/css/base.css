@@ -52,3 +52,25 @@ body {
   border-radius: 4px;
   border-left: 3px solid var(--error-color);
 }
+
+/* =============================================
+   LAYOUT STRUCTURE
+   ============================================= */
+body > div {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  margin-bottom: var(--spacing-2xl);
+}
+
+nav {
+  flex-shrink: 0;
+}
+
+footer {
+  flex-shrink: 0;
+}

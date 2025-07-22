@@ -1,0 +1,50 @@
+<footer class="main-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3 class="footer-title">STAG Compete</h3>
+            <p class="footer-description">Comprehensive gymnastics competition management and live scoring system</p>
+        </div>
+
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul class="footer-links">
+                <li><a href="{{ url_for('main.home') }}">Home</a></li>
+                <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
+                <li><a href="{{ url_for('main.results') }}">Results</a></li>
+                <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
+            </ul>
+        </div>
+
+        {% if logged_in %}
+        <div class="footer-section">
+            <h4>Admin</h4>
+            <ul class="footer-links">
+                {% if is_admin %}
+                <li><a href="{{ url_for('main.competitions') }}">Competitions</a></li>
+                <li><a href="{{ url_for('main.entries') }}">Entries</a></li>
+                <li><a href="{{ url_for('main.gymnasts') }}">Gymnasts</a></li>
+                {% endif %}
+                {% if is_admin or is_judge %}
+                <li><a href="{{ url_for('main.scoring') }}">Scoring</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="footer-section">
+            <h4>System Info</h4>
+            <p class="footer-info">
+                {% if logged_in %}
+                User ID: {{ user_id }}
+                {% else %}
+                <a href="{{ url_for('main.login') }}">Admin Login</a>
+                {% endif %}
+            </p>
+            <p class="footer-info">© 2025 STAG Compete</p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2025 STAG Compete</p>
+    </div>
+</footer>
