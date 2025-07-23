@@ -86,18 +86,27 @@ def add_apparatus():
 
 
 def add_competitions():
+    from datetime import datetime, timedelta
+    
     seasons = [season.id for season in models.Seasons.query.all()]
+    
+    # Base date around current date (July 23, 2025)
+    base_date = datetime(2025, 7, 23).date()
 
     for _ in range(20):
-
         street_address = fake.street_address()
         city = fake.city()
         address = f"{street_address}, {city}"
+        
+        # Generate dates within 6 months before and after current date
+        days_offset = random.randint(-180, 180)
+        competition_date = base_date + timedelta(days=days_offset)
 
         competition = models.Competitions(
             season_id=random.choice(seasons),
             name=fake.color_name(),
-            address=address
+            address=address,
+            competition_date=competition_date
         )
         db.session.add(competition)
     db.session.commit()
@@ -149,7 +158,7 @@ def add_entries():
             entries += 1
 
     db.session.commit()
-    print("Entries added successfully.") 
+    print("Entries added successfully.")
 
 
 def add_scores():
@@ -176,11 +185,55 @@ def add_scores():
     print("Scores added successfully.")
 
 
+def create_judge_scores_table():
+    """Create the judge_scores table for multiple judge scoring"""
+    db.create_all()
+    print("✅ judge_scores table created successfully!")
+
+
+def add_sample_judge_scores():
+    """Add sample judge scores for testing the multiple judge system"""
+    # Get some existing scores to add judge scores for
+    scores = models.Scores.query.limit(10).all()
+    
+    for score in scores:
+        # Add 2-3 judge scores per apparatus score using judge numbers
+        num_judges = random.randint(2, 3)
+        
+        judge_e_scores = []
+        for judge_num in range(1, num_judges + 1):
+            # Generate judge scores around current e_score with variation
+            variation = random.uniform(-0.5, 0.5)
+            judge_e_score = max(0, min(10, score.e_score + variation))
+            
+            judge_score = models.JudgeScores(
+                score_id=score.id,
+                judge_number=judge_num,
+                e_score=round(judge_e_score, 3)
+            )
+            db.session.add(judge_score)
+            judge_e_scores.append(judge_e_score)
+        
+        # Update the score with the average of judge scores
+        if judge_e_scores:
+            avg_e_score = sum(judge_e_scores) / len(judge_e_scores)
+            score.e_score = round(avg_e_score, 3)
+            score.total = score.e_score + score.d_score - score.penalty
+    
+    db.session.commit()
+    print(f"Sample judge scores added for {len(scores)} routines.")
+
+
 def create_random_data():
     db.create_all()
     add_roles()
     add_users()
+    add_seasons()
     add_clubs()
     add_apparatus()
+    add_competitions()
     add_gymnasts()
-    print("All data created successfully.")
+    add_entries()
+    add_scores()
+    add_sample_judge_scores()  # Add judge scores after regular scores
+    print("All data created successfully including judge scores!")

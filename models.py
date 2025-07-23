@@ -225,3 +225,49 @@ class Scores(db.Model):
     total = db.Column(
         db.Float, nullable=False
     )
+
+    # Relationship to individual judge scores
+    judge_scores = db.relationship(
+        'JudgeScores', backref='final_score', lazy=True
+    )
+
+    def calculate_average_e_score(self):
+        """Calculate the average E-score from all judge scores"""
+        if not self.judge_scores:
+            # Fallback to stored e_score if no judge scores
+            return self.e_score
+        
+        total_e_score = sum(js.e_score for js in self.judge_scores)
+        return round(total_e_score / len(self.judge_scores), 3)
+
+    def update_final_score(self):
+        """Update the final e_score and total based on judge scores"""
+        if self.judge_scores:
+            self.e_score = self.calculate_average_e_score()
+            self.total = self.e_score + self.d_score - self.penalty
+
+
+class JudgeScores(db.Model):
+
+    __tablename__ = 'judge_scores'
+
+    id = db.Column(
+        db.Integer, primary_key=True
+    )
+
+    score_id = db.Column(
+        db.Integer, db.ForeignKey('scores.id'), nullable=False
+    )
+
+    judge_number = db.Column(
+        db.Integer, nullable=False
+    )
+
+    e_score = db.Column(
+        db.Float, nullable=False
+    )
+
+    # Timestamp for when the score was submitted
+    submitted_at = db.Column(
+        db.DateTime, default=db.func.current_timestamp()
+    )

@@ -4,137 +4,246 @@
 <div class="content">
 
     {% if no_live_competition %}
-        <div class="no-live-competition">
-            <h2>No Live Competition</h2>
-            <p>There is currently no live competition running. Please contact an admin to start a competition.</p>
-        </div>
+    <div class="no-live-competition">
+        <h2>No Live Competition</h2>
+        <p>There is currently no live competition running. Please contact an admin to start a competition.</p>
+    </div>
     {% else %}
-        <div class="live-competition-header">
-            <h2>🔴 Scoring for: {{ live_competition.name }}</h2>
-            <p>{{ live_competition.address }}</p>
-        </div>
+    <div class="live-competition-header">
+        <h2>🔴 Scoring for: {{ live_competition.name }}</h2>
+        <p>{{ live_competition.address }}</p>
+    </div>
 
-        <!-- Overall Progress Section -->
-        <div class="progress-section">
-            <h3>
-                Scoring Progress 
-                {% if overall_progress.is_complete %}
-                    <span class="completion-badge">✅ Complete</span>
-                {% else %}
-                    <span class="progress-badge">{{ overall_progress.fully_scored }}/{{ overall_progress.total_gymnasts }}</span>
-                {% endif %}
-            </h3>
-            
-            <div class="progress-bar-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ overall_progress.percentage }}%"></div>
-                </div>
-                <span class="progress-text">{{ "%.0f"|format(overall_progress.percentage) }}% Complete</span>
-            </div>
-            
+    <!-- Overall Progress Section -->
+    <div class="progress-section">
+        <h3>
+            Scoring Progress
             {% if overall_progress.is_complete %}
-                <div class="completion-message">
-                    🎉 All {{ overall_progress.total_gymnasts }} gymnasts have been fully scored!
-                </div>
+            <span class="completion-badge">✅ Complete</span>
+            {% else %}
+            <span class="progress-badge">{{ overall_progress.fully_scored }}/{{ overall_progress.total_gymnasts
+                }}</span>
             {% endif %}
+        </h3>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ overall_progress.percentage }}%"></div>
+            </div>
+            <span class="progress-text">{{ "%.0f"|format(overall_progress.percentage) }}% Complete</span>
         </div>
 
-        <div class="scoring-form">
-            <h3>Add/Update Score</h3>
-            <form method="POST">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="entry_id">Gymnast:</label>
-                        <select id="entry_id" name="entry_id" required>
-                            <option value="">Select a gymnast...</option>
-                            {% for entry, gymnast, club in entries %}
-                                <option value="{{ entry.id }}">
-                                    {% if scoring_progress[entry.id].is_complete %}✅{% endif %}
-                                    {{ gymnast.name }} - {{ club.name }} ({{ gymnast.level }})
-                                    {% if not scoring_progress[entry.id].is_complete %}
-                                        - {{ scoring_progress[entry.id].scored_count }}/{{ scoring_progress[entry.id].total_count }}
-                                    {% endif %}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
+        {% if overall_progress.is_complete %}
+        <div class="completion-message">
+            🎉 All {{ overall_progress.total_gymnasts }} gymnasts have been fully scored!
+        </div>
+        {% endif %}
+    </div>
 
-                    <div class="form-group">
-                        <label for="apparatus_id">Apparatus:</label>
-                        <select id="apparatus_id" name="apparatus_id" required>
-                            <option value="">Select apparatus...</option>
-                            {% for apparatus in apparatus_list %}
-                                <option value="{{ apparatus.id }}">{{ apparatus.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="e_score">Execution Score:</label>
-                        <input type="number" id="e_score" name="e_score" step="0.001" min="0" max="10" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="d_score">Difficulty Score:</label>
-                        <input type="number" id="d_score" name="d_score" step="0.001" min="0" max="10" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="penalty">Penalty:</label>
-                        <input type="number" id="penalty" name="penalty" step="0.001" min="0" max="10" value="0" required>
-                    </div>
+    <div class="scoring-form">
+        <h3>Score Entry</h3>
+        <form method="POST" id="scoring-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="entry_id">Gymnast:</label>
+                    <select id="entry_id" name="entry_id" required>
+                        <option value="">Select a gymnast...</option>
+                        {% for entry, gymnast, club in entries %}
+                        <option value="{{ entry.id }}">
+                            {{ gymnast.name }} - {{ club.name }} ({{ gymnast.level }})
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Submit Score</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Show existing scores for reference -->
-        <div class="existing-scores">
-            <h3>Recent Scores</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Gymnast</th>
-                        <th>Club</th>
-                        <th>Level</th>
-                        <th>Apparatus</th>
-                        <th>E Score</th>
-                        <th>D Score</th>
-                        <th>Penalty</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entry, gymnast, club in entries %}
-                        {% for score in entry.scores %}
-                            <tr class="{% if scoring_progress[entry.id].is_complete %}complete-row{% endif %}">
-                                <td>
-                                    {% if scoring_progress[entry.id].is_complete %}
-                                        <span class="status-complete">✅</span>
-                                    {% else %}
-                                        <span class="status-progress">{{ scoring_progress[entry.id].scored_count }}/{{ scoring_progress[entry.id].total_count }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ gymnast.name }}</td>
-                                <td>{{ club.name }}</td>
-                                <td>{{ gymnast.level }}</td>
-                                <td>{{ score.apparatus.name }}</td>
-                                <td>{{ "%.3f"|format(score.e_score) }}</td>
-                                <td>{{ "%.3f"|format(score.d_score) }}</td>
-                                <td>{{ "%.3f"|format(score.penalty) }}</td>
-                                <td><strong>{{ "%.3f"|format(score.total) }}</strong></td>
-                            </tr>
+                    <label for="apparatus_id">Apparatus:</label>
+                    <select id="apparatus_id" name="apparatus_id" required>
+                        <option value="">Select apparatus...</option>
+                        {% for apparatus in apparatus_list %}
+                        <option value="{{ apparatus.id }}">{{ apparatus.name }}</option>
                         {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Execution Scores Section -->
+            <div class="execution-scores-section">
+                <div class="section-header">
+                    <label>Execution Scores:</label>
+                    <button type="button" id="add-judge-btn" class="btn btn-add">+ Add Judge</button>
+                </div>
+
+                <div id="execution-scores-container">
+                    <!-- First execution score (always present) -->
+                    <div class="execution-score-row" data-judge="1">
+                        <div class="judge-label">Judge 1:</div>
+                        <input type="number" name="execution_scores" step="0.001" min="0" max="10" placeholder="8.5"
+                            required class="execution-input">
+                        <button type="button" class="remove-judge-btn" style="display: none;">×</button>
+                    </div>
+                </div>
+
+                <div class="average-display" id="average-display" style="display: none;">
+                    <strong>Average E-Score: <span id="average-value">0.000</span></strong>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="d_score">Difficulty Score:</label>
+                    <input type="number" id="d_score" name="d_score" step="0.001" min="0" max="10" placeholder="6.0"
+                        required>
+                    <small class="form-help">Difficulty score (0-10)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="penalty">Penalty:</label>
+                    <input type="number" id="penalty" name="penalty" step="0.001" min="0" max="10" value="0"
+                        placeholder="0.0">
+                    <small class="form-help">Penalty deductions (optional)</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit Score</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let judgeCount = 1;
+        const maxJudges = 6; // Reasonable limit for gymnastics competitions
+
+        document.getElementById('add-judge-btn').addEventListener('click', function () {
+            if (judgeCount < maxJudges) {
+                judgeCount++;
+                addJudgeInput();
+                updateRemoveButtons();
+                updateAverage();
+            }
+        });
+
+        function addJudgeInput() {
+            const container = document.getElementById('execution-scores-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'execution-score-row';
+            newRow.setAttribute('data-judge', judgeCount);
+
+            newRow.innerHTML = `
+                <div class="judge-label">Judge ${judgeCount}:</div>
+                <input type="number" name="execution_scores" step="0.001" min="0" max="10" 
+                       placeholder="8.5" required class="execution-input">
+                <button type="button" class="remove-judge-btn">×</button>
+            `;
+
+            container.appendChild(newRow);
+
+            // Add event listener to the remove button
+            newRow.querySelector('.remove-judge-btn').addEventListener('click', function () {
+                removeJudgeInput(newRow);
+            });
+
+            // Add event listener for average calculation
+            newRow.querySelector('.execution-input').addEventListener('input', updateAverage);
+        }
+
+        function removeJudgeInput(row) {
+            row.remove();
+            judgeCount--;
+            updateJudgeLabels();
+            updateRemoveButtons();
+            updateAverage();
+        }
+
+        function updateJudgeLabels() {
+            const rows = document.querySelectorAll('.execution-score-row');
+            rows.forEach((row, index) => {
+                row.querySelector('.judge-label').textContent = `Judge ${index + 1}:`;
+                row.setAttribute('data-judge', index + 1);
+            });
+        }
+
+        function updateRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.remove-judge-btn');
+            removeButtons.forEach(btn => {
+                btn.style.display = judgeCount > 1 ? 'inline-block' : 'none';
+            });
+        }
+
+        function updateAverage() {
+            const inputs = document.querySelectorAll('.execution-input');
+            const values = Array.from(inputs)
+                .map(input => parseFloat(input.value))
+                .filter(val => !isNaN(val));
+
+            if (values.length > 1) {
+                const average = values.reduce((sum, val) => sum + val, 0) / values.length;
+                document.getElementById('average-value').textContent = average.toFixed(3);
+                document.getElementById('average-display').style.display = 'block';
+            } else {
+                document.getElementById('average-display').style.display = 'none';
+            }
+        }
+
+        // Add event listeners to existing inputs
+        document.querySelectorAll('.execution-input').forEach(input => {
+            input.addEventListener('input', updateAverage);
+        });
+    </script> <!-- Show existing scores for reference -->
+    <div class="existing-scores">
+        <h3>Recent Scores</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Gymnast</th>
+                    <th>Club</th>
+                    <th>Level</th>
+                    <th>Apparatus</th>
+                    <th>E Score (Avg)</th>
+                    <th>Judge Scores</th>
+                    <th>D Score</th>
+                    <th>Penalty</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry, gymnast, club in entries %}
+                {% for score in entry.scores %}
+                <tr class="{% if scoring_progress[entry.id].is_complete %}complete-row{% endif %}">
+                    <td>
+                        {% if scoring_progress[entry.id].is_complete %}
+                        <span class="status-complete">✅</span>
+                        {% else %}
+                        <span class="status-progress">{{ scoring_progress[entry.id].scored_count }}/{{
+                            scoring_progress[entry.id].total_count }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ gymnast.name }}</td>
+                    <td>{{ club.name }}</td>
+                    <td>{{ gymnast.level }}</td>
+                    <td>{{ score.apparatus.name }}</td>
+                    <td>{{ "%.3f"|format(score.e_score) }}</td>
+                    <td class="judge-scores">
+                        {% if score.judge_scores %}
+                        {% for judge_score in score.judge_scores %}
+                        <span class="judge-score">J{{ judge_score.judge_number }}: {{ "%.3f"|format(judge_score.e_score)
+                            }}</span>
+                        {% endfor %}
+                        {% else %}
+                        <span class="no-judge-scores">No judge scores</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ "%.3f"|format(score.d_score) }}</td>
+                    <td>{{ "%.3f"|format(score.penalty) }}</td>
+                    <td><strong>{{ "%.3f"|format(score.total) }}</strong></td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% endif %}
 
 </div>

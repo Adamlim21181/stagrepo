@@ -101,11 +101,6 @@ def scoring():
     if 'user_id' not in session:
         return render_template('nologin.html')
 
-    user_roles = session.get('roles', [])
-    if 'admin' not in user_roles and 'judges' not in user_roles:
-        flash('Access denied.', 'danger')
-        return render_template('nologin.html')
-
     # Get the live competition
     live_competition = models.Competitions.query.filter_by(
         status='live'
@@ -169,38 +164,81 @@ def scoring():
     if request.method == 'POST':
         entry_id = request.form.get('entry_id')
         apparatus_id = request.form.get('apparatus_id')
-        e_score = float(request.form.get('e_score'))
-        d_score = float(request.form.get('d_score'))
-        penalty = float(request.form.get('penalty'))
-
-        # Calculate total
-        total = e_score + d_score - penalty
-
-        # Check if score already exists for this entry/apparatus combination
-        existing_score = models.Scores.query.filter_by(
-            entry_id=entry_id,
-            apparatus_id=apparatus_id
-        ).first()
-
-        if existing_score:
-            # Update existing score
-            existing_score.e_score = e_score
+        d_score = request.form.get('d_score')
+        penalty = request.form.get('penalty', 0)
+        
+        # Get execution scores (can be multiple)
+        execution_scores = request.form.getlist('execution_scores')
+        
+        try:
+            # Convert to floats and filter out empty values
+            execution_scores = [
+                float(score) for score in execution_scores 
+                if score and score.strip()
+            ]
+            
+            if not execution_scores:
+                flash('Please enter at least one execution score.', 'warning')
+                return redirect(url_for('main.scoring'))
+            
+            d_score = float(d_score) if d_score else 0.0
+            penalty = float(penalty) if penalty else 0.0
+            
+            # Find existing score or create new one
+            existing_score = models.Scores.query.filter_by(
+                entry_id=entry_id,
+                apparatus_id=apparatus_id
+            ).first()
+            
+            if existing_score:
+                # Clear existing judge scores
+                models.JudgeScores.query.filter_by(
+                    score_id=existing_score.id
+                ).delete()
+            else:
+                # Create new score record
+                existing_score = models.Scores(
+                    entry_id=entry_id,
+                    apparatus_id=apparatus_id,
+                    e_score=0.0,
+                    d_score=d_score,
+                    penalty=penalty,
+                    total=0.0
+                )
+                db.session.add(existing_score)
+                db.session.flush()  # Get the ID
+            
+            # Update D-score and penalty
             existing_score.d_score = d_score
             existing_score.penalty = penalty
-            existing_score.total = total
-            flash('Score updated successfully!', 'success')
-        else:
-            # Create new score
-            new_score = models.Scores(
-                entry_id=entry_id,
-                apparatus_id=apparatus_id,
-                e_score=e_score,
-                d_score=d_score,
-                penalty=penalty,
-                total=total
-            )
-            db.session.add(new_score)
-            flash('Score added successfully!', 'success')
+            
+            if len(execution_scores) == 1:
+                # Single judge scoring
+                existing_score.e_score = execution_scores[0]
+                existing_score.total = (existing_score.e_score + 
+                                      existing_score.d_score - 
+                                      existing_score.penalty)
+                flash(f'Score submitted! Total: {existing_score.total:.3f}', 
+                      'success')
+            else:
+                # Multiple judge scoring - save individual scores and average
+                for judge_num, e_score in enumerate(execution_scores, 1):
+                    judge_score = models.JudgeScores(
+                        score_id=existing_score.id,
+                        judge_number=judge_num,
+                        e_score=round(e_score, 3)
+                    )
+                    db.session.add(judge_score)
+                
+                # Calculate and update averaged E-score
+                existing_score.update_final_score()
+                flash(f'Multi-judge score submitted! Average E-score: '
+                      f'{existing_score.e_score:.3f}, Total: '
+                      f'{existing_score.total:.3f}', 'success')
+            
+        except ValueError as e:
+            flash(f'Invalid score values: {str(e)}', 'danger')
+            return redirect(url_for('main.scoring'))
 
         db.session.commit()
 
