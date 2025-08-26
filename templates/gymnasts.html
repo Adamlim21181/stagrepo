@@ -28,9 +28,9 @@
                         <label for="gymnast_club">Club</label>
                         <select id="gymnast_club" name="club" required>
                             <option value="">Select a club...</option>
-                            <option value="1">Elite Gymnastics Club</option>
-                            <option value="2">Champion Academy</option>
-                            <option value="3">Rising Stars</option>
+                            {% for club in clubs %}
+                            <option value="{{ club.id }}">{{ club.name }}</option>
+                            {% endfor %}
                         </select>
                         {% if gymnast_form.club.errors %}
                         <ul class="error-list">
@@ -45,11 +45,17 @@
                         <label for="gymnast_level">Level</label>
                         <select id="gymnast_level" name="level" required>
                             <option value="">Select level...</option>
-                            <option value="1">Level 1</option>
-                            <option value="2">Level 2</option>
-                            <option value="3">Level 3</option>
-                            <option value="4">Level 4</option>
-                            <option value="5">Level 5</option>
+                            <option value="Level 1">Level 1</option>
+                            <option value="Level 2">Level 2</option>
+                            <option value="Level 3">Level 3</option>
+                            <option value="Level 4">Level 4</option>
+                            <option value="Level 5">Level 5</option>
+                            <option value="Level 6">Level 6</option>
+                            <option value="Level 7">Level 7</option>
+                            <option value="Level 8">Level 8</option>
+                            <option value="Level 9">Level 9</option>
+                            <option value="Junior International">Junior International</option>
+                            <option value="Senior International">Senior International</option>
                         </select>
                         {% if gymnast_form.level.errors %}
                         <ul class="error-list">
@@ -105,32 +111,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Sample data - replace with {% for row in gymnasts %} -->
+                        {% for gymnast in gymnasts %}
                         <tr>
-                            <td class="id-column">001</td>
-                            <td>Elite Gymnastics Club</td>
-                            <td>Sarah Johnson</td>
+                            <td class="id-column">{{ "%03d"|format(gymnast.id) }}</td>
+                            <td>{{ gymnast.clubs.name }}</td>
+                            <td>{{ gymnast.name }}</td>
                             <td class="level-column">
-                                <span class="level-badge">Level 3</span>
+                                <span class="level-badge">{{ gymnast.level }}</span>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="id-column">002</td>
-                            <td>Champion Academy</td>
-                            <td>Emma Davis</td>
-                            <td class="level-column">
-                                <span class="level-badge">Level 4</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="id-column">003</td>
-                            <td>Rising Stars</td>
-                            <td>Olivia Wilson</td>
-                            <td class="level-column">
-                                <span class="level-badge">Level 2</span>
-                            </td>
-                        </tr>
-                        <!-- {% endfor %} -->
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

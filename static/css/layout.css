@@ -457,20 +457,3 @@ nav {
   color: var(--text-muted);
   font-size: var(--font-size-sm);
 }
-
-/* Responsive footer */
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
-    padding: 0 var(--spacing-md);
-  }
-  
-  .footer-section {
-    text-align: center;
-  }
-  
-  .footer-links a:hover {
-    transform: none;
-  }
-}

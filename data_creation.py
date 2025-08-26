@@ -87,9 +87,7 @@ def add_apparatus():
 
 def add_competitions():
     from datetime import datetime, timedelta
-    
-    seasons = [season.id for season in models.Seasons.query.all()]
-    
+
     # Base date around current date (July 23, 2025)
     base_date = datetime(2025, 7, 23).date()
 
@@ -97,13 +95,23 @@ def add_competitions():
         street_address = fake.street_address()
         city = fake.city()
         address = f"{street_address}, {city}"
-        
+
         # Generate dates within 6 months before and after current date
         days_offset = random.randint(-180, 180)
         competition_date = base_date + timedelta(days=days_offset)
 
+        # Find the correct season based on the competition year
+        competition_year = competition_date.year
+        season = models.Seasons.query.filter_by(year=competition_year).first()
+
+        # If no season exists for that year, create one
+        if not season:
+            season = models.Seasons(year=competition_year)
+            db.session.add(season)
+            db.session.flush()  # Get the ID
+
         competition = models.Competitions(
-            season_id=random.choice(seasons),
+            season_id=season.id,
             name=fake.color_name(),
             address=address,
             competition_date=competition_date
@@ -224,6 +232,30 @@ def add_sample_judge_scores():
     print(f"Sample judge scores added for {len(scores)} routines.")
 
 
+def clear_all_data():
+    """Clear all data from the database and reset auto-increment counters"""
+    print("Clearing all existing data...")
+    
+    # Delete all data in reverse order of dependencies
+    db.session.execute('DELETE FROM judge_scores')
+    db.session.execute('DELETE FROM scores')
+    db.session.execute('DELETE FROM entries')
+    db.session.execute('DELETE FROM user_roles')
+    db.session.execute('DELETE FROM gymnasts')
+    db.session.execute('DELETE FROM competitions')
+    db.session.execute('DELETE FROM apparatus')
+    db.session.execute('DELETE FROM clubs')
+    db.session.execute('DELETE FROM seasons')
+    db.session.execute('DELETE FROM users')
+    db.session.execute('DELETE FROM roles')
+    
+    # Reset auto-increment counters for SQLite
+    db.session.execute('UPDATE sqlite_sequence SET seq = 0 WHERE name IN ("roles", "users", "seasons", "clubs", "apparatus", "competitions", "gymnasts", "entries", "scores", "judge_scores")')
+    
+    db.session.commit()
+    print("All data cleared and auto-increment counters reset.")
+
+
 def create_random_data():
     db.create_all()
     add_roles()
@@ -237,3 +269,10 @@ def create_random_data():
     add_scores()
     add_sample_judge_scores()  # Add judge scores after regular scores
     print("All data created successfully including judge scores!")
+
+
+def recreate_all_data():
+    """Clear all data and recreate fresh data"""
+    clear_all_data()
+    create_random_data()
+    print("Database completely recreated with fresh data!")

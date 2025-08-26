@@ -17,18 +17,8 @@ class AddGymnast(FlaskForm):
         validators=[DataRequired('Please enter a name')]
     )
 
-    club = QuerySelectField(
+    club = SelectField(
         'Club',
-
-        # query_factory is a callable that is required by QuerySelectField.
-
-        # lambda is just a quick way to create a function inline
-        # without having to define the full def function.
-        query_factory=lambda: models.Clubs.query.all(),
-
-        get_label='name',
-        allow_blank=True,
-        blank_text='Select Club',
         validators=[DataRequired('Select Club')]
     )
 
