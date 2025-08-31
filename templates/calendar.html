@@ -40,8 +40,8 @@
 
                 {% if day in competitions_by_date %}
                 {% for competition in competitions_by_date[day] %}
-                <div class="competition {{ competition.status }}"
-                    onclick="showCompetitionModal('{{ competition.id }}')">
+                <div class="competition {{ competition.status }}" data-competition-id="{{ competition.id }}">
+
                     <div class="competition-title">{{ competition.name }}</div>
                     {% if competition.started_at %}
                     <div class="competition-time">

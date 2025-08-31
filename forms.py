@@ -4,9 +4,10 @@ from wtforms import (
     SelectField,
     IntegerField,
     SubmitField,
-    PasswordField
+    PasswordField,
+    HiddenField
 )
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from wtforms_sqlalchemy.fields import QuerySelectField
 import models
 
@@ -102,3 +103,14 @@ class LoginForm(FlaskForm):
     )
 
     submit = SubmitField('Login')
+
+
+class ResultsSearchForm(FlaskForm):
+    """Search/sort/pagination controls for the results page."""
+    search = StringField('Search results', validators=[Optional()])
+    per_page = SelectField('Rows per page',
+                           coerce=int, validators=[Optional()])
+    sort_by = SelectField('Sort by', validators=[Optional()])
+    # Keep sort_order in the form so it persists across GET submits
+    sort_order = HiddenField(validators=[Optional()])
+    submit = SubmitField('Search')

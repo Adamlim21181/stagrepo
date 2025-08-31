@@ -7,27 +7,19 @@
     <div class="top-controls">
         <div class="search-controls">
             <form method="GET" action="{{ url_for('main.results') }}" id="searchForm">
-                <input type="text" name="search" id="search" placeholder="Search results" autocomplete="off"
-                    value="{{ search_query }}" />
+                {{ form.hidden_tag() }}
+                {{ form.sort_order(id='sort_order', value=current_sort_order) }}
+
+                {{ form.search(id='search', placeholder='Search results', autocomplete='off') }}
 
                 <label for="per_page">Rows per page:</label>
-                <select name="per_page" id="per_page" onchange="document.getElementById('searchForm').submit();">
-                    {% for value, label in pagination_options %}
-                    <option value="{{ value }}" {{ 'selected' if per_page==value else '' }}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                {{ form.per_page(id='per_page', onchange="document.getElementById('searchForm').submit();") }}
 
-                <!-- Add sorting controls to the search form -->
                 <label for="sort_by">Sort by:</label>
-                <select name="sort_by" id="sort_by" onchange="document.getElementById('searchForm').submit();">
-                    {% for value, label in sort_options %}
-                    <option value="{{ value }}" {{ 'selected' if current_sort_by==value else '' }}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                {{ form.sort_by(id='sort_by', onchange="document.getElementById('searchForm').submit();") }}
 
-                <button type="submit">Search</button>
+                {{ form.submit() }}
 
-                <!-- Reset buttons -->
                 {% if search_query %}
                 <a href="{{ url_for('main.results', per_page=per_page, sort_by=current_sort_by, sort_order=current_sort_order) }}"
                     class="btn-reset">Clear Search</a>
@@ -37,6 +29,7 @@
                 <a href="{{ url_for('main.results') }}" class="btn-reset">Reset All</a>
                 {% endif %}
             </form>
+
 
             {% if search_query %}
             <p>Search query: <strong>{{ search_query }}</strong></p>
@@ -203,7 +196,8 @@
                     </th>
                 </tr>
 
-                {% for row in results.items %}
+                {% for row in results %}
+
                 <tr>
                     <td class="col-id">{{ row.id }}</td>
                     <td class="col-entry">{{ row.entry_id }}</td>
@@ -221,29 +215,48 @@
         </div>
 
         <!-- Pagination -->
+        {% if pagination %}
         <div class="pagination">
-            {% if results.has_prev %}
-            <a
-                href="{{ url_for('main.results', page=results.prev_num, per_page=per_page, search=search_query, sort_by=current_sort_by, sort_order=current_sort_order) }}">‹
-                Prev</a>
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('main.results',
+                        page=pagination.prev_num,
+                        per_page=per_page,
+                        search=search_query,
+                        sort_by=current_sort_by,
+                        sort_order=current_sort_order) }}">
+                ‹ Prev
+            </a>
             {% endif %}
 
-            {% for num in results.iter_pages() %}
+            {% for num in pagination.iter_pages() %}
             {% if num %}
-            <a href="{{ url_for('main.results', page=num, per_page=per_page, search=search_query, sort_by=current_sort_by, sort_order=current_sort_order) }}"
-                {% if num==results.page %}style="background-color: #4CAF50; color: white; border-color: #4CAF50;" {%
-                endif %}>{{ num }}</a>
+            <a href="{{ url_for('main.results',
+                                page=num,
+                                per_page=per_page,
+                                search=search_query,
+                                sort_by=current_sort_by,
+                                sort_order=current_sort_order) }}" {% if num==pagination.page %}
+                style="background-color:#4CAF50;color:white;border-color:#4CAF50;" {% endif %}>
+                {{ num }}
+            </a>
             {% else %}
-            <span style="padding: 6px; color: #999;">…</span>
+            <span style="padding:6px;color:#999;">…</span>
             {% endif %}
             {% endfor %}
 
-            {% if results.has_next %}
-            <a
-                href="{{url_for('main.results', page=results.next_num, per_page=per_page, search=search_query, sort_by=current_sort_by, sort_order=current_sort_order) }}">Next
-                ›</a>
+            {% if pagination.has_next %}
+            <a href="{{ url_for('main.results',
+                        page=pagination.next_num,
+                        per_page=per_page,
+                        search=search_query,
+                        sort_by=current_sort_by,
+                        sort_order=current_sort_order) }}">
+                Next ›
+            </a>
             {% endif %}
         </div>
+        {% endif %}
+
     </div>
 
 </div><!--content-->

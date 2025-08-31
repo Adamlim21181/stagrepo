@@ -62,7 +62,11 @@ def gymnasts():
 
     if request.method == 'POST':
         # Check which form was submitted
-        if 'name' in request.form and 'club' in request.form and 'level' in request.form:
+        if (
+            'name' in request.form and
+            'club' in request.form and
+            'level' in request.form
+        ):
             # Gymnast form submitted - validate manually
             name = request.form.get('name', '').strip()
             club_id = request.form.get('club', '')
@@ -105,7 +109,7 @@ def gymnasts():
 
                 db.session.add(new_club)
                 db.session.commit()
-                
+
                 flash(f'Club "{name}" added successfully!', 'success')
                 return redirect(url_for('main.gymnasts'))
 
@@ -191,30 +195,30 @@ def scoring():
         apparatus_id = request.form.get('apparatus_id')
         d_score = request.form.get('d_score')
         penalty = request.form.get('penalty', 0)
-        
+
         # Get execution scores (can be multiple)
         execution_scores = request.form.getlist('execution_scores')
-        
+
         try:
             # Convert to floats and filter out empty values
             execution_scores = [
-                float(score) for score in execution_scores 
+                float(score) for score in execution_scores
                 if score and score.strip()
             ]
-            
+
             if not execution_scores:
                 flash('Please enter at least one execution score.', 'warning')
                 return redirect(url_for('main.scoring'))
-            
+
             d_score = float(d_score) if d_score else 0.0
             penalty = float(penalty) if penalty else 0.0
-            
+
             # Find existing score or create new one
             existing_score = models.Scores.query.filter_by(
                 entry_id=entry_id,
                 apparatus_id=apparatus_id
             ).first()
-            
+
             if existing_score:
                 # Clear existing judge scores
                 models.JudgeScores.query.filter_by(
@@ -232,18 +236,18 @@ def scoring():
                 )
                 db.session.add(existing_score)
                 db.session.flush()  # Get the ID
-            
+
             # Update D-score and penalty
             existing_score.d_score = d_score
             existing_score.penalty = penalty
-            
+
             if len(execution_scores) == 1:
                 # Single judge scoring
                 existing_score.e_score = execution_scores[0]
-                existing_score.total = (existing_score.e_score + 
-                                      existing_score.d_score - 
-                                      existing_score.penalty)
-                flash(f'Score submitted! Total: {existing_score.total:.3f}', 
+                existing_score.total = (existing_score.e_score +
+                                        existing_score.d_score -
+                                        existing_score.penalty)
+                flash(f'Score submitted! Total: {existing_score.total:.3f}',
                       'success')
             else:
                 # Multiple judge scoring - save individual scores and average
@@ -254,13 +258,13 @@ def scoring():
                         e_score=round(e_score, 3)
                     )
                     db.session.add(judge_score)
-                
+
                 # Calculate and update averaged E-score
                 existing_score.update_final_score()
                 flash(f'Multi-judge score submitted! Average E-score: '
                       f'{existing_score.e_score:.3f}, Total: '
                       f'{existing_score.total:.3f}', 'success')
-            
+
         except ValueError as e:
             flash(f'Invalid score values: {str(e)}', 'danger')
             return redirect(url_for('main.scoring'))
@@ -493,27 +497,16 @@ def login():
 
 @main.route('/results')
 def results():
-    search_query = request.args.get('search', '', type=str)
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 5, type=int)
+    """Results page with WTForms search, sorting, and pagination."""
+    # Build WTForms-based search form (GET; CSRF off for idempotent query)
+    form = forms.ResultsSearchForm(request.args, meta={'csrf': False})
+    search_query = form.search.data or ''
 
-    # Add sorting parameters
-
-    # Default sort by total score
-    sort_by = request.args.get('sort_by', 'total', type=str)
-    # Default descending
-    sort_order = request.args.get('sort_order', 'desc', type=str)
-
-    # Define pagination options
-    pagination_options = [(5, '5'),
-                          (10, '10'),
-                          (20, '20'),
-                          (50, '50'),
-                          (100, '100'),
-                          (1000, '1000'),
-                          (-1, 'All')]
-
-    # Define sorting options for the template
+    # Choices for the form
+    pagination_options = [
+        (5, '5'), (10, '10'), (20, '20'), (50, '50'),
+        (100, '100'), (1000, '1000'), (-1, 'All'),
+    ]
     sort_options = [
         ('total', 'Total Score'),
         ('e_score', 'Execution Score'),
@@ -524,119 +517,115 @@ def results():
         ('competition_name', 'Competition'),
         ('apparatus_name', 'Apparatus'),
         ('level', 'Level'),
-        ('id', 'ID'),
-        ('entry_id', 'Entry ID')
+        ('id', 'Gymnast ID'),
+        ('entry_id', 'Entry ID'),
     ]
+    form.per_page.choices = pagination_options
+    form.sort_by.choices = sort_options
 
-    # Start with base query including necessary joins
-    query = models.Scores.query\
-        .join(models.Entries)\
-        .join(models.Gymnasts)\
-        .join(models.Clubs)\
-        .join(models.Competitions)\
-        .join(models.Apparatus)
+    # Read current controls (with defaults)
+    per_page = form.per_page.data if form.per_page.data is not None else 5
+    sort_by = form.sort_by.data or 'total'
+    sort_order = form.sort_order.data or request.args.get('sort_order', 'desc')
 
-    # Add search filter if search term provided
+    # Base query: return Scores ORM objects and eager-load relations
+    query = (
+        models.Scores.query
+        .join(models.Entries, models.Scores.entry_id == models.Entries.id)
+        .join(models.Gymnasts, models.Entries.gymnast_id == models.Gymnasts.id)
+        .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)
+        .join(
+            models.Competitions,
+            models.Entries.competition_id == models.Competitions.id
+        )
+        .join(
+            models.Apparatus,
+            models.Scores.apparatus_id == models.Apparatus.id
+        )
+        .options(
+            db.joinedload(models.Scores.entry)
+              .joinedload(models.Entries.gymnasts)
+              .joinedload(models.Gymnasts.clubs),
+            db.joinedload(models.Scores.entry)
+              .joinedload(models.Entries.competitions),
+            db.joinedload(models.Scores.apparatus),
+        )
+    )
+
+    # Search filter
     if search_query:
+        like = f"%{search_query}%"
         query = query.filter(
-            or_(
-                # Integer fields - cast to string for searching
-                cast(models.Scores.id, String).contains(search_query),
-                cast(models.Scores.entry_id, String).contains(search_query),
-
-                # Float fields - cast to string for searching
-                cast(models.Scores.e_score, String).contains(search_query),
-                cast(models.Scores.d_score, String).contains(search_query),
-                cast(models.Scores.penalty, String).contains(search_query),
-                cast(models.Scores.total, String).contains(search_query),
-
-                # Related table fields - use proper join syntax
-                models.Competitions.name.contains(search_query),
-                models.Gymnasts.name.contains(search_query),
-                models.Gymnasts.level.contains(search_query),
-                models.Clubs.name.contains(search_query),
-                models.Apparatus.name.contains(search_query)
+            db.or_(
+                models.Gymnasts.name.ilike(like),
+                models.Clubs.name.ilike(like),
+                models.Competitions.name.ilike(like),
+                models.Apparatus.name.ilike(like),
+                models.Gymnasts.level.ilike(like),
+                db.cast(models.Entries.id, db.String).ilike(like),
+                db.cast(models.Gymnasts.id, db.String).ilike(like),
             )
         )
 
-    # Add sorting logic
-    if sort_by == 'gymnast_name':
-        sort_column = models.Gymnasts.name
-    elif sort_by == 'club_name':
-        sort_column = models.Clubs.name
-    elif sort_by == 'competition_name':
-        sort_column = models.Competitions.name
-    elif sort_by == 'apparatus_name':
-        sort_column = models.Apparatus.name
-    elif sort_by == 'level':
-        sort_column = models.Gymnasts.level
-    elif sort_by == 'id':
-        sort_column = models.Scores.id
-    elif sort_by == 'entry_id':
-        sort_column = models.Scores.entry_id
-    elif sort_by == 'e_score':
-        sort_column = models.Scores.e_score
-    elif sort_by == 'd_score':
-        sort_column = models.Scores.d_score
-    elif sort_by == 'penalty':
-        sort_column = models.Scores.penalty
+    # Sorting
+    # For 'total', sort by e + d - penalty;
+    # for others use columns/related columns
+    total_expr = (
+        models.Scores.e_score + models.Scores.d_score - models.Scores.penalty
+    )
+    sort_map = {
+        'total': total_expr,
+        'e_score': models.Scores.e_score,
+        'd_score': models.Scores.d_score,
+        'penalty': models.Scores.penalty,
+        'gymnast_name': models.Gymnasts.name,
+        'club_name': models.Clubs.name,
+        'competition_name': models.Competitions.name,
+        'apparatus_name': models.Apparatus.name,
+        'level': models.Gymnasts.level,
+        'id': models.Gymnasts.id,
+        'entry_id': models.Entries.id,
+    }
+    sort_col = sort_map.get(sort_by, total_expr)
+    query = query.order_by(
+        db.desc(sort_col) if sort_order == 'desc' else db.asc(sort_col)
+    )
+
+    # Pagination
+    if per_page == -1:  # show all
+        results = query.all()
+        pagination = None
     else:
-        # Default to total score
-        sort_column = models.Scores.total
+        page = request.args.get('page', 1, type=int)
+        # If you’re on Flask-SQLAlchemy >=3, prefer db.paginate(query, ...)
+        try:
+            pagination = query.paginate(
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
+        except AttributeError:
+            pagination = db.paginate(
+                query,
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
+        results = pagination.items
 
-    # Apply sorting
-    if sort_order == 'desc':
-        query = query.order_by(sort_column.desc())
-    else:
-        query = query.order_by(sort_column.asc())
-
-    # Handle "All" option vs normal pagination
-    if per_page == -1:
-        # Show all results, no pagination
-        all_results = query.all()
-
-        # Create a mock pagination object with
-        # all necessary attributes and methods
-        class MockPagination:
-            def __init__(self, items):
-                self.items = items
-                self.total = len(items)
-                self.pages = 1
-                self.page = 1
-                self.per_page = len(items)
-                self.has_prev = False
-                self.has_next = False
-                self.prev_num = None
-                self.next_num = None
-
-            def iter_pages(
-                self,
-                left_edge=2,
-                left_current=2,
-                right_current=3,
-                right_edge=2
-            ):
-                # For "All", we only have 1 page, so just return [1]
-                return [1]
-
-        paginated_results = MockPagination(all_results)
-    else:
-        # Apply normal pagination
-        paginated_results = query.paginate(
-            page=page,
-            per_page=per_page,
-            error_out=False
-        )
+    print('DEBUG total rows:', query.count())
 
     return render_template(
         'results.html',
-        results=paginated_results,
-        per_page=per_page,
         search_query=search_query,
+        current_sort_by=sort_by,
+        current_sort_order=sort_order,
+        per_page=per_page,
+        form=form,
+        results=results,
+        pagination=pagination,
         pagination_options=pagination_options,
         sort_options=sort_options,
-        current_sort_by=sort_by,
-        current_sort_order=sort_order
     )
 
 
@@ -659,13 +648,13 @@ def entries():
     # Handle adding new entry
     if request.method == 'POST':
         competition_id = request.form.get('competition_id')
-        
+
         # Check if this is bulk add
         if request.form.get('bulk_add'):
             gymnast_ids = request.form.getlist('gymnast_ids')
             added_count = 0
             duplicate_count = 0
-            
+
             for gymnast_id in gymnast_ids:
                 # Check if entry already exists
                 existing_entry = models.Entries.query.filter_by(
@@ -682,18 +671,25 @@ def entries():
                     added_count += 1
                 else:
                     duplicate_count += 1
-            
+
             db.session.commit()
-            
+
             if added_count > 0:
-                flash(f'Added {added_count} gymnasts to the competition!', 'success')
+                flash(
+                    f'Added {added_count} gymnasts to the competition!',
+                    'success'
+                )
             if duplicate_count > 0:
-                flash(f'{duplicate_count} gymnasts were already in the competition.', 'info')
-        
+                flash(
+                    (f'{duplicate_count} gymnasts were already in the '
+                     'competition.'),
+                    'info'
+                )
+
         else:
             # Single gymnast add
             gymnast_id = request.form.get('gymnast_id')
-            
+
             # Check if entry already exists
             existing_entry = models.Entries.query.filter_by(
                 competition_id=competition_id,
@@ -701,7 +697,10 @@ def entries():
             ).first()
 
             if existing_entry:
-                flash('This gymnast is already entered in this competition!', 'warning')
+                flash(
+                    'This gymnast is already entered in this competition!',
+                    'warning'
+                )
             else:
                 new_entry = models.Entries(
                     competition_id=competition_id,
@@ -714,25 +713,53 @@ def entries():
         return redirect(url_for('main.entries'))
 
     # Get all competitions, gymnasts, and clubs
-    competitions = models.Competitions.query.order_by(models.Competitions.competition_date.desc()).all()
-    gymnasts = models.Gymnasts.query.order_by(models.Gymnasts.name).all()
+    competitions = (
+        models.Competitions.query
+        .order_by(models.Competitions.competition_date.desc())
+        .all()
+    )
+    gymnasts = (
+        models.Gymnasts.query
+        .order_by(models.Gymnasts.name)
+        .all()
+    )
     clubs = models.Clubs.query.order_by(models.Clubs.name).all()
-    
+
     # Get unique levels
-    levels = db.session.query(models.Gymnasts.level).distinct().order_by(models.Gymnasts.level).all()
+    levels = (
+        db.session.query(models.Gymnasts.level)
+        .distinct()
+        .order_by(models.Gymnasts.level)
+        .all()
+    )
     levels = [level[0] for level in levels]
 
     # Get all entries with related data
-    entries = db.session.query(models.Entries, models.Competitions,
-                               models.Gymnasts, models.Clubs)\
-        .join(models.Competitions,
-              models.Entries.competition_id == models.Competitions.id)\
-        .join(models.Gymnasts,
-              models.Entries.gymnast_id == models.Gymnasts.id)\
-        .join(models.Clubs,
-              models.Gymnasts.club_id == models.Clubs.id)\
-        .order_by(models.Competitions.competition_date.desc(), models.Gymnasts.name)\
+    entries = (
+        db.session.query(
+            models.Entries,
+            models.Competitions,
+            models.Gymnasts,
+            models.Clubs
+        )
+        .join(
+            models.Competitions,
+            models.Entries.competition_id == models.Competitions.id
+        )
+        .join(
+            models.Gymnasts,
+            models.Entries.gymnast_id == models.Gymnasts.id
+        )
+        .join(
+            models.Clubs,
+            models.Gymnasts.club_id == models.Clubs.id
+        )
+        .order_by(
+            models.Competitions.competition_date.desc(),
+            models.Gymnasts.name
+        )
         .all()
+    )
 
     return render_template(
         'entries.html',
@@ -792,7 +819,8 @@ def competitions():
         flash('Competition added successfully!', 'success')
         return redirect(url_for('main.competitions'))
 
-    # Get all competitions ordered by date (newest first), then by ID (newest first)
+    # Get all competitions ordered by date (newest first),
+    # then by ID (newest first)
     competitions = models.Competitions.query.order_by(
         models.Competitions.competition_date.desc(),
         models.Competitions.id.desc()
