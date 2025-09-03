@@ -873,3 +873,119 @@ def end_competition(competition_id):
     db.session.commit()
     flash(f'Competition "{competition.name}" has ended.', 'success')
     return redirect(url_for('main.competitions'))
+
+
+@main.route('/admin/competition/<int:competition_id>/delete', methods=['POST'])
+def delete_competition(competition_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    comp = models.Competitions.query.get_or_404(competition_id)
+
+    # Don’t allow deleting a live comp
+    if getattr(comp, 'status', None) == 'live':
+        flash("You can't delete a LIVE competition.", 'warning')
+        return redirect(url_for('main.competitions'))
+
+    # Cascade delete manually
+    db.session.query(models.JudgeScores) \
+        .join(models.Scores) \
+        .join(models.Entries) \
+        .filter(models.Entries.competition_id == comp.id) \
+        .delete()
+
+    db.session.query(models.Scores).join(models.Entries) \
+        .filter(models.Entries.competition_id == comp.id).delete()
+
+    db.session.query(models.Entries) \
+        .filter(models.Entries.competition_id == comp.id).delete()
+
+    db.session.delete(comp)
+    db.session.commit()
+
+    flash('Competition and related data deleted successfully!', 'success')
+    return redirect(url_for('main.competitions'))
+
+
+@main.route('/admin/entry/<int:entry_id>/delete', methods=['POST'])
+def delete_entry(entry_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    entry = models.Entries.query.get_or_404(entry_id)
+
+    db.session.query(models.JudgeScores).join(models.Scores) \
+        .filter(models.Scores.entry_id == entry.id).delete()
+
+    db.session.query(models.Scores) \
+        .filter(models.Scores.entry_id == entry.id).delete()
+
+    db.session.delete(entry)
+    db.session.commit()
+
+    flash('Entry deleted successfully!', 'success')
+    return redirect(url_for('main.entries'))
+
+
+@main.route('/admin/gymnast/<int:gymnast_id>/delete', methods=['POST'])
+def delete_gymnast(gymnast_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    gymnast = models.Gymnasts.query.get_or_404(gymnast_id)
+
+    # Delete JudgeScores first (find them via joined tables)
+    judge_scores_to_delete = db.session.query(models.JudgeScores) \
+        .join(models.Scores) \
+        .join(models.Entries) \
+        .filter(models.Entries.gymnast_id == gymnast.id) \
+        .all()
+    
+    for judge_score in judge_scores_to_delete:
+        db.session.delete(judge_score)
+
+    # Delete Scores (find them via entries)
+    scores_to_delete = db.session.query(models.Scores) \
+        .join(models.Entries) \
+        .filter(models.Entries.gymnast_id == gymnast.id) \
+        .all()
+    
+    for score in scores_to_delete:
+        db.session.delete(score)
+
+    # Delete Entries directly (no join needed)
+    entries_to_delete = models.Entries.query.filter_by(
+        gymnast_id=gymnast.id
+    ).all()
+    for entry in entries_to_delete:
+        db.session.delete(entry)
+
+    # Finally delete the gymnast
+    db.session.delete(gymnast)
+    db.session.commit()
+
+    flash('Gymnast and related data deleted successfully!', 'success')
+    return redirect(url_for('main.gymnasts'))
+
+
+@main.route('/admin/score/<int:score_id>/delete', methods=['POST'])
+def delete_score(score_id):
+    if 'user_id' not in session or 'admin' not in session.get('roles', []):
+        flash('Access denied', 'danger')
+        return redirect(url_for('main.home'))
+
+    # Get the score (404 if not found)
+    score = models.Scores.query.get_or_404(score_id)
+
+    # First delete judge scores linked to this score
+    db.session.query(models.JudgeScores).filter_by(score_id=score.id).delete()
+
+    # Then delete the score itself
+    db.session.delete(score)
+    db.session.commit()
+
+    flash('Score deleted successfully!', 'success')
+    return redirect(url_for('main.scoring'))

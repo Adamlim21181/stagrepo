@@ -108,6 +108,7 @@
                             <th>Club</th>
                             <th>Name</th>
                             <th class="level-column">Level</th>
+                            <th>actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -118,6 +119,15 @@
                             <td>{{ gymnast.name }}</td>
                             <td class="level-column">
                                 <span class="level-badge">{{ gymnast.level }}</span>
+                            </td>
+                            <td class="actions">
+                                <form method="POST" action="{{ url_for('main.delete_gymnast', gymnast_id=gymnast.id) }}"
+                                    style="display:inline"
+                                    onsubmit="return confirm('Delete this gymnast and all their entries/scores?');">
+                                    {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+
                             </td>
                         </tr>
                         {% endfor %}

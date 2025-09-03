@@ -74,9 +74,14 @@
                         <td>{{ gymnast.name }}</td>
                         <td>{{ club.name }}</td>
                         <td>{{ gymnast.level }}</td>
-                        <td>
-                            <a href="#" class="btn btn-danger btn-sm">Remove</a>
+                        <td class="actions">
+                            <form method="POST" action="{{ url_for('main.delete_entry', entry_id=entry.Entries.id) }}"
+                                style="display:inline" onsubmit="return confirm('Delete this entry and its scores?');">
+                                {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
                         </td>
+
                     </tr>
                     {% endfor %}
                 </tbody>

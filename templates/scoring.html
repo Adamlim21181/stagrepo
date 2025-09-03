@@ -206,6 +206,7 @@
                     <th>D Score</th>
                     <th>Penalty</th>
                     <th>Total</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -238,6 +239,14 @@
                     <td>{{ "%.3f"|format(score.d_score) }}</td>
                     <td>{{ "%.3f"|format(score.penalty) }}</td>
                     <td><strong>{{ "%.3f"|format(score.total) }}</strong></td>
+                    <td class="actions">
+                        <form method="POST" action="{{ url_for('main.delete_score', score_id=score.id) }}"
+                            style="display:inline" onsubmit="return confirm('Delete this score?');">
+                            {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+
+                    </td>
                 </tr>
                 {% endfor %}
                 {% endfor %}
