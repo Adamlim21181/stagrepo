@@ -22,7 +22,7 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                    </div>
+                    </div> <!-- form-group -->
 
                     <div class="form-group">
                         <label for="gymnast_club">Club</label>
@@ -39,7 +39,7 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                    </div>
+                    </div> <!-- form-group -->
 
                     <div class="form-group">
                         <label for="gymnast_level">Level</label>
@@ -64,13 +64,13 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                    </div>
+                    </div> <!-- form-group -->
 
                     <div class="form-group">
                         <input type="submit" value="Add Gymnast">
-                    </div>
+                    </div> <!-- /.form-group -->
                 </form>
-            </div>
+            </div> <!-- form-section -->
 
             <!-- Add Club Form -->
             <div class="form-section">
@@ -88,14 +88,14 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
-                    </div>
+                    </div> <!-- form-group -->
 
                     <div class="form-group">
                         <input type="submit" value="Add Club">
-                    </div>
+                    </div> <!-- form-group -->
                 </form>
-            </div>
-        </div>
+            </div> <!-- form-section -->
+        </div> <!-- forms-container -->
 
         <!-- Gymnasts Table -->
         <div class="table-section">
@@ -128,14 +128,14 @@
                                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
 
-                            </td>
+                            </td> <!-- actions -->
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-</div>
+            </div> <!-- table-container -->
+        </div> <!-- table-section -->
+    </div> <!-- content -->
+</div> <!-- page-container -->
 
 {% endblock %}

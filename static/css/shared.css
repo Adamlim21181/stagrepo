@@ -1,0 +1,107 @@
+/* =============================================
+   FORM STYLES
+   ============================================= */
+.forms {
+  border-radius: var(--spacing-xs);
+  background-color: var(--background-white);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.forms-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  color: var(--text-dark);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+}
+
+.forms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-section {
+  background: linear-gradient(135deg, var(--background-section), var(--background-section-alt));
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-lighter);
+}
+
+.form-section h3 {
+  margin-top: 0;
+  color: var(--text-dark);
+  text-align: center;
+  border-bottom: 2px solid var(--primary-green);
+  padding-bottom: 8px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.form-section .form-group input,
+.form-section .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  box-sizing: border-box;
+  color: var(--text-secondary);
+}
+
+.form-section .form-group input[type="submit"] {
+  background-color: var(--primary-green);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: none;
+}
+
+.form-section .form-group input[type="submit"]:hover {
+  background-color: var(--primary-green-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-green);
+}
+
+.form-section .form-group input:focus,
+.form-section .form-group select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.form-submit {
+  text-align: center;
+}
+
+.form-submit input {
+  padding: 12px var(--spacing-2xl);
+  background-color: var(--primary-green);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  width: auto;
+}
+
+.form-submit input:hover {
+  background-color: var(--primary-green-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-green);
+}
+
+/* =============================================
+   TABLE STYLES
+   ============================================= */
+.tables {
+  border-radius: var(--spacing-xs);
+  background-color: var(--background-white);
+  padding: var(--spacing-md);
+  margin: 0;
+}

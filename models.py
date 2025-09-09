@@ -30,22 +30,11 @@ class Users(db.Model):
         db.String(50), nullable=True
     )
 
-    roles = db.relationship(
-        "Roles", secondary="user_roles", backref="users"
-    )
-
-
-class UserRoles(db.Model):
-
-    __tablename__ = 'user_roles'
-
-    user_id = db.Column(
-        db.Integer, db.ForeignKey('users.id'), primary_key=True
-    )
-
     role_id = db.Column(
-        db.Integer, db.ForeignKey('roles.id'), primary_key=True
+        db.Integer, db.ForeignKey('roles.id'), nullable=False
     )
+
+    role = db.relationship("Roles", backref="users")
 
 
 class Seasons(db.Model):
@@ -236,7 +225,7 @@ class Scores(db.Model):
         if not self.judge_scores:
             # Fallback to stored e_score if no judge scores
             return self.e_score
-        
+
         total_e_score = sum(js.e_score for js in self.judge_scores)
         return round(total_e_score / len(self.judge_scores), 3)
 
@@ -265,9 +254,4 @@ class JudgeScores(db.Model):
 
     e_score = db.Column(
         db.Float, nullable=False
-    )
-
-    # Timestamp for when the score was submitted
-    submitted_at = db.Column(
-        db.DateTime, default=db.func.current_timestamp()
     )

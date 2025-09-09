@@ -7,7 +7,19 @@
 @import './css/base.css';       /* Global styles, resets, and utilities */
 @import './css/components.css'; /* Reusable components (buttons, forms, badges, etc.) */
 @import './css/layout.css';     /* Navigation, grid systems, and layout utilities */
-@import './css/pages.css';      /* Page-specific styles */
+@import './css/shared.css';     /* Shared legacy form and table styles */
+
+/* Page-specific styles */
+@import './css/pages/home.css';
+@import './css/pages/login.css';
+@import './css/pages/calendar.css';
+@import './css/pages/gymnasts.css';
+@import './css/pages/competitions.css';
+@import './css/pages/entries.css';
+@import './css/pages/live.css';
+@import './css/pages/scoring.css';
+@import './css/pages/results.css';
+@import './css/pages/error.css';
 
 /* 
   File Organization:
@@ -15,8 +27,20 @@
   - base.css: Global styles, HTML element resets, utility classes
   - components.css: Buttons, forms, badges, tables, progress bars, pagination
   - layout.css: Navigation, grids, flexbox utilities, search controls
-  - pages.css: Page-specific styles (login, calendar, live, scoring, etc.)
+  - shared.css: Shared legacy form and table styles used across pages
+  - pages/*.css: Individual page-specific styles organized by functionality
+    - home.css: Homepage styles, hero sections, action cards, admin panels
+    - login.css: Login page and authentication styles
+    - calendar.css: Calendar view, modal, competition display styles  
+    - gymnasts.css: Gymnasts page table and form styles
+    - competitions.css: Competition management page styles
+    - entries.css: Entry management and search functionality styles
+    - live.css: Live competition viewing interface styles
+    - scoring.css: Score entry and judge management styles
+    - results.css: Results display and table header styles
+    - error.css: Error page and messaging styles
   
   This modular approach makes the CSS easier to maintain and debug.
   Each file has a specific purpose and can be edited independently.
+  Page styles are now organized by functionality for better scalability.
 */

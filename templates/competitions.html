@@ -8,25 +8,47 @@
     <div class="add-competition">
         <h2>Add New Competition</h2>
         <form method="POST">
-            <div class="form-group">
-                <label for="name">Competition Name:</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+            {{ form.hidden_tag() }}
 
             <div class="form-group">
-                <label for="address">Address:</label>
-                <input type="text" id="address" name="address" required>
-            </div>
+                {{ form.name.label(for="name") }}
+                {{ form.name(id="name", required=True) }}
+                {% if form.name.errors %}
+                <ul class="error-list">
+                    {% for error in form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div> <!-- /.form-group -->
 
             <div class="form-group">
-                <label for="competition_date">Competition Date:</label>
-                <input type="date" id="competition_date" name="competition_date" required>
-            </div>
+                {{ form.address.label(for="address") }}
+                {{ form.address(id="address", required=True) }}
+                {% if form.address.errors %}
+                <ul class="error-list">
+                    {% for error in form.address.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div> <!-- /.form-group -->
 
+            <div class="form-group">
+                {{ form.competition_date.label(for="competition_date") }}
+                {{ form.competition_date(id="competition_date", required=True) }}
+                {% if form.competition_date.errors %}
+                <ul class="error-list">
+                    {% for error in form.competition_date.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div> <!-- /.form-group -->
 
-            <button id="addcomp" type="submit">Add Competition</button>
+            {{ form.submit(id="addcomp") }}
         </form>
-    </div>
+    </div> <!-- /.add-competition -->
 
     <!-- Competition Table -->
     <div class="competitions-list">
@@ -79,12 +101,12 @@
                         </form>
 
 
-                    </td>
+                    </td> <!-- actions -->
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-</div>
+    </div> <!-- competitions-list -->
+</div> <!-- content -->
 
 {% endblock %}

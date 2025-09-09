@@ -2,14 +2,13 @@ from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     SelectField,
-    IntegerField,
     SubmitField,
     PasswordField,
-    HiddenField
+    HiddenField,
+    DateField,
+    FloatField
 )
-from wtforms.validators import DataRequired, Optional
-from wtforms_sqlalchemy.fields import QuerySelectField
-import models
+from wtforms.validators import DataRequired, Optional, NumberRange
 
 
 class AddGymnast(FlaskForm):
@@ -51,46 +50,6 @@ class AddClub(FlaskForm):
     submit = SubmitField('Add Club')
 
 
-class AddScores(FlaskForm):
-    id = IntegerField(
-        'id',
-        validators=[DataRequired('Please Enter a gymnast ID')],
-    )
-
-    apparatus = SelectField(
-        'Apparatus',
-        coerce=int,
-        choices=[
-            (0, 'Select Apparatus'),
-            (1, 'Floor'),
-            (2, 'Pommel Horse'),
-            (3, 'Rings'),
-            (4, 'Vault'),
-            (5, 'Parallel Bars'),
-            (6, 'High Bar')
-        ],
-        validators=[DataRequired('Please select an apparatus')]
-    )
-
-    execution = IntegerField(
-        'Execution',
-        validators=[DataRequired('Please enter an execution score')]
-    )
-
-    difficulty = IntegerField(
-        'Difficulty',
-        validators=[DataRequired('Please enter a difficulty score')]
-    )
-
-    penalty = IntegerField(
-        'Penalty',
-        default=0,
-        validators=[DataRequired('Please enter a penalty score')]
-    )
-
-    submit = SubmitField('Add Score')
-
-
 class LoginForm(FlaskForm):
     username = StringField(
         'Username',
@@ -114,3 +73,72 @@ class ResultsSearchForm(FlaskForm):
     # Keep sort_order in the form so it persists across GET submits
     sort_order = HiddenField(validators=[Optional()])
     submit = SubmitField('Search')
+
+
+class AddCompetitionForm(FlaskForm):
+    name = StringField(
+        'Competition Name',
+        validators=[DataRequired('Please enter a competition name')]
+    )
+    address = StringField(
+        'Address',
+        validators=[DataRequired('Please enter an address')]
+    )
+    competition_date = DateField(
+        'Competition Date',
+        validators=[DataRequired('Please select a competition date')]
+    )
+    submit = SubmitField('Add Competition')
+
+
+class AddEntryForm(FlaskForm):
+    competition_id = SelectField(
+        'Competition',
+        coerce=int,
+        validators=[DataRequired('Please select a competition')]
+    )
+    gymnast_id = SelectField(
+        'Gymnast',
+        coerce=int,
+        validators=[DataRequired('Please select a gymnast')]
+    )
+    submit = SubmitField('Add Entry')
+
+
+class AddScores(FlaskForm):
+    entry_id = SelectField(
+        'Gymnast',
+        coerce=int,
+        validators=[DataRequired('Please select a gymnast')]
+    )
+    apparatus_id = SelectField(
+        'Apparatus',
+        coerce=int,
+        validators=[DataRequired('Please select an apparatus')]
+    )
+    d_score = FloatField(
+        'Difficulty Score',
+        validators=[
+            DataRequired('Please enter a difficulty score'),
+            NumberRange(
+                min=0,
+                max=10,
+                message='Score must be between 0 and 10'
+            )
+        ]
+    )
+    penalty = FloatField(
+        'Penalty',
+        default=0.0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=10,
+                message='Penalty must be between 0 and 10'
+            )
+        ]
+    )
+    # Note: execution_scores will be handled manually in template
+    # for multi-judge support
+    submit = SubmitField('Submit Score')

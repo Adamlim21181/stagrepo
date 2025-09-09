@@ -299,26 +299,23 @@ table {
   border-collapse: collapse;
   font-family: 'Lexend', sans-serif;
   margin: 0;
-  background-color: var(--background-white);
-  border-radius: var(--spacing-xs);
+  background-color: white;
+  border-radius: var(--spacing-sm);
   overflow: hidden;
+  box-shadow: var(--shadow-md);
 }
 
 th, td {
   padding: var(--spacing-md);
   text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-  border: 1px solid #dddddd;
+  border-bottom: 1px solid #eee;
   color: var(--text-secondary);
 }
 
 th {
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
-  background-color: var(--primary-green);
   color: white;
-  color: var(--text-primary);
-  font-weight: 500;
-  font-weight: bold;
+  font-weight: 600;
   font-size: var(--font-size-base);
   position: sticky;
   top: 0;
@@ -399,7 +396,24 @@ td {
   text-align: center;
 }
 
-.pagination a:hover {
+/* Pagination links (both <a> and <span> elements) */
+.pagination-link {
+  padding: var(--border-radius-sm) var(--spacing-sm);
+  background-color: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--spacing-xs);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  transition: var(--transition-fast);
+  min-width: 32px;
+  text-align: center;
+  display: inline-block;
+}
+
+.pagination a:hover,
+.pagination-link:hover {
   background-color: var(--primary-green);
   color: white;
   border-color: var(--primary-green);
@@ -407,10 +421,20 @@ td {
   box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
 }
 
-.pagination a.active {
+.pagination a.active,
+.pagination-link.current {
   background-color: var(--primary-green);
   color: white;
   border-color: var(--primary-green);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+}
+
+.pagination-link.disabled {
+  background-color: var(--background-light);
+  color: var(--text-light);
+  border-color: var(--border-lightest);
+  cursor: not-allowed;
 }
 
 /* =============================================

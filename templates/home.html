@@ -15,10 +15,10 @@
                 <strong>{{ comp.name }} is currently running!</strong>
                 {% endfor %}
                 <a href="{{ url_for('main.live') }}" class="btn btn-primary">View Live Leaderboard</a>
-            </div>
+            </div> <!-- /.live-alert -->
             {% endif %}
-        </div>
-    </section>
+        </div> <!-- /.hero-content -->
+    </section> <!-- /.hero-section -->
 
     <!-- Quick Actions -->
     <section class="quick-actions">
@@ -28,29 +28,29 @@
                 <h3>📊 Results</h3>
                 <p>View competition results and standings</p>
                 <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View Results</a>
-            </div>
+            </div> <!-- /.action-card -->
 
             <div class="action-card">
                 <h3>📺 Live Leaderboard</h3>
                 <p>Follow ongoing competitions in real-time</p>
                 <a href="{{ url_for('main.live') }}" class="btn btn-secondary">Live Scores</a>
-            </div>
+            </div> <!-- /.action-card -->
 
             <div class="action-card">
                 <h3>📅 Calendar</h3>
                 <p>Check upcoming competition dates</p>
                 <a href="{{ url_for('main.calendar_view') }}" class="btn btn-secondary">View Calendar</a>
-            </div>
+            </div> <!-- /.action-card -->
 
             {% if not logged_in %}
             <div class="action-card official-login">
                 <h3>🔐 Officials Login</h3>
                 <p>Access scoring and administration tools</p>
                 <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
-            </div>
+            </div> <!-- /.action-card.official-login -->
             {% endif %}
-        </div>
-    </section>
+        </div> <!-- /.action-grid -->
+    </section> <!-- /.quick-actions -->
 
     <!-- Upcoming Competitions -->
     {% if upcoming_competitions %}
@@ -158,9 +158,9 @@
             {% endif %}
 
             <a href="{{ url_for('main.logout') }}" class="btn btn-outline">Logout</a>
-        </div>
-    </section>
+        </div> <!-- admin-panel -->
+    </section> <!-- admin-section -->
     {% endif %}
-</div>
+</div> <!-- content -->
 
 {% endblock %}

@@ -1,0 +1,187 @@
+/* =============================================
+   ENTRIES/COMPETITIONS PAGE
+   ============================================= */
+.entries-page .content h1 {
+  text-align: center;
+  color: var(--text-dark);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.entries-page .add-entry,
+.entries-page .entries-list {
+  background: linear-gradient(135deg, var(--background-section), var(--background-section-alt));
+  padding: var(--spacing-2xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-lighter);
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.entries-page .add-entry::before,
+.entries-page .entries-list::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.entries-page .add-entry h2,
+.entries-page .entries-list h2 {
+  color: var(--text-dark);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+  border-bottom: 2px solid var(--primary-green);
+  padding-bottom: var(--spacing-sm);
+}
+
+.entries-page .add-entry form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: end;
+}
+
+.entries-page .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.entries-page .form-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: var(--font-size-base);
+}
+
+.entries-page .form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-base);
+  font-family: 'Lexend', sans-serif;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.entries-page .form-group select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+  transform: translateY(-2px);
+}
+
+.entries-page .add-entry button {
+  padding: 12px var(--spacing-2xl);
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  font-family: 'Lexend', sans-serif;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-green);
+  justify-self: center;
+}
+
+.entries-page .add-entry button:hover {
+  background: linear-gradient(135deg, var(--primary-green-dark), var(--primary-green));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.entries-page .entries-list .btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, var(--error-color), #c82333);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  transition: var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.entries-page .entries-list .btn:hover {
+  background: linear-gradient(135deg, #c82333, var(--error-color));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* Additional entries page form styles moved from inline */
+.entries-page .form-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.entries-page .form-group {
+  flex: 1;
+}
+
+.entries-page .form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.entries-page .form-group input,
+.entries-page .form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.entries-page .form-group input:focus,
+.entries-page .form-group select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 2px rgba(101, 163, 13, 0.2);
+}
+
+.entries-page .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.entries-page .add-entry {
+  background-color: var(--background-section);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.entries-page .entries-list {
+  background-color: var(--background-section);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.entries-page #gymnast_search {
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+}
+
+.entries-page #gymnast_search:focus {
+  background-color: white;
+  border-style: solid;
+}

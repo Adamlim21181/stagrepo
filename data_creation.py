@@ -8,7 +8,7 @@ fake = Faker("en_NZ")
 
 
 def add_roles():
-    role_names = ["admin", "judges", "public"]
+    role_names = ["admin", "judges"]
     for name in role_names:
         if not models.Roles.query.filter_by(name=name).first():
             role = models.Roles(
@@ -22,27 +22,27 @@ def add_roles():
 def add_users():
     roles = {
         "admin": "admin",
-        "judges": "judges",
-        "public": None
+        "judges": "judges"
     }
 
     codes = {
         "admin": "admin123",
-        "judges": "judge123",
-        "public": "public123"
+        "judges": "judge123"
     }
 
     for username, role_name in roles.items():
         if not models.Users.query.filter_by(username=username).first():
+            # Get the role by name
+            role = models.Roles.query.filter_by(name=role_name).first()
+            if not role:
+                print(f"Warning: Role '{role_name}' not found!")
+                continue
+                
             user = models.Users(
                 username=username,
-                code=codes[username]
+                code=codes[username],
+                role_id=role.id  # Direct foreign key assignment
             )
-
-            if role_name:
-                role = models.Roles.query.filter_by(name=role_name).first()
-                if role:
-                    user.roles.append(role)
 
             db.session.add(user)
     db.session.commit()
@@ -240,7 +240,6 @@ def clear_all_data():
     db.session.execute('DELETE FROM judge_scores')
     db.session.execute('DELETE FROM scores')
     db.session.execute('DELETE FROM entries')
-    db.session.execute('DELETE FROM user_roles')
     db.session.execute('DELETE FROM gymnasts')
     db.session.execute('DELETE FROM competitions')
     db.session.execute('DELETE FROM apparatus')

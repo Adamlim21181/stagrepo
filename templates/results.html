@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-
 <div class="content">
     <!-- Top section: Search and Column Controls side by side -->
     <div class="top-controls">
@@ -29,57 +28,26 @@
                 <a href="{{ url_for('main.results') }}" class="btn-reset">Reset All</a>
                 {% endif %}
             </form>
-
-
-            {% if search_query %}
-            <p>Search query: <strong>{{ search_query }}</strong></p>
-            {% endif %}
-
-            <!-- Active filters display -->
-            {% if search_query or current_sort_by != 'total' or current_sort_order != 'desc' or per_page != 5 %}
-            <div class="active-filters"
-                style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff;">
-                <strong>Active Filters:</strong>
-                <div style="margin-top: 5px;">
-                    {% if search_query %}
-                    <span class="filter-tag">Search: "{{ search_query }}" <a
-                            href="{{ url_for('main.results', per_page=per_page, sort_by=current_sort_by, sort_order=current_sort_order) }}"
-                            class="btn-small btn-reset">×</a></span>
-                    {% endif %}
-
-                    {% if current_sort_by != 'total' or current_sort_order != 'desc' %}
-                    <span class="filter-tag">Sort: {{ dict(sort_options)[current_sort_by] }} ({{ 'A-Z/Low-High' if
-                        current_sort_order == 'asc' else 'Z-A/High-Low' }}) <a
-                            href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='total', sort_order='desc') }}"
-                            class="btn-small btn-reset">×</a></span>
-                    {% endif %}
-
-                    {% if per_page != 5 %}
-                    <span class="filter-tag">Rows: {{ per_page }} <a
-                            href="{{ url_for('main.results', search=search_query, sort_by=current_sort_by, sort_order=current_sort_order, per_page=5) }}"
-                            class="btn-small btn-reset">×</a></span>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
+        </div> <!-- /.search-controls -->
 
         <div class="column_controls">
+            <h3>Show/Hide Columns</h3>
             <div class="controls-grid">
-                <label><input type="checkbox" class="column-toggle" data-column="id" checked> ID</label>
+                <label><input type="checkbox" class="column-toggle" data-column="id" checked> Gymnast ID</label>
                 <label><input type="checkbox" class="column-toggle" data-column="entry" checked> Entry ID</label>
                 <label><input type="checkbox" class="column-toggle" data-column="competition" checked>
                     Competition</label>
                 <label><input type="checkbox" class="column-toggle" data-column="name" checked> Name</label>
                 <label><input type="checkbox" class="column-toggle" data-column="club" checked> Club</label>
+                <label><input type="checkbox" class="column-toggle" data-column="level" checked> Level</label>
                 <label><input type="checkbox" class="column-toggle" data-column="apparatus" checked> Apparatus</label>
                 <label><input type="checkbox" class="column-toggle" data-column="execution" checked> Execution</label>
                 <label><input type="checkbox" class="column-toggle" data-column="difficulty" checked> Difficulty</label>
                 <label><input type="checkbox" class="column-toggle" data-column="penalty" checked> Penalty</label>
                 <label><input type="checkbox" class="column-toggle" data-column="total" checked> Total</label>
-            </div>
-        </div>
-    </div>
+            </div> <!-- /.controls-grid -->
+        </div> <!-- /.column_controls -->
+    </div> <!-- /.top-controls -->
 
     <!-- Results header with info -->
     <div class="results-header">
@@ -105,16 +73,24 @@
             <table id="resultsTable">
                 <tr>
                     <th class="headerhover col-id">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='id', sort_order='asc' if current_sort_by != 'id' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='id', 
+                                           sort_order='asc' if current_sort_by != 'id' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
-                            ID
+                            Gymnast ID
                             {% if current_sort_by == 'id' %}
                             {{ '↑' if current_sort_order == 'asc' else '↓' }}
                             {% endif %}
                         </a>
                     </th>
                     <th class="headerhover col-entry">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='entry_id', sort_order='asc' if current_sort_by != 'entry_id' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='entry_id', 
+                                           sort_order='asc' if current_sort_by != 'entry_id' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Entries_id
                             {% if current_sort_by == 'entry_id' %}
@@ -123,7 +99,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-competition">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='competition_name', sort_order='asc' if current_sort_by != 'competition_name' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='competition_name', 
+                                           sort_order='asc' if current_sort_by != 'competition_name' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Competition
                             {% if current_sort_by == 'competition_name' %}
@@ -132,7 +112,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-name">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='gymnast_name', sort_order='asc' if current_sort_by != 'gymnast_name' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='gymnast_name', 
+                                           sort_order='asc' if current_sort_by != 'gymnast_name' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Name
                             {% if current_sort_by == 'gymnast_name' %}
@@ -141,7 +125,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-club">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='club_name', sort_order='asc' if current_sort_by != 'club_name' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='club_name', 
+                                           sort_order='asc' if current_sort_by != 'club_name' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Club
                             {% if current_sort_by == 'club_name' %}
@@ -149,8 +137,25 @@
                             {% endif %}
                         </a>
                     </th>
+                    <th class="headerhover col-level">
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='level', 
+                                           sort_order='asc' if current_sort_by != 'level' or current_sort_order == 'desc' else 'desc') }}"
+                            style="color: inherit; text-decoration: none;">
+                            Level
+                            {% if current_sort_by == 'level' %}
+                            {{ '↑' if current_sort_order == 'asc' else '↓' }}
+                            {% endif %}
+                        </a>
+                    </th>
                     <th class="headerhover col-apparatus">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='apparatus_name', sort_order='asc' if current_sort_by != 'apparatus_name' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='apparatus_name', 
+                                           sort_order='asc' if current_sort_by != 'apparatus_name' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Apparatus
                             {% if current_sort_by == 'apparatus_name' %}
@@ -159,7 +164,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-execution">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='e_score', sort_order='desc' if current_sort_by != 'e_score' or current_sort_order == 'asc' else 'asc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='e_score', 
+                                           sort_order='desc' if current_sort_by != 'e_score' or current_sort_order == 'asc' else 'asc') }}"
                             style="color: inherit; text-decoration: none;">
                             Execution
                             {% if current_sort_by == 'e_score' %}
@@ -168,7 +177,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-difficulty">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='d_score', sort_order='desc' if current_sort_by != 'd_score' or current_sort_order == 'asc' else 'asc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='d_score', 
+                                           sort_order='desc' if current_sort_by != 'd_score' or current_sort_order == 'asc' else 'asc') }}"
                             style="color: inherit; text-decoration: none;">
                             Difficulty
                             {% if current_sort_by == 'd_score' %}
@@ -177,7 +190,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-penalty">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='penalty', sort_order='asc' if current_sort_by != 'penalty' or current_sort_order == 'desc' else 'desc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='penalty', 
+                                           sort_order='asc' if current_sort_by != 'penalty' or current_sort_order == 'desc' else 'desc') }}"
                             style="color: inherit; text-decoration: none;">
                             Penalty
                             {% if current_sort_by == 'penalty' %}
@@ -186,7 +203,11 @@
                         </a>
                     </th>
                     <th class="headerhover col-total">
-                        <a href="{{ url_for('main.results', search=search_query, per_page=per_page, sort_by='total', sort_order='desc' if current_sort_by != 'total' or current_sort_order == 'asc' else 'asc') }}"
+                        <a href="{{ url_for('main.results', 
+                                           search=search_query, 
+                                           per_page=per_page, 
+                                           sort_by='total', 
+                                           sort_order='desc' if current_sort_by != 'total' or current_sort_order == 'asc' else 'asc') }}"
                             style="color: inherit; text-decoration: none;">
                             Total
                             {% if current_sort_by == 'total' %}
@@ -197,13 +218,13 @@
                 </tr>
 
                 {% for row in results %}
-
                 <tr>
-                    <td class="col-id">{{ row.id }}</td>
+                    <td class="col-id">{{ row.entry.gymnasts.id }}</td>
                     <td class="col-entry">{{ row.entry_id }}</td>
                     <td class="col-competition">{{ row.entry.competitions.name }}</td>
                     <td class="col-name">{{ row.entry.gymnasts.name }}</td>
                     <td class="col-club">{{ row.entry.gymnasts.clubs.name }}</td>
+                    <td class="col-level">{{ row.entry.gymnasts.level }}</td>
                     <td class="col-apparatus">{{ row.apparatus.name }}</td>
                     <td class="col-execution">{{ row.e_score }}</td>
                     <td class="col-difficulty">{{ row.d_score }}</td>
@@ -212,52 +233,57 @@
                 </tr>
                 {% endfor %}
             </table>
-        </div>
+        </div> <!-- /.tables -->
+    </div> <!-- /.table-section -->
 
-        <!-- Pagination -->
-        {% if pagination %}
+    <!-- Pagination section -->
+    <div class="pagination-section">
+        {% if results.pages > 1 %}
         <div class="pagination">
-            {% if pagination.has_prev %}
-            <a href="{{ url_for('main.results',
-                        page=pagination.prev_num,
-                        per_page=per_page,
-                        search=search_query,
-                        sort_by=current_sort_by,
-                        sort_order=current_sort_order) }}">
-                ‹ Prev
-            </a>
-            {% endif %}
-
-            {% for num in pagination.iter_pages() %}
-            {% if num %}
-            <a href="{{ url_for('main.results',
-                                page=num,
-                                per_page=per_page,
-                                search=search_query,
-                                sort_by=current_sort_by,
-                                sort_order=current_sort_order) }}" {% if num==pagination.page %}
-                style="background-color:#4CAF50;color:white;border-color:#4CAF50;" {% endif %}>
-                {{ num }}
-            </a>
+            <!-- Previous page link -->
+            {% if results.has_prev %}
+            <a href="{{ url_for('main.results', 
+                               page=results.prev_num,
+                               search=search_query,
+                               per_page=per_page,
+                               sort_by=current_sort_by,
+                               sort_order=current_sort_order) }}" class="pagination-link">← Previous</a>
             {% else %}
-            <span style="padding:6px;color:#999;">…</span>
+            <span class="pagination-link disabled">← Previous</span>
             {% endif %}
-            {% endfor %}
 
-            {% if pagination.has_next %}
-            <a href="{{ url_for('main.results',
-                        page=pagination.next_num,
-                        per_page=per_page,
-                        search=search_query,
-                        sort_by=current_sort_by,
-                        sort_order=current_sort_order) }}">
-                Next ›
-            </a>
-            {% endif %}
-        </div>
+            <!-- Page numbers -->
+            {% for page_num in range(1, results.pages + 1) %}
+            {% if page_num == results.page %}
+            <span class="pagination-link current">{{ page_num }}</span>
+            {% elif page_num <= 3 or page_num> results.pages - 3 or (page_num >= results.page - 2 and page_num <=
+                    results.page + 2) %} <a href="{{ url_for('main.results', 
+                                   page=page_num,
+                                   search=search_query,
+                                   per_page=per_page,
+                                   sort_by=current_sort_by,
+                                   sort_order=current_sort_order) }}" class="pagination-link">{{ page_num }}</a>
+                    {% elif page_num == 4 and results.page > 6 %}
+                    <span class="pagination-link disabled">...</span>
+                    {% elif page_num == results.pages - 3 and results.page < results.pages - 5 %} <span
+                        class="pagination-link disabled">...</span>
+                        {% endif %}
+                        {% endfor %}
+
+                        <!-- Next page link -->
+                        {% if results.has_next %}
+                        <a href="{{ url_for('main.results', 
+                               page=results.next_num,
+                               search=search_query,
+                               per_page=per_page,
+                               sort_by=current_sort_by,
+                               sort_order=current_sort_order) }}" class="pagination-link">Next →</a>
+                        {% else %}
+                        <span class="pagination-link disabled">Next →</span>
+                        {% endif %}
+        </div> <!-- /.pagination -->
         {% endif %}
+    </div> <!-- /.pagination-section -->
+</div> <!-- /.content -->
 
-    </div>
-
-</div><!--content-->
 {% endblock %}

@@ -20,7 +20,7 @@ def create_app():
     def url_too_long(e):
         return render_template("414.html"), 414
 
-    # take all the routes and add them to the main app
+    # Register the modular routes blueprint
     from routes import main
     app.register_blueprint(main)
 
