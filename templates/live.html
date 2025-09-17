@@ -4,84 +4,83 @@
 <div class="content live-page">
 
     {% if no_live_competition %}
-        <div id="nolive" class="no-live-competition">
-            <h2>No Live Competition</h2>
-            <p>There is currently no live competition running. Please contact an admin to start a competition.</p>
-        </div>
+    <div id="nolive" class="no-live-competition">
+        <h2>No Live Competition</h2>
+        <p>There is currently no live competition running. Please contact an admin to start a competition.</p>
+    </div><!-- no-live-competition -->
     {% else %}
 
     <div class="sidebar">
         <form method="get">
             {% for level in levels %}
-                <button name="level" value="{{ level }}"
-                    class="{{ 'active' if level == selected_level else '' }}">
-                    {{ level }}
-                </button>
+            <button name="level" value="{{ level }}" class="{{ 'active' if level == selected_level else '' }}">
+                {{ level }}
+            </button>
             {% endfor %}
         </form>
-    </div>
+    </div><!-- sidebar -->
 
     <div class="main">
 
         {% if selected_level %}
-            <div class="apparatus-bar">
-                <form method="get">
-                    <input type="hidden" name="level" value="{{ selected_level }}">
-                    
-                    <!-- All Around button -->
-                    <button name="apparatus" value="all_around"
-                        class="{{ 'active' if selected_apparatus_id == 'all_around' or not selected_apparatus_id }}">
-                        All Around
-                    </button>
-                    
-                    {% for app in apparatus_list %}
-                        <button name="apparatus" value="{{ app.id }}"
-                            class="{{ 'active' if app.id|string == selected_apparatus_id }}">
-                            {{ app.name }}
-                        </button>
-                    {% endfor %}
-                </form>
-            </div>
+        <div class="apparatus-bar">
+            <form method="get">
+                <input type="hidden" name="level" value="{{ selected_level }}">
+
+                <button name="apparatus" value="all_around"
+                    class="{{ 'active' if selected_apparatus_id == 'all_around' or not selected_apparatus_id }}">
+                    All Around
+                </button>
+
+                {% for app in apparatus_list %}
+                <button name="apparatus" value="{{ app.id }}"
+                    class="{{ 'active' if app.id|string == selected_apparatus_id }}">
+                    {{ app.name }}
+                </button>
+                {% endfor %}
+            </form>
+        </div><!-- apparatus-bar -->
         {% endif %}
 
         {% if leaderboard_data %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Gymnast</th>
-                        <th>Club</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if selected_apparatus_id and selected_apparatus_id != 'all_around' %}
-                        <!-- Individual apparatus scores -->
-                        {% for score, gymnast, club in leaderboard_data %}
-                            <tr>
-                                <td>{{ loop.index }}</td>
-                                <td>{{ gymnast.name }}</td>
-                                <td>{{ club.name }}</td>
-                                <td>{{ "%.3f"|format(score.total) }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <!-- All around scores (total scores) -->
-                        {% for gymnast_data in leaderboard_data %}
-                            <tr>
-                                <td>{{ loop.index }}</td>
-                                <td>{{ gymnast_data.name}}</td>
-                                <td>{{ gymnast_data.club_name }}</td>
-                                <td>{{ "%.3f"|format(gymnast_data.total_score) }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Gymnast</th>
+                    <th>Club</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if selected_apparatus_id and selected_apparatus_id != 'all_around' %}
+                <!-- Individual apparatus scores -->
+                {% for score, gymnast, club in leaderboard_data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ gymnast.name }}</td>
+                    <td>{{ club.name }}</td>
+                    <td>{{ "%.3f"|format(score.total) }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <!-- All around scores (total scores) -->
+                {% for gymnast_data in leaderboard_data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ gymnast_data.name}}</td>
+                    <td>{{ gymnast_data.club_name }}</td>
+                    <td>{{ "%.3f"|format(gymnast_data.total_score) }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
         {% elif selected_level %}
-            <p>No scores found for that level{% if selected_apparatus_id and selected_apparatus_id != 'all_around' %} and apparatus{% endif %}.</p>
+        <p>No scores found for that level{% if selected_apparatus_id and selected_apparatus_id != 'all_around' %} and
+            apparatus{% endif %}.</p>
         {% else %}
-            <p>Please select a level to view the leaderboard.</p>
+        <p>Please select a level to view the leaderboard.</p>
         {% endif %}
 
     </div>

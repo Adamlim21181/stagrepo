@@ -6,7 +6,7 @@
         <div class="login-header">
             <h1>Welcome Back</h1>
             <p>Sign in to access the gymnastics management system</p>
-        </div>
+        </div><!-- login-header -->
 
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -16,7 +16,7 @@
                 <li>{{ message }}</li>
                 {% endfor %}
             </ul>
-        </div>
+        </div><!-- login-messages -->
         {% endif %}
         {% endwith %}
 
@@ -26,18 +26,18 @@
             <div class="login-form-group">
                 {{ form.username.label }}
                 {{ form.username(size=32, placeholder="Enter your username") }}
-            </div>
+            </div><!-- login-form-group -->
 
             <div class="login-form-group">
                 {{ form.code.label }}
                 {{ form.code(size=32, placeholder="Enter your access code") }}
-            </div>
+            </div><!-- login-form-group -->
 
             <div class="login-form-group">
                 {{ form.submit(class="login-submit-btn") }}
-            </div>
-        </form>
-    </div>
-</div>
+            </div><!-- login-form-group -->
+        </form><!-- login-form -->
+    </div><!-- login-container -->
+</div><!-- login-page -->
 
 {% endblock %}

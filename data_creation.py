@@ -1,3 +1,5 @@
+"""Database seeding and test data creation functions."""
+
 from create_app import db
 import models
 
@@ -8,6 +10,7 @@ fake = Faker("en_NZ")
 
 
 def add_roles():
+    """Add default user roles (admin, judges)"""
     role_names = ["admin", "judges"]
     for name in role_names:
         if not models.Roles.query.filter_by(name=name).first():
@@ -20,6 +23,8 @@ def add_roles():
 
 
 def add_users():
+    """Add default users with preset credentials"""
+    # initial users needed for system access
     roles = {
         "admin": "admin",
         "judges": "judges"
@@ -32,16 +37,15 @@ def add_users():
 
     for username, role_name in roles.items():
         if not models.Users.query.filter_by(username=username).first():
-            # Get the role by name
             role = models.Roles.query.filter_by(name=role_name).first()
             if not role:
                 print(f"Warning: Role '{role_name}' not found!")
                 continue
-                
+
             user = models.Users(
                 username=username,
                 code=codes[username],
-                role_id=role.id  # Direct foreign key assignment
+                role_id=role.id
             )
 
             db.session.add(user)
@@ -50,6 +54,7 @@ def add_users():
 
 
 def add_seasons():
+    """Add random competition seasons"""
     for _ in range(5):
         year = random.randint(2010, 2025)
         if not models.Seasons.query.filter_by(year=year).first():
@@ -62,6 +67,7 @@ def add_seasons():
 
 
 def add_clubs():
+    """Add sample gymnastics clubs"""
     for _ in range(15):
         name = fake.company()
         if not models.Clubs.query.filter_by(name=name).first():
@@ -74,6 +80,7 @@ def add_clubs():
 
 
 def add_apparatus():
+    """Add gymnastics apparatus (floor, vault, bars, etc.)"""
     apparatus = ["Floor", "Pommel Horse", "Still Rings", "Vault",
                  "Parallel Bars", "Horizontal Bar"]
     for name in apparatus:
@@ -86,9 +93,9 @@ def add_apparatus():
 
 
 def add_competitions():
+    """Add sample competitions with dates and locations"""
     from datetime import datetime, timedelta
 
-    # Base date around current date (July 23, 2025)
     base_date = datetime(2025, 7, 23).date()
 
     for _ in range(20):
@@ -108,7 +115,7 @@ def add_competitions():
         if not season:
             season = models.Seasons(year=competition_year)
             db.session.add(season)
-            db.session.flush()  # Get the ID
+            db.session.flush()
 
         competition = models.Competitions(
             season_id=season.id,
@@ -122,6 +129,7 @@ def add_competitions():
 
 
 def add_gymnasts():
+    """Add sample gymnasts with random clubs and levels"""
     clubs = [club.id for club in models.Clubs.query.all()]
     levels = ["Level 1", "Level 2", "Level 3", "Level 4", "Level 5",
               "Level 6", "Level 7", "Level 8", "Level 9",
@@ -139,6 +147,7 @@ def add_gymnasts():
 
 
 def add_entries():
+    """Add competition entries (gymnast-competition links)"""
     competitions = [competition.id
                     for competition in models.Competitions.query.all()]
 
@@ -146,7 +155,7 @@ def add_entries():
 
     entries = 0
 
-    # prevent duplicate gymnasts in the same competition
+    # While loop prevents duplicate entries
     while entries < 1100:
         competition_id = random.choice(competitions)
         gymnast_id = random.choice(gymnasts)
@@ -155,8 +164,6 @@ def add_entries():
             competition_id=competition_id, gymnast_id=gymnast_id
         ).first()
 
-        # first() gets the first row that matches the filter,
-        # or None is returned if no match is found
         if not existing_entry:
             entry = models.Entries(
                 competition_id=competition_id,
@@ -170,6 +177,7 @@ def add_entries():
 
 
 def add_scores():
+    """Add performance scores for all entries and apparatus"""
     entries = [entry.id for entry in models.Entries.query.all()]
     apparatus = models.Apparatus.query.all()
 
@@ -194,26 +202,25 @@ def add_scores():
 
 
 def create_judge_scores_table():
-    """Create the judge_scores table for multiple judge scoring"""
+    """Create judge_scores table for multiple judge scoring"""
     db.create_all()
     print("✅ judge_scores table created successfully!")
 
 
 def add_sample_judge_scores():
-    """Add sample judge scores for testing the multiple judge system"""
+    """Add sample judge scores for testing multi-judge system"""
     # Get some existing scores to add judge scores for
     scores = models.Scores.query.limit(10).all()
-    
+
     for score in scores:
-        # Add 2-3 judge scores per apparatus score using judge numbers
+        # Add 2-3 judge scores per apparatus
         num_judges = random.randint(2, 3)
-        
+
         judge_e_scores = []
         for judge_num in range(1, num_judges + 1):
-            # Generate judge scores around current e_score with variation
             variation = random.uniform(-0.5, 0.5)
             judge_e_score = max(0, min(10, score.e_score + variation))
-            
+
             judge_score = models.JudgeScores(
                 score_id=score.id,
                 judge_number=judge_num,
@@ -221,22 +228,22 @@ def add_sample_judge_scores():
             )
             db.session.add(judge_score)
             judge_e_scores.append(judge_e_score)
-        
-        # Update the score with the average of judge scores
+
+        # Update score with average of all judge scores
         if judge_e_scores:
             avg_e_score = sum(judge_e_scores) / len(judge_e_scores)
             score.e_score = round(avg_e_score, 3)
             score.total = score.e_score + score.d_score - score.penalty
-    
+
     db.session.commit()
     print(f"Sample judge scores added for {len(scores)} routines.")
 
 
 def clear_all_data():
-    """Clear all data from the database and reset auto-increment counters"""
+    """Clear all data and reset auto-increment counters"""
     print("Clearing all existing data...")
-    
-    # Delete all data in reverse order of dependencies
+
+    # Delete in reverse order of dependencies
     db.session.execute('DELETE FROM judge_scores')
     db.session.execute('DELETE FROM scores')
     db.session.execute('DELETE FROM entries')
@@ -247,15 +254,22 @@ def clear_all_data():
     db.session.execute('DELETE FROM seasons')
     db.session.execute('DELETE FROM users')
     db.session.execute('DELETE FROM roles')
-    
+
     # Reset auto-increment counters for SQLite
-    db.session.execute('UPDATE sqlite_sequence SET seq = 0 WHERE name IN ("roles", "users", "seasons", "clubs", "apparatus", "competitions", "gymnasts", "entries", "scores", "judge_scores")')
-    
+    table_names = '"roles", "users", "seasons", "clubs", "apparatus"'
+    table_names += ', "competitions", "gymnasts", "entries", "scores"'
+    table_names += ', "judge_scores"'
+
+    db.session.execute(
+        f'UPDATE sqlite_sequence SET seq = 0 WHERE name IN ({table_names})'
+    )
+
     db.session.commit()
     print("All data cleared and auto-increment counters reset.")
 
 
 def create_random_data():
+    """Create all test data in correct order"""
     db.create_all()
     add_roles()
     add_users()
@@ -271,7 +285,7 @@ def create_random_data():
 
 
 def recreate_all_data():
-    """Clear all data and recreate fresh data"""
+    """Clear all data and recreate fresh test data"""
     clear_all_data()
     create_random_data()
     print("Database completely recreated with fresh data!")

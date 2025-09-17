@@ -3,7 +3,7 @@
         <div class="footer-section">
             <h3 class="footer-title">STAG Compete</h3>
             <p class="footer-description">Comprehensive gymnastics competition management and live scoring system</p>
-        </div>
+        </div><!-- footer-section -->
 
         <div class="footer-section">
             <h4>Quick Links</h4>
@@ -12,8 +12,8 @@
                 <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
                 <li><a href="{{ url_for('main.results') }}">Results</a></li>
                 <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
-            </ul>
-        </div>
+            </ul><!-- footer-links -->
+        </div><!-- footer-section -->
 
         {% if logged_in %}
         <div class="footer-section">
@@ -27,8 +27,8 @@
                 {% if is_admin or is_judge %}
                 <li><a href="{{ url_for('main.scoring') }}">Scoring</a></li>
                 {% endif %}
-            </ul>
-        </div>
+            </ul><!-- footer-links -->
+        </div><!-- footer-section -->
         {% endif %}
 
         <div class="footer-section">
@@ -41,8 +41,8 @@
                 {% endif %}
             </p>
             <p class="footer-info">© 2025 STAG Compete</p>
-        </div>
-    </div>
+        </div><!-- footer-section -->
+    </div><!-- footer-content -->
 
     <div class="footer-bottom">
         <p>&copy; 2025 STAG Compete</p>

@@ -1,94 +1,91 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="entries-page">
-    <div class="content">
-        <h1>Competition Entries Management</h1>
+<div class="content">
+    <h1>Competition Entries Management</h1>
 
-        <!-- Add New Entry Form -->
-        <div class="add-entry">
-            <h2>Add Gymnast to Competition</h2>
-            <form method="POST">
-                {{ form.hidden_tag() }}
+    <div class="add-entry">
+        <h2>Add Gymnast to Competition</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
 
-                <div class="form-row">
-                    <div class="form-group">
-                        {{ form.competition_id.label(for="competition_id") }}
-                        {{ form.competition_id(id="competition_id", required=True) }}
-                        {% if form.competition_id.errors %}
-                        <ul class="error-list">
-                            {% for error in form.competition_id.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div> <!-- /.form-group -->
-                </div> <!-- /.form-row -->
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.competition_id.label(for="competition_id") }}
+                    {{ form.competition_id(id="competition_id", required=True) }}
+                    {% if form.competition_id.errors %}
+                    <ul class="error-list">
+                        {% for error in form.competition_id.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div><!-- form-group -->
+            </div><!-- form-row -->
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="gymnast_search">Search Gymnast:</label>
-                        <input type="text" id="gymnast_search"
-                            placeholder="Type to search gymnasts by name, club, or level..." autocomplete="off">
-                    </div> <!-- /.form-group -->
-                </div> <!-- /.form-row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="gymnast_search">Search Gymnast:</label>
+                    <input type="text" id="gymnast_search"
+                        placeholder="Type to search gymnasts by name, club, or level..." autocomplete="off">
+                </div><!-- form-group -->
+            </div><!-- form-row -->
 
-                <div class="form-row">
-                    <div class="form-group">
-                        {{ form.gymnast_id.label(for="gymnast_id") }}
-                        {{ form.gymnast_id(id="gymnast_id", required=True) }}
-                        {% if form.gymnast_id.errors %}
-                        <ul class="error-list">
-                            {% for error in form.gymnast_id.errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div> <!-- /.form-group -->
-                </div> <!-- /.form-row -->
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.gymnast_id.label(for="gymnast_id") }}
+                    {{ form.gymnast_id(id="gymnast_id", required=True) }}
+                    {% if form.gymnast_id.errors %}
+                    <ul class="error-list">
+                        {% for error in form.gymnast_id.errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul><!-- error-list -->
+                    {% endif %}
+                </div><!-- form-group -->
+            </div><!-- form-row -->
 
-                <div class="form-actions">
-                    {{ form.submit(class="btn btn-primary") }}
-                </div> <!-- /.form-actions -->
-            </form>
-        </div> <!-- /.add-entry -->
+            <div class="form-actions">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div><!-- add-entry -->
 
-        <!-- Existing Entries List -->
-        <div class="entries-list">
-            <h2>Current Entries</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Competition</th>
-                        <th>Gymnast ID</th>
-                        <th>Gymnast Name</th>
-                        <th>Club</th>
-                        <th>Level</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entry, competition, gymnast, club in entries %}
-                    <tr>
-                        <td>{{ competition.name }}</td>
-                        <td>#{{ "%03d"|format(gymnast.id) }}</td>
-                        <td>{{ gymnast.name }}</td>
-                        <td>{{ club.name }}</td>
-                        <td>{{ gymnast.level }}</td>
-                        <td class="actions">
-                            <form method="POST" action="{{ url_for('main.delete_entry', entry_id=entry.id) }}"
-                                style="display:inline" onsubmit="return confirm('Delete this entry and its scores?');">
-                                {% if csrf_token %}{{ csrf_token() }}{% endif %}
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td> <!-- actions -->
+    <!-- Existing Entries List -->
+    <div class="entries-list">
+        <h2>Current Entries</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Competition</th>
+                    <th>Gymnast ID</th>
+                    <th>Gymnast Name</th>
+                    <th>Club</th>
+                    <th>Level</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry, competition, gymnast, club in entries %}
+                <tr>
+                    <td>{{ competition.name }}</td>
+                    <td>#{{ "%03d"|format(gymnast.id) }}</td>
+                    <td>{{ gymnast.name }}</td>
+                    <td>{{ club.name }}</td>
+                    <td>{{ gymnast.level }}</td>
+                    <td class="actions">
+                        <form method="POST" action="{{ url_for('main.delete_entry', entry_id=entry.id) }}"
+                            class="inline-form" onsubmit="return confirm('Delete this entry and its scores?');">
+                            {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td><!-- actions -->
 
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div> <!-- entries-list -->
-    </div> <!-- content -->
-</div> <!-- entries-page -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><!-- entries-list -->
+</div><!-- content -->
 
 {% endblock %}

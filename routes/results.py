@@ -1,7 +1,4 @@
-"""
-Results routes.
-Handles competition results display with search, sorting, and pagination.
-"""
+
 from flask import render_template, request
 from extensions import db
 import models
@@ -15,7 +12,7 @@ def results():
     form = forms.ResultsSearchForm(request.args, meta={'csrf': False})
     search_query = form.search.data or ''
 
-    # Choices for the form
+    # Choices for the pagination
     pagination_options = [
         (5, '5'), (10, '10'), (20, '20'), (50, '50'),
         (100, '100'), (1000, '1000'), (-1, 'All'),
@@ -41,7 +38,6 @@ def results():
     sort_by = form.sort_by.data or 'total'
     sort_order = form.sort_order.data or request.args.get('sort_order', 'desc')
 
-    # Base query: return Scores ORM objects and eager-load relations
     query = (
         models.Scores.query
         .join(models.Entries, models.Scores.entry_id == models.Entries.id)
@@ -81,14 +77,11 @@ def results():
         )
 
     # Sorting
-    # For 'total', sort by e + d - penalty;
     # for others use columns/related columns
     total_expr = (
         models.Scores.e_score + models.Scores.d_score - models.Scores.penalty
     )
 
-    # Custom level sorting: convert level text to numeric order
-    # Levels 1-9, then Junior Inter (10), then Senior Inter (11)
     level_order_case = db.case(
         (models.Gymnasts.level == 'Level 1', 1),
         (models.Gymnasts.level == 'Level 2', 2),
@@ -101,7 +94,7 @@ def results():
         (models.Gymnasts.level == 'Level 9', 9),
         (models.Gymnasts.level == 'Junior Inter', 10),
         (models.Gymnasts.level == 'Senior Inter', 11),
-        else_=999  # Put any unknown levels at the end
+        else_=999
     )
 
     sort_map = {
@@ -128,7 +121,6 @@ def results():
         pagination = None
     else:
         page = request.args.get('page', 1, type=int)
-        # If you're on Flask-SQLAlchemy >=3, prefer db.paginate(query, ...)
         try:
             pagination = query.paginate(
                 page=page,

@@ -2,7 +2,6 @@
 {% block content %}
 
 <div class="content">
-    <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">STAG Compete</h1>
@@ -15,10 +14,10 @@
                 <strong>{{ comp.name }} is currently running!</strong>
                 {% endfor %}
                 <a href="{{ url_for('main.live') }}" class="btn btn-primary">View Live Leaderboard</a>
-            </div> <!-- /.live-alert -->
+            </div><!-- live-alert -->
             {% endif %}
-        </div> <!-- /.hero-content -->
-    </section> <!-- /.hero-section -->
+        </div><!-- hero-content -->
+    </section><!-- hero-section -->
 
     <!-- Quick Actions -->
     <section class="quick-actions">
@@ -28,31 +27,30 @@
                 <h3>📊 Results</h3>
                 <p>View competition results and standings</p>
                 <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View Results</a>
-            </div> <!-- /.action-card -->
+            </div>
 
             <div class="action-card">
                 <h3>📺 Live Leaderboard</h3>
                 <p>Follow ongoing competitions in real-time</p>
                 <a href="{{ url_for('main.live') }}" class="btn btn-secondary">Live Scores</a>
-            </div> <!-- /.action-card -->
+            </div>
 
             <div class="action-card">
                 <h3>📅 Calendar</h3>
                 <p>Check upcoming competition dates</p>
                 <a href="{{ url_for('main.calendar_view') }}" class="btn btn-secondary">View Calendar</a>
-            </div> <!-- /.action-card -->
+            </div>
 
             {% if not logged_in %}
             <div class="action-card official-login">
                 <h3>🔐 Officials Login</h3>
                 <p>Access scoring and administration tools</p>
                 <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
-            </div> <!-- /.action-card.official-login -->
+            </div>
             {% endif %}
-        </div> <!-- /.action-grid -->
-    </section> <!-- /.quick-actions -->
+        </div><!-- action-grid -->
+    </section><!-- quick-actions -->
 
-    <!-- Upcoming Competitions -->
     {% if upcoming_competitions %}
     <section class="upcoming-section">
         <h2>Upcoming Competitions</h2>
@@ -61,7 +59,7 @@
             <div class="competition-card">
                 <div class="competition-status {{ competition.status }}">
                     {{ competition.status.title() }}
-                </div>
+                </div><!-- competition-status -->
                 <h3>{{ competition.name }}</h3>
                 <div class="competition-details">
                     <p><strong>📅 Date:</strong>
@@ -72,16 +70,15 @@
                         {% endif %}
                     </p>
                     <p><strong>📍 Location:</strong> {{ competition.address }}</p>
-                </div>
+                </div><!-- competition-details -->
                 <a href="{{ url_for('main.competition_details', competition_id=competition.id) }}"
                     class="btn btn-outline">View Details</a>
-            </div>
+            </div><!-- competition-card -->
             {% endfor %}
-        </div>
-    </section>
+        </div><!-- competition-grid -->
+    </section><!-- upcoming-section -->
     {% endif %}
 
-    <!-- Recent Results -->
     {% if recent_results %}
     <section class="recent-results">
         <h2>Recent Results</h2>
@@ -98,19 +95,18 @@
                         {% endif %}
                     </p>
                     <p><strong>Location:</strong> {{ competition.address }}</p>
-                </div>
+                </div><!-- result-info -->
                 <a href="{{ url_for('main.competition_details', competition_id=competition.id) }}"
                     class="btn btn-outline">View Results</a>
-            </div>
+            </div><!-- result-card -->
             {% endfor %}
-        </div>
+        </div><!-- results-grid -->
         <div class="view-all">
             <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View All Results</a>
-        </div>
-    </section>
+        </div><!-- view-all -->
+    </section><!-- recent-results -->
     {% endif %}
 
-    <!-- System Information -->
     <section class="system-info">
         <div class="info-grid">
             <div class="info-card">
@@ -139,10 +135,9 @@
                     <li>✅ Calendar integration</li>
                 </ul>
             </div>
-        </div>
-    </section>
+        </div><!-- info-grid -->
+    </section><!-- system-info -->
 
-    <!-- Admin Panel Access -->
     {% if logged_in %}
     <section class="admin-panel">
         <h2>Welcome back, {{ session.get('username', 'Official') }}!</h2>
@@ -158,9 +153,9 @@
             {% endif %}
 
             <a href="{{ url_for('main.logout') }}" class="btn btn-outline">Logout</a>
-        </div> <!-- admin-panel -->
-    </section> <!-- admin-section -->
+        </div><!-- admin-actions -->
+    </section><!-- admin-panel -->
     {% endif %}
-</div> <!-- content -->
+</div><!-- content -->
 
 {% endblock %}

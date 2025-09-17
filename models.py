@@ -1,8 +1,9 @@
+"""Database models for gymnastics competition management."""
+
 from extensions import db
 
 
 class Roles(db.Model):
-
     __tablename__ = 'roles'
 
     id = db.Column(
@@ -15,7 +16,6 @@ class Roles(db.Model):
 
 
 class Users(db.Model):
-
     __tablename__ = 'users'
 
     id = db.Column(
@@ -38,7 +38,6 @@ class Users(db.Model):
 
 
 class Seasons(db.Model):
-
     __tablename__ = 'seasons'
 
     id = db.Column(
@@ -51,7 +50,6 @@ class Seasons(db.Model):
 
 
 class Clubs(db.Model):
-
     __tablename__ = 'clubs'
 
     id = db.Column(
@@ -61,14 +59,12 @@ class Clubs(db.Model):
     name = db.Column(
         db.String(50), nullable=False
     )
-
     gymnasts = db.relationship(
         'Gymnasts', backref='clubs'
     )
 
 
 class Apparatus(db.Model):
-
     __tablename__ = 'apparatus'
 
     id = db.Column(
@@ -83,8 +79,6 @@ class Apparatus(db.Model):
         'Scores', backref='apparatus'
     )
 
-
-# Add this to your existing Competitions model in models.py
 
 class Competitions(db.Model):
     __tablename__ = 'competitions'
@@ -111,7 +105,7 @@ class Competitions(db.Model):
 
     status = db.Column(
         db.String(20), nullable=False, default='draft'
-    )  # Options: 'draft', 'live', 'ended'
+    )
 
     started_at = db.Column(
         db.DateTime, nullable=True
@@ -131,7 +125,6 @@ class Competitions(db.Model):
 
 
 class Gymnasts(db.Model):
-
     __tablename__ = 'gymnasts'
 
     id = db.Column(
@@ -156,7 +149,6 @@ class Gymnasts(db.Model):
 
 
 class Entries(db.Model):
-
     __tablename__ = 'entries'
 
     id = db.Column(
@@ -175,8 +167,7 @@ class Entries(db.Model):
         'Scores', backref='entry'
     )
 
-    # __table_args is how to define additional configurations
-    # so for this case, I am defining a unique constraint
+    # Database constraint prevents duplicate entries
     __table_args__ = (
         db.UniqueConstraint('competition_id', 'gymnast_id',
                             name='_competition_gymnast_uc'),
@@ -184,7 +175,6 @@ class Entries(db.Model):
 
 
 class Scores(db.Model):
-
     __tablename__ = 'scores'
 
     id = db.Column(
@@ -215,29 +205,27 @@ class Scores(db.Model):
         db.Float, nullable=False
     )
 
-    # Relationship to individual judge scores
     judge_scores = db.relationship(
         'JudgeScores', backref='final_score', lazy=True
     )
 
     def calculate_average_e_score(self):
-        """Calculate the average E-score from all judge scores"""
+        """Calculate the average E-score from all judge scores."""
         if not self.judge_scores:
-            # Fallback to stored e_score if no judge scores
             return self.e_score
 
+        # Sum all judge scores and divide by count to get average
         total_e_score = sum(js.e_score for js in self.judge_scores)
         return round(total_e_score / len(self.judge_scores), 3)
 
     def update_final_score(self):
-        """Update the final e_score and total based on judge scores"""
+        """Update the final e_score and total based on judge scores."""
         if self.judge_scores:
             self.e_score = self.calculate_average_e_score()
             self.total = self.e_score + self.d_score - self.penalty
 
 
 class JudgeScores(db.Model):
-
     __tablename__ = 'judge_scores'
 
     id = db.Column(

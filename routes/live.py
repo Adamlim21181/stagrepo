@@ -1,7 +1,4 @@
-"""
-Live competition viewing routes.
-Handles public live leaderboards and competition viewing.
-"""
+
 from flask import render_template, request
 from extensions import db
 import models
@@ -10,7 +7,6 @@ from . import main
 
 @main.route('/live')
 def live():
-    """Display live competition leaderboards by level and apparatus."""
     selected_level = request.args.get('level')
     selected_apparatus_id = request.args.get('apparatus')
 
@@ -30,7 +26,6 @@ def live():
     ).distinct().order_by(models.Gymnasts.level).all()
     levels = [lvl[0] for lvl in levels]
 
-    # Desired level order
     desired_order = [
         'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5',
         'Level 6', 'Level 7', 'Level 8', 'Level 9',
@@ -41,16 +36,13 @@ def live():
     levels = sorted(levels, key=lambda x: desired_order.index(x)
                     if x in desired_order else 100)
 
-    # Fetch all apparatus for top buttons
-    apparatus_list = models.Apparatus.query.order_by(
-        models.Apparatus.name
-    ).all()
+    apparatus_list = models.Apparatus.query.all()
 
     leaderboard_data = []
 
     if selected_level:
         if selected_apparatus_id and selected_apparatus_id != 'all_around':
-            # Show scores for specific apparatus
+
             leaderboard_data = (
                 db.session.query(models.Scores, models.Gymnasts, models.Clubs)
                 .join(models.Entries,

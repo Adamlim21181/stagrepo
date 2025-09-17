@@ -1,3 +1,5 @@
+"""Flask-WTF forms for user input and validation."""
+
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
@@ -12,6 +14,7 @@ from wtforms.validators import DataRequired, Optional, NumberRange
 
 
 class AddGymnast(FlaskForm):
+    """Form for adding new gymnasts"""
     name = StringField(
         'Name',
         validators=[DataRequired('Please enter a name')]
@@ -42,6 +45,7 @@ class AddGymnast(FlaskForm):
 
 
 class AddClub(FlaskForm):
+    """Form for adding new clubs"""
     name = StringField(
         'Name',
         validators=[DataRequired('Please enter a club name')]
@@ -51,6 +55,7 @@ class AddClub(FlaskForm):
 
 
 class LoginForm(FlaskForm):
+    """User authentication form"""
     username = StringField(
         'Username',
         validators=[DataRequired('Please enter a username')]
@@ -65,7 +70,7 @@ class LoginForm(FlaskForm):
 
 
 class ResultsSearchForm(FlaskForm):
-    """Search/sort/pagination controls for the results page."""
+    """Search/sort/pagination controls for results page"""
     search = StringField('Search results', validators=[Optional()])
     per_page = SelectField('Rows per page',
                            coerce=int, validators=[Optional()])
@@ -76,6 +81,7 @@ class ResultsSearchForm(FlaskForm):
 
 
 class AddCompetitionForm(FlaskForm):
+    """Form for creating new competitions"""
     name = StringField(
         'Competition Name',
         validators=[DataRequired('Please enter a competition name')]
@@ -92,6 +98,7 @@ class AddCompetitionForm(FlaskForm):
 
 
 class AddEntryForm(FlaskForm):
+    """Form for entering gymnasts into competitions"""
     competition_id = SelectField(
         'Competition',
         coerce=int,
@@ -106,6 +113,7 @@ class AddEntryForm(FlaskForm):
 
 
 class AddScores(FlaskForm):
+    """Form for adding performance scores"""
     entry_id = SelectField(
         'Gymnast',
         coerce=int,

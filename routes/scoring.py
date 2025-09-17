@@ -1,7 +1,4 @@
-"""
-Scoring routes.
-Handles live competition scoring functionality for judges.
-"""
+
 from flask import render_template, redirect, url_for, session, flash, request
 from extensions import db
 import models
@@ -11,11 +8,10 @@ from . import main
 
 @main.route('/scoring', methods=['GET', 'POST'])
 def scoring():
-    """Handle live competition scoring interface for judges."""
+
     if 'user_id' not in session:
         return render_template('nologin.html')
 
-    # Get the live competition
     live_competition = models.Competitions.query.filter_by(
         status='live'
         ).first()
@@ -25,7 +21,6 @@ def scoring():
               'Please contact an admin.', 'warning')
         return render_template('scoring.html', no_live_competition=True)
 
-    # Get all entries for the live competition (gymnasts who are competing)
     entries = db.session.query(models.Entries, models.Gymnasts, models.Clubs)\
         .join(models.Gymnasts,
               models.Entries.gymnast_id == models.Gymnasts.id)\
@@ -34,10 +29,8 @@ def scoring():
         .filter(models.Entries.competition_id == live_competition.id)\
         .all()
 
-    # Get all apparatus
     apparatus_list = models.Apparatus.query.all()
 
-    # Calculate scoring progress for each gymnast
     scoring_progress = {}
     total_gymnasts = len(entries)
     fully_scored_gymnasts = 0
@@ -64,7 +57,6 @@ def scoring():
             )
         }
 
-    # Overall competition progress
     overall_progress = {
         'total_gymnasts': total_gymnasts,
         'fully_scored': fully_scored_gymnasts,
@@ -75,10 +67,8 @@ def scoring():
         'is_complete': fully_scored_gymnasts == total_gymnasts
     }
 
-    # Create form for scoring with proper WTF integration
     form = forms.AddScores()
-    
-    # Populate form choices dynamically
+
     form.entry_id.choices = [(0, 'Select a gymnast...')] + [
         (entry.id, f"{gymnast.name} - {club.name} ({gymnast.level})")
         for entry, gymnast, club in entries
@@ -87,14 +77,12 @@ def scoring():
         (app.id, app.name) for app in apparatus_list
     ]
 
-    # Handle form submission with existing multi-judge system
     if request.method == 'POST':
         entry_id = request.form.get('entry_id')
         apparatus_id = request.form.get('apparatus_id')
         d_score = request.form.get('d_score')
         penalty = request.form.get('penalty', 0)
 
-        # Get execution scores (can be multiple)
         execution_scores = request.form.getlist('execution_scores')
 
         try:
@@ -133,9 +121,8 @@ def scoring():
                     total=0.0
                 )
                 db.session.add(existing_score)
-                db.session.flush()  # Get the ID
+                db.session.flush()
 
-            # Update D-score and penalty
             existing_score.d_score = d_score
             existing_score.penalty = penalty
 
@@ -157,7 +144,6 @@ def scoring():
                     )
                     db.session.add(judge_score)
 
-                # Calculate and update averaged E-score
                 existing_score.update_final_score()
                 flash(
                     f'Multi-judge score submitted! Average E-score: '

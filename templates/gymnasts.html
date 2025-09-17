@@ -20,9 +20,9 @@
                             {% for error in gymnast_form.name.errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
-                        </ul>
+                        </ul><!-- error-list -->
                         {% endif %}
-                    </div> <!-- form-group -->
+                    </div><!-- form-group -->
 
                     <div class="form-group">
                         <label for="gymnast_club">Club</label>
@@ -37,9 +37,9 @@
                             {% for error in gymnast_form.club.errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
-                        </ul>
+                        </ul><!-- error-list -->
                         {% endif %}
-                    </div> <!-- form-group -->
+                    </div><!-- form-group -->
 
                     <div class="form-group">
                         <label for="gymnast_level">Level</label>
@@ -62,17 +62,16 @@
                             {% for error in gymnast_form.level.errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
-                        </ul>
+                        </ul><!-- error-list -->
                         {% endif %}
-                    </div> <!-- form-group -->
+                    </div><!-- form-group -->
 
                     <div class="form-group">
                         <input type="submit" value="Add Gymnast">
-                    </div> <!-- /.form-group -->
+                    </div>
                 </form>
-            </div> <!-- form-section -->
+            </div><!-- form-section -->
 
-            <!-- Add Club Form -->
             <div class="form-section">
                 <h3>Add New Club</h3>
                 <form method="POST">
@@ -86,18 +85,17 @@
                             {% for error in club_form.name.errors %}
                             <li>{{ error }}</li>
                             {% endfor %}
-                        </ul>
+                        </ul><!-- error-list -->
                         {% endif %}
-                    </div> <!-- form-group -->
+                    </div><!-- form-group -->
 
                     <div class="form-group">
                         <input type="submit" value="Add Club">
-                    </div> <!-- form-group -->
+                    </div>
                 </form>
-            </div> <!-- form-section -->
-        </div> <!-- forms-container -->
+            </div><!-- form-section -->
+        </div><!-- forms-container -->
 
-        <!-- Gymnasts Table -->
         <div class="table-section">
             <h3>Registered Gymnasts</h3>
             <div class="table-container">
@@ -122,20 +120,19 @@
                             </td>
                             <td class="actions">
                                 <form method="POST" action="{{ url_for('main.delete_gymnast', gymnast_id=gymnast.id) }}"
-                                    style="display:inline"
+                                    class="inline-form"
                                     onsubmit="return confirm('Delete this gymnast and all their entries/scores?');">
                                     {% if csrf_token %}{{ csrf_token() }}{% endif %}
                                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
-
-                            </td> <!-- actions -->
+                            </td><!-- actions -->
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div> <!-- table-container -->
-        </div> <!-- table-section -->
-    </div> <!-- content -->
-</div> <!-- page-container -->
+            </div><!-- table-container -->
+        </div><!-- table-section -->
+    </div><!-- content -->
+</div><!-- page-container -->
 
 {% endblock %}

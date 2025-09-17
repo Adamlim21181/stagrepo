@@ -1,15 +1,9 @@
-/*
- * GYMNASTICS COMPETITION MANAGEMENT SYSTEM - JAVASCRIPT
- * =====================================================
- * This file contains all the interactive functionality for the website.
- * It handles modals, search features, and dynamic form controls.
- */
 
 // Wait for the entire page to load before running any JavaScript
 document.addEventListener("DOMContentLoaded", () => {
   
   /*
-   * MODAL FUNCTIONALITY (for Calendar Page)
+   * MODAL (for Calendar Page)
    * =====================================
    * This section handles popup windows that show competition details
    * when you click on competitions in the calendar view.
@@ -28,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Add a click listener to each competition element
       el.addEventListener("click", () => {
         
-        // When clicked, fetch the competition details from the server
+        // When clicked, get the competition details from the server
         // This makes an HTTP request to get the competition information
         fetch(`/competition/${el.dataset.competitionId}`)
           .then(r => r.text())  // Convert the response to text/HTML
@@ -58,8 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * INITIALIZE PAGE-SPECIFIC FUNCTIONALITY
-   * ====================================
    * These functions set up different features depending on which page you're on
    */
 
@@ -74,8 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /*
- * ENTRIES PAGE SEARCH FUNCTIONALITY
- * ================================
+ * ENTRIES PAGE SEARCH
+ * ===================
  * This allows users to search for gymnasts by typing in a search box
  * instead of scrolling through a long dropdown list.
  */
@@ -136,8 +128,8 @@ function initializeEntriesPage() {
 }
 
 /*
- * SCORING PAGE JUDGE FUNCTIONALITY
- * ===============================
+ * SCORING PAGE JUDGE
+ * ==================
  * This allows judges to be added/removed dynamically on the scoring page
  * and automatically calculates average scores.
  */
@@ -288,8 +280,8 @@ function closeModal() {
 }
 
 /*
- * RESULTS PAGE COLUMN TOGGLE FUNCTIONALITY
- * =======================================
+ * RESULTS PAGE COLUMN TOGGLE
+ * ==========================
  * This allows users to show/hide different columns in the results table
  * by checking/unchecking the checkboxes above the table.
  */

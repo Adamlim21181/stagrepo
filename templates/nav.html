@@ -1,11 +1,9 @@
 <nav>
     <div class="nav-container">
-        <!-- Left: Logo -->
         <div class="nav-left">
             <a href="{{ url_for('main.home') }}"><img src="/static/images/Logo.png" alt="Logo"></a>
         </div>
 
-        <!-- Center: Main Navigation Links -->
         <ul class="nav-center">
             <li><a href="{{ url_for('main.home') }}">Home</a></li>
             <li><a href="{{ url_for('main.results') }}">Results</a></li>
@@ -22,14 +20,13 @@
                     <a href="{{ url_for('main.gymnasts') }}">Gymnast Management</a>
                     <a href="{{ url_for('main.competitions') }}">Manage Competitions</a>
                     <a href="{{ url_for('main.entries') }}">Manage Entries</a>
-                </div>
-            </li>
+                </div><!-- dropdown-content -->
+            </li><!-- dropdown -->
             {% endif %}
 
             <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
-        </ul>
+        </ul><!-- nav-center -->
 
-        <!-- Right: Login/Logout -->
         <ul class="nav-right">
             {% if not logged_in %}
             <li><a href="{{ url_for('main.login') }}">Login</a></li>
@@ -37,6 +34,6 @@
             {% if logged_in %}
             <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
             {% endif %}
-        </ul>
-    </div>
+        </ul><!-- nav-right -->
+    </div><!-- nav-container -->
 </nav>

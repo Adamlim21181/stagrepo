@@ -1,4 +1,3 @@
-
 <div class="competition-info">
     <div class="info-item">
         <div class="info-icon">📅</div>
@@ -7,8 +6,8 @@
             <br>
             <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
         </div>
-    </div>
-    
+    </div><!-- info-item -->
+
     {% if competition.started_at %}
     <div class="info-item">
         <div class="info-icon">⏰</div>
@@ -17,79 +16,72 @@
             {{ competition.started_at.strftime('%A, %B %d, %Y') }}<br>
             {{ competition.started_at.strftime('%I:%M %p') }}
             {% if competition.ended_at %}
-                - {{ competition.ended_at.strftime('%I:%M %p') }}
+            - {{ competition.ended_at.strftime('%I:%M %p') }}
             {% endif %}
         </div>
-    </div>
+    </div><!-- info-item -->
     {% endif %}
-    
+
     <div class="info-item">
         <div class="info-icon">📍</div>
         <div>
             <strong>Location:</strong><br>
             {{ competition.address }}
         </div>
-    </div>
-    
+    </div><!-- info-item -->
+
     <div class="info-item">
         <div class="info-icon">👥</div>
         <div>
             <strong>Participants:</strong><br>
             {{ entries_count }} gymnasts registered
         </div>
-    </div>
-</div>
+    </div><!-- info-item -->
+</div><!-- competition-info -->
 
 {% if entries %}
-<div style="margin-top: 20px;">
-    <h3 style="margin-bottom: 15px; color: #2d3748;">Registered Gymnasts</h3>
-    <div style="max-height: 200px; overflow-y: auto;">
-        <table style="width: 100%; border-collapse: collapse;">
+<div class="competition-details-section">
+    <h3>Registered Gymnasts</h3>
+    <div class="gymnasts-table-container">
+        <table class="gymnasts-table">
             <thead>
-                <tr style="background: #f8f9fa; border-bottom: 2px solid #e2e8f0;">
-                    <th style="padding: 10px; text-align: left; font-weight: 600;">Name</th>
-                    <th style="padding: 10px; text-align: left; font-weight: 600;">Level</th>
-                    <th style="padding: 10px; text-align: left; font-weight: 600;">Club</th>
+                <tr>
+                    <th>Name</th>
+                    <th>Level</th>
+                    <th>Club</th>
                 </tr>
             </thead>
             <tbody>
                 {% for entry, gymnast, club in entries %}
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 8px;">{{ gymnast.name }}</td>
-                    <td style="padding: 8px;">{{ gymnast.level }}</td>
-                    <td style="padding: 8px;">{{ club.name }}</td>
+                <tr>
+                    <td>{{ gymnast.name }}</td>
+                    <td>{{ gymnast.level }}</td>
+                    <td>{{ club.name }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-</div>
+    </div><!-- gymnasts-table-container -->
+</div><!-- competition-details-section -->
 {% endif %}
 
 {% if competition.status == 'live' %}
-<div style="margin-top: 20px; padding: 15px; background: #c6f6d5; border-radius: 8px; border: 1px solid #38a169;">
-    <strong style="color: #2f855a;">🔴 This competition is currently live!</strong>
-    <br>
-    <a href="{{ url_for('main.live') }}" style="color: #2f855a; text-decoration: none; font-weight: 600;">
-        View Live Results →
-    </a>
+<div class="status-alert live">
+    <strong>🔴 This competition is currently live!</strong>
+    <a href="{{ url_for('main.live') }}">View Live Results →</a>
 </div>
 {% endif %}
 
 {% if competition.status == 'draft' %}
-<div style="margin-top: 20px; padding: 15px; background: #ebf8ff; border-radius: 8px; border: 1px solid #3182ce;">
-    <strong style="color: #2b6cb0;">📋 This competition is in draft mode</strong>
-    <br>
-    <small style="color: #2b6cb0;">Registration and setup in progress</small>
+<div class="status-alert draft">
+    <strong>📋 This competition is in draft mode</strong>
+    <small>Registration and setup in progress</small>
 </div>
 {% endif %}
 
 {% if competition.status == 'ended' %}
-<div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; border: 1px solid #718096;">
-    <strong style="color: #4a5568;">✅ This competition has ended</strong>
-    <br>
-    <a href="{{ url_for('main.results') }}" style="color: #4a5568; text-decoration: none; font-weight: 600;">
-        View Results →
-    </a>
+<div class="status-alert ended">
+    <strong>✅ This competition has ended</strong>
+    <a href="{{ url_for('main.results') }}">View Results →</a>
 </div>
 {% endif %}

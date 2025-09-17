@@ -1,8 +1,4 @@
-"""
-Admin routes.
-Handles all admin-only operations like starting/ending competitions,
-deleting records, and managing competitions.
-"""
+
 from flask import redirect, url_for, session, flash
 from extensions import db
 import models
@@ -11,7 +7,6 @@ from . import main
 
 @main.route('/admin/competition/<int:competition_id>/start')
 def start_competition(competition_id):
-    """Start a competition and end any currently live competition."""
     if 'user_id' not in session or 'admin' not in session.get('roles', []):
         flash('Access denied', 'danger')
         return redirect(url_for('main.home'))
@@ -62,8 +57,11 @@ def delete_competition(competition_id):
         flash("You can't delete a LIVE competition.", 'warning')
         return redirect(url_for('main.competitions'))
 
-    # Cascade delete manually to avoid SQLAlchemy join+delete issues
-    # Delete JudgeScores first (find them via joined tables)
+    """
+    I have to delete the JudgesScores first, then from the Scores table,
+    then from the entries table to avoid foreign key constraint issues.
+    """
+
     judge_scores_to_delete = db.session.query(models.JudgeScores) \
         .join(models.Scores) \
         .join(models.Entries) \
@@ -73,7 +71,6 @@ def delete_competition(competition_id):
     for judge_score in judge_scores_to_delete:
         db.session.delete(judge_score)
 
-    # Delete Scores (find them via entries)
     scores_to_delete = db.session.query(models.Scores) \
         .join(models.Entries) \
         .filter(models.Entries.competition_id == comp.id) \
@@ -82,7 +79,6 @@ def delete_competition(competition_id):
     for score in scores_to_delete:
         db.session.delete(score)
 
-    # Delete Entries directly (no join needed)
     entries_to_delete = models.Entries.query.filter_by(
         competition_id=comp.id
     ).all()
@@ -105,7 +101,11 @@ def delete_entry(entry_id):
 
     entry = models.Entries.query.get_or_404(entry_id)
 
-    # Delete JudgeScores first (find them via joined tables)
+    """
+    I have to delete the JudgesScores first, then from the Scores table
+    because of foreign key constraints.
+    """
+
     judge_scores_to_delete = db.session.query(models.JudgeScores) \
         .join(models.Scores) \
         .filter(models.Scores.entry_id == entry.id) \
@@ -114,7 +114,6 @@ def delete_entry(entry_id):
     for judge_score in judge_scores_to_delete:
         db.session.delete(judge_score)
 
-    # Delete Scores directly (no join needed)
     scores_to_delete = models.Scores.query.filter_by(
         entry_id=entry.id
     ).all()
@@ -137,7 +136,12 @@ def delete_gymnast(gymnast_id):
 
     gymnast = models.Gymnasts.query.get_or_404(gymnast_id)
 
-    # Delete JudgeScores first (find them via joined tables)
+    """
+    I have to delete the JudgesScores first, then from the Scores table,
+    then from the entries table, then finally the gymnast because of
+    foreign key constraints.
+    """
+
     judge_scores_to_delete = db.session.query(models.JudgeScores) \
         .join(models.Scores) \
         .join(models.Entries) \
@@ -147,7 +151,6 @@ def delete_gymnast(gymnast_id):
     for judge_score in judge_scores_to_delete:
         db.session.delete(judge_score)
 
-    # Delete Scores (find them via entries)
     scores_to_delete = db.session.query(models.Scores) \
         .join(models.Entries) \
         .filter(models.Entries.gymnast_id == gymnast.id) \
@@ -156,14 +159,12 @@ def delete_gymnast(gymnast_id):
     for score in scores_to_delete:
         db.session.delete(score)
 
-    # Delete Entries directly (no join needed)
     entries_to_delete = models.Entries.query.filter_by(
         gymnast_id=gymnast.id
     ).all()
     for entry in entries_to_delete:
         db.session.delete(entry)
 
-    # Finally delete the gymnast
     db.session.delete(gymnast)
     db.session.commit()
 
@@ -178,13 +179,10 @@ def delete_score(score_id):
         flash('Access denied', 'danger')
         return redirect(url_for('main.home'))
 
-    # Get the score (404 if not found)
     score = models.Scores.query.get_or_404(score_id)
 
-    # First delete judge scores linked to this score
     db.session.query(models.JudgeScores).filter_by(score_id=score.id).delete()
 
-    # Then delete the score itself
     db.session.delete(score)
     db.session.commit()
 

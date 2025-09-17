@@ -1,7 +1,4 @@
-"""
-Authentication routes.
-Handles user login and logout functionality.
-"""
+
 from flask import render_template, redirect, url_for, session, flash
 import models
 import forms
@@ -31,6 +28,5 @@ def login():
 
 @main.route('/logout')
 def logout():
-    """Clear user session and redirect to home."""
     session.clear()
     return redirect(url_for('main.home'))

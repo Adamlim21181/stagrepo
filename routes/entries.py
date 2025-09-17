@@ -1,7 +1,4 @@
-"""
-Entries management routes.
-Handles competition entry management.
-"""
+
 from flask import render_template, redirect, url_for, session, flash, request
 from extensions import db
 import models
@@ -11,7 +8,6 @@ from . import main
 
 @main.route('/entries', methods=['GET', 'POST'])
 def entries():
-    """Manage competition entries - admin only access."""
     if 'user_id' not in session:
         return render_template('nologin.html')
 
@@ -19,10 +15,8 @@ def entries():
         flash('Access denied', 'danger')
         return render_template('nologin.html')
 
-    # Create form and populate choices
     form = forms.AddEntryForm()
-    
-    # Get competitions and gymnasts for form choices
+
     competitions = (
         models.Competitions.query
         .order_by(models.Competitions.competition_date.desc())
@@ -33,18 +27,20 @@ def entries():
         .order_by(models.Gymnasts.name)
         .all()
     )
-    
+
     # Populate form choices
     form.competition_id.choices = [(0, 'Select Competition...')] + [
-        (comp.id, f"{comp.name} - {comp.competition_date}") 
+        (comp.id, f"{comp.name} - {comp.competition_date}")
         for comp in competitions
     ]
     form.gymnast_id.choices = [(0, 'Select Gymnast...')] + [
-        (gym.id, f"#{gym.id:03d} - {gym.name} - {gym.clubs.name} ({gym.level})")
+        (
+            gym.id,
+            f"#{gym.id:03d} - {gym.name} - {gym.clubs.name} ({gym.level})"
+        )
         for gym in gymnasts
     ]
 
-    # Handle form submission
     if form.validate_on_submit():
         # Check if entry already exists
         existing_entry = models.Entries.query.filter_by(
@@ -68,11 +64,9 @@ def entries():
 
         return redirect(url_for('main.entries'))
 
-    # Handle legacy bulk form submission (keeping existing functionality)
     if request.method == 'POST' and not form.validate_on_submit():
         competition_id = request.form.get('competition_id')
 
-        # Check if this is bulk add
         if request.form.get('bulk_add'):
             gymnast_ids = request.form.getlist('gymnast_ids')
             added_count = 0
@@ -110,7 +104,6 @@ def entries():
                 )
 
         else:
-            # Single gymnast add
             gymnast_id = request.form.get('gymnast_id')
 
             # Check if entry already exists
@@ -135,7 +128,6 @@ def entries():
 
         return redirect(url_for('main.entries'))
 
-    # Get all competitions, gymnasts, and clubs (for display)
     clubs = models.Clubs.query.order_by(models.Clubs.name).all()
 
     # Get unique levels
@@ -147,7 +139,6 @@ def entries():
     )
     levels = [level[0] for level in levels]
 
-    # Get all entries with related data
     entries = (
         db.session.query(
             models.Entries,

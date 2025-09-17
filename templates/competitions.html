@@ -4,7 +4,6 @@
 <div class="content">
     <h1>Competition Management</h1>
 
-    <!-- Add New Competition Form -->
     <div class="add-competition">
         <h2>Add New Competition</h2>
         <form method="POST">
@@ -20,7 +19,7 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
-            </div> <!-- /.form-group -->
+            </div><!-- form-group -->
 
             <div class="form-group">
                 {{ form.address.label(for="address") }}
@@ -32,7 +31,7 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
-            </div> <!-- /.form-group -->
+            </div><!-- form-group -->
 
             <div class="form-group">
                 {{ form.competition_date.label(for="competition_date") }}
@@ -44,13 +43,12 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
-            </div> <!-- /.form-group -->
+            </div><!-- form-group -->
 
             {{ form.submit(id="addcomp") }}
         </form>
-    </div> <!-- /.add-competition -->
+    </div><!-- add-competition -->
 
-    <!-- Competition Table -->
     <div class="competitions-list">
         <h2>All Competitions</h2>
         <table>
@@ -101,12 +99,12 @@
                         </form>
 
 
-                    </td> <!-- actions -->
-                </tr>
+                    </td><!-- actions -->
+                </tr><!-- competition-row -->
                 {% endfor %}
             </tbody>
         </table>
-    </div> <!-- competitions-list -->
-</div> <!-- content -->
+    </div><!-- competitions-list -->
+</div><!-- content -->
 
 {% endblock %}

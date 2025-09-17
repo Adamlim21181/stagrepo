@@ -1,7 +1,4 @@
-"""
-Calendar routes.
-Handles calendar view and competition details display.
-"""
+
 from flask import render_template, request
 from datetime import datetime, timedelta
 import calendar
@@ -12,12 +9,10 @@ from . import main
 
 @main.route('/calendar')
 def calendar_view():
-    """Display monthly calendar with competitions."""
     # Get current date or date from query parameters
     year = request.args.get('year', datetime.now().year, type=int)
     month = request.args.get('month', datetime.now().month, type=int)
 
-    # Handle month navigation
     if month > 12:
         month = 1
         year += 1
@@ -40,7 +35,6 @@ def calendar_view():
         models.Competitions.competition_date.between(start_date, end_date)
     ).all()
 
-    # Group competitions by date
     competitions_by_date = {}
     for comp in competitions:
         if comp.competition_date:
@@ -49,7 +43,6 @@ def calendar_view():
                 competitions_by_date[day] = []
             competitions_by_date[day].append(comp)
 
-    # Calculate navigation dates
     prev_month = month - 1 if month > 1 else 12
     prev_year = year if month > 1 else year - 1
     next_month = month + 1 if month < 12 else 1

@@ -1,7 +1,4 @@
-"""
-Base routes module for STAG Compete application.
-Contains shared utilities and blueprint setup for all route modules.
-"""
+
 from flask import Blueprint, session
 
 # Create the main blueprint that all other route modules will use
