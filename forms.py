@@ -10,23 +10,35 @@ from wtforms import (
     DateField,
     FloatField
 )
-from wtforms.validators import DataRequired, Optional, NumberRange
+from wtforms.validators import (
+    DataRequired,
+    Optional,
+    NumberRange,
+    Length,
+    ValidationError
+)
+
+
+def validate_not_placeholder(form, field):
+    """Custom validator to reject placeholder values (0) for select fields."""
+    if field.data == 0:
+        raise ValidationError('Please make a selection')
 
 
 class AddGymnast(FlaskForm):
     """Form for adding new gymnasts"""
     name = StringField(
         'Name',
-        validators=[DataRequired('Please enter a name')]
+        validators=[DataRequired('Please enter a name'), Length(max=50)]
     )
 
     club = SelectField(
         'Club',
-        validators=[DataRequired('Select Club')]
+        coerce=int,
+        validators=[DataRequired('Please select a club')]
     )
 
     level = SelectField('Level', choices=[
-        ('', 'Select Level'),
         ('Level 1', 'Level 1'),
         ('Level 2', 'Level 2'),
         ('Level 3', 'Level 3'),
@@ -48,7 +60,7 @@ class AddClub(FlaskForm):
     """Form for adding new clubs"""
     name = StringField(
         'Name',
-        validators=[DataRequired('Please enter a club name')]
+        validators=[DataRequired('Please enter a club name'), Length(max=50)]
     )
 
     submit = SubmitField('Add Club')
@@ -84,11 +96,12 @@ class AddCompetitionForm(FlaskForm):
     """Form for creating new competitions"""
     name = StringField(
         'Competition Name',
-        validators=[DataRequired('Please enter a competition name')]
+        validators=[DataRequired('Please enter a competition name'),
+                    Length(max=100)]
     )
     address = StringField(
         'Address',
-        validators=[DataRequired('Please enter an address')]
+        validators=[DataRequired('Please enter an address'), Length(max=100)]
     )
     competition_date = DateField(
         'Competition Date',
@@ -102,27 +115,40 @@ class AddEntryForm(FlaskForm):
     competition_id = SelectField(
         'Competition',
         coerce=int,
-        validators=[DataRequired('Please select a competition')]
+        validators=[
+            DataRequired('Please select a competition'),
+            validate_not_placeholder
+        ]
     )
-    gymnast_id = SelectField(
-        'Gymnast',
-        coerce=int,
-        validators=[DataRequired('Please select a gymnast')]
+    gymnast_name = StringField(
+        'Gymnast Name',
+        validators=[
+            DataRequired('Please enter a gymnast name'),
+            Length(
+                max=100,
+                message='Gymnast name must be 100 characters or less'
+            )
+        ]
     )
     submit = SubmitField('Add Entry')
 
 
 class AddScores(FlaskForm):
-    """Form for adding performance scores"""
     entry_id = SelectField(
         'Gymnast',
         coerce=int,
-        validators=[DataRequired('Please select a gymnast')]
+        validators=[
+            DataRequired('Please select a gymnast'),
+            validate_not_placeholder
+        ]
     )
     apparatus_id = SelectField(
         'Apparatus',
         coerce=int,
-        validators=[DataRequired('Please select an apparatus')]
+        validators=[
+            DataRequired('Please select an apparatus'),
+            validate_not_placeholder
+        ]
     )
     d_score = FloatField(
         'Difficulty Score',

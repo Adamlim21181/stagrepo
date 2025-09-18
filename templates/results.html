@@ -32,8 +32,6 @@
         <div class="column_controls">
             <h3>Show/Hide Columns</h3>
             <div class="controls-grid">
-                <label><input type="checkbox" class="column-toggle" data-column="id" checked> Gymnast ID</label>
-                <label><input type="checkbox" class="column-toggle" data-column="entry" checked> Entry ID</label>
                 <label><input type="checkbox" class="column-toggle" data-column="competition" checked>
                     Competition</label>
                 <label><input type="checkbox" class="column-toggle" data-column="name" checked> Name</label>
@@ -69,32 +67,6 @@
         <div class="tables">
             <table id="resultsTable">
                 <tr>
-                    <th class="headerhover col-id">
-                        <a href="{{ url_for('main.results', 
-                                           search=search_query, 
-                                           per_page=per_page, 
-                                           sort_by='id', 
-                                           sort_order='asc' if current_sort_by != 'id' or current_sort_order == 'desc' else 'desc') }}"
-                            style="color: inherit; text-decoration: none;">
-                            Gymnast ID
-                            {% if current_sort_by == 'id' %}
-                            {{ '↑' if current_sort_order == 'asc' else '↓' }}
-                            {% endif %}
-                        </a>
-                    </th>
-                    <th class="headerhover col-entry">
-                        <a href="{{ url_for('main.results', 
-                                           search=search_query, 
-                                           per_page=per_page, 
-                                           sort_by='entry_id', 
-                                           sort_order='asc' if current_sort_by != 'entry_id' or current_sort_order == 'desc' else 'desc') }}"
-                            style="color: inherit; text-decoration: none;">
-                            Entries_id
-                            {% if current_sort_by == 'entry_id' %}
-                            {{ '↑' if current_sort_order == 'asc' else '↓' }}
-                            {% endif %}
-                        </a>
-                    </th>
                     <th class="headerhover col-competition">
                         <a href="{{ url_for('main.results', 
                                            search=search_query, 
@@ -216,10 +188,8 @@
 
                 {% for row in results %}
                 <tr>
-                    <td class="col-id">{{ row.entry.gymnasts.id }}</td>
-                    <td class="col-entry">{{ row.entry_id }}</td>
                     <td class="col-competition">{{ row.entry.competitions.name }}</td>
-                    <td class="col-name">{{ row.entry.gymnasts.name }}</td>
+                    <td class="col-name">{{ row.entry.gymnasts.name }} ({{ row.entry.gymnasts.id }})</td>
                     <td class="col-club">{{ row.entry.gymnasts.clubs.name }}</td>
                     <td class="col-level">{{ row.entry.gymnasts.level }}</td>
                     <td class="col-apparatus">{{ row.apparatus.name }}</td>

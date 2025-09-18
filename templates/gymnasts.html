@@ -13,8 +13,8 @@
                     {{ gymnast_form.hidden_tag() }}
 
                     <div class="form-group">
-                        <label for="gymnast_name">Name</label>
-                        <input type="text" id="gymnast_name" name="name" size="32" required>
+                        {{ gymnast_form.name.label(for="gymnast_name") }}
+                        {{ gymnast_form.name(id="gymnast_name", class="form-control", required=True) }}
                         {% if gymnast_form.name.errors %}
                         <ul class="error-list">
                             {% for error in gymnast_form.name.errors %}
@@ -25,13 +25,14 @@
                     </div><!-- form-group -->
 
                     <div class="form-group">
-                        <label for="gymnast_club">Club</label>
-                        <select id="gymnast_club" name="club" required>
-                            <option value="">Select a club...</option>
-                            {% for club in clubs %}
-                            <option value="{{ club.id }}">{{ club.name }}</option>
-                            {% endfor %}
+                        {{ gymnast_form.club.label(for="gymnast_club") }}
+                        {% if gymnast_form.club.choices %}
+                        {{ gymnast_form.club(id="gymnast_club", class="form-control", required=True) }}
+                        {% else %}
+                        <select id="gymnast_club" class="form-control" disabled>
+                            <option>No clubs available - add a club first</option>
                         </select>
+                        {% endif %}
                         {% if gymnast_form.club.errors %}
                         <ul class="error-list">
                             {% for error in gymnast_form.club.errors %}
@@ -42,21 +43,8 @@
                     </div><!-- form-group -->
 
                     <div class="form-group">
-                        <label for="gymnast_level">Level</label>
-                        <select id="gymnast_level" name="level" required>
-                            <option value="">Select level...</option>
-                            <option value="Level 1">Level 1</option>
-                            <option value="Level 2">Level 2</option>
-                            <option value="Level 3">Level 3</option>
-                            <option value="Level 4">Level 4</option>
-                            <option value="Level 5">Level 5</option>
-                            <option value="Level 6">Level 6</option>
-                            <option value="Level 7">Level 7</option>
-                            <option value="Level 8">Level 8</option>
-                            <option value="Level 9">Level 9</option>
-                            <option value="Junior International">Junior International</option>
-                            <option value="Senior International">Senior International</option>
-                        </select>
+                        {{ gymnast_form.level.label(for="gymnast_level") }}
+                        {{ gymnast_form.level(id="gymnast_level", class="form-control", required=True) }}
                         {% if gymnast_form.level.errors %}
                         <ul class="error-list">
                             {% for error in gymnast_form.level.errors %}
@@ -67,7 +55,7 @@
                     </div><!-- form-group -->
 
                     <div class="form-group">
-                        <input type="submit" value="Add Gymnast">
+                        {{ gymnast_form.submit(class="btn btn-primary") }}
                     </div>
                 </form>
             </div><!-- form-section -->
@@ -78,8 +66,8 @@
                     {{ club_form.hidden_tag() }}
 
                     <div class="form-group">
-                        <label for="club_name">Club Name</label>
-                        <input type="text" id="club_name" name="name" size="32" required>
+                        {{ club_form.name.label(for="club_name") }}
+                        {{ club_form.name(id="club_name", class="form-control", required=True) }}
                         {% if club_form.name.errors %}
                         <ul class="error-list">
                             {% for error in club_form.name.errors %}
@@ -90,7 +78,7 @@
                     </div><!-- form-group -->
 
                     <div class="form-group">
-                        <input type="submit" value="Add Club">
+                        {{ club_form.submit(class="btn btn-primary") }}
                     </div>
                 </form>
             </div><!-- form-section -->

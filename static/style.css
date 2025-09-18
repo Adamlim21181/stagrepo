@@ -4,10 +4,7 @@
 
 /* Import all CSS modules in the correct order */
 @import './css/variables.css';  /* CSS custom properties and design tokens */
-@import './css/base.css';       /* Global styles, resets, and utilities */
-@import './css/components.css'; /* Reusable components (buttons, forms, badges, etc.) */
-@import './css/layout.css';     /* Navigation, grid systems, and layout utilities */
-@import './css/shared.css';     /* Shared legacy form and table styles */
+@import './css/global.css';     /* All global styles, components, layout, navigation, utilities */
 
 /* All page-specific styles consolidated into one file */
 @import './css/pages.css';
@@ -15,13 +12,10 @@
 /* 
   File Organization:
   - variables.css: CSS custom properties, colors, spacing, typography
-  - base.css: Global styles, HTML element resets, utility classes
-  - components.css: Buttons, forms, badges, tables, progress bars, pagination
-  - layout.css: Navigation, grids, flexbox utilities, search controls
-  - shared.css: Shared legacy form and table styles used across pages
+  - global.css: ALL global styles, components, layout, navigation, utilities, and base styles
   - pages.css: ALL page-specific styles consolidated for better performance
   
   This streamlined approach reduces HTTP requests and makes CSS easier to maintain.
-  All page styles are now in a single, well-organized file instead of scattered
-  across multiple files.
+  All global styles, components, and layout utilities are now in a single, well-organized file
+  instead of scattered across multiple files.
 */

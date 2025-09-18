@@ -1,4 +1,3 @@
-
 from flask import render_template, redirect, url_for, session, flash, request
 from extensions import db
 import models
@@ -50,11 +49,7 @@ def scoring():
         scoring_progress[entry.id] = {
             'scored_count': scored_count,
             'total_count': total_apparatus,
-            'is_complete': is_complete,
-            'percentage': (
-                (scored_count / total_apparatus * 100)
-                if total_apparatus > 0 else 0
-            )
+            'is_complete': is_complete
         }
 
     overall_progress = {
@@ -78,95 +73,114 @@ def scoring():
     ]
 
     if request.method == 'POST':
-        entry_id = request.form.get('entry_id')
-        apparatus_id = request.form.get('apparatus_id')
-        d_score = request.form.get('d_score')
-        penalty = request.form.get('penalty', 0)
+        if form.validate_on_submit():
+            entry_id = form.entry_id.data
+            apparatus_id = form.apparatus_id.data
+            d_score = form.d_score.data
+            penalty = form.penalty.data if form.penalty.data else 0.0
 
-        execution_scores = request.form.getlist('execution_scores')
+            # Handle execution scores (dynamic JavaScript input)
+            execution_scores = request.form.getlist('execution_scores')
 
-        try:
-            # Convert to floats and filter out empty values
-            execution_scores = [
-                float(score) for score in execution_scores
-                if score and score.strip()
-            ]
+            try:
+                # Convert to floats and filter out empty values
+                execution_scores = [
+                    float(score) for score in execution_scores
+                    if score and score.strip()
+                ]
 
-            if not execution_scores:
-                flash('Please enter at least one execution score.', 'warning')
+                if not execution_scores:
+                    flash(
+                        'Please enter at least one execution score.',
+                        'warning'
+                    )
+                    return redirect(url_for('main.scoring'))
+
+                # Validate execution scores are in valid range
+                for score in execution_scores:
+                    if score < 0 or score > 10:
+                        flash(
+                            'Execution scores must be between 0 and 10.',
+                            'danger'
+                        )
+                        return redirect(url_for('main.scoring'))
+
+                # Find existing score or create new one
+                existing_score = models.Scores.query.filter_by(
+                    entry_id=entry_id,
+                    apparatus_id=apparatus_id
+                ).first()
+
+                if existing_score:
+                    # Clear existing judge scores
+                    models.JudgeScores.query.filter_by(
+                        score_id=existing_score.id
+                    ).delete()
+                else:
+                    # Create new score record
+                    existing_score = models.Scores(
+                        entry_id=entry_id,
+                        apparatus_id=apparatus_id,
+                        e_score=0.0,
+                        d_score=d_score,
+                        penalty=penalty,
+                        total=0.0
+                    )
+                    db.session.add(existing_score)
+                    db.session.flush()
+
+                existing_score.d_score = d_score
+                existing_score.penalty = penalty
+
+                if len(execution_scores) == 1:
+                    # Single judge scoring
+                    existing_score.e_score = execution_scores[0]
+                    existing_score.total = (existing_score.e_score +
+                                            existing_score.d_score -
+                                            existing_score.penalty)
+                    flash(
+                        f'Score submitted! Total: {existing_score.total:.3f}',
+                        'success'
+                    )
+                else:
+                    # Multiple judge scoring - save individual scores
+                    for judge_num, e_score in enumerate(execution_scores, 1):
+                        judge_score = models.JudgeScores(
+                            score_id=existing_score.id,
+                            judge_number=judge_num,
+                            e_score=round(e_score, 3)
+                        )
+                        db.session.add(judge_score)
+
+                    existing_score.update_final_score()
+                    flash(
+                        f'Multi-judge score submitted! Average E-score: '
+                        f'{existing_score.e_score:.3f}, Total: '
+                        f'{existing_score.total:.3f}',
+                        'success'
+                    )
+
+                db.session.commit()
+
+                # Check if this completed scoring for a gymnast
+                updated_entry = models.Entries.query.get(entry_id)
+                if updated_entry:
+                    scored_apparatus_count = len(updated_entry.scores)
+                    if scored_apparatus_count == len(apparatus_list):
+                        gymnast_name = updated_entry.gymnasts.name
+                        flash(f'✅ {gymnast_name} scoring complete!', 'info')
+
                 return redirect(url_for('main.scoring'))
 
-            d_score = float(d_score) if d_score else 0.0
-            penalty = float(penalty) if penalty else 0.0
-
-            # Find existing score or create new one
-            existing_score = models.Scores.query.filter_by(
-                entry_id=entry_id,
-                apparatus_id=apparatus_id
-            ).first()
-
-            if existing_score:
-                # Clear existing judge scores
-                models.JudgeScores.query.filter_by(
-                    score_id=existing_score.id
-                ).delete()
-            else:
-                # Create new score record
-                existing_score = models.Scores(
-                    entry_id=entry_id,
-                    apparatus_id=apparatus_id,
-                    e_score=0.0,
-                    d_score=d_score,
-                    penalty=penalty,
-                    total=0.0
-                )
-                db.session.add(existing_score)
-                db.session.flush()
-
-            existing_score.d_score = d_score
-            existing_score.penalty = penalty
-
-            if len(execution_scores) == 1:
-                # Single judge scoring
-                existing_score.e_score = execution_scores[0]
-                existing_score.total = (existing_score.e_score +
-                                        existing_score.d_score -
-                                        existing_score.penalty)
-                flash(f'Score submitted! Total: {existing_score.total:.3f}',
-                      'success')
-            else:
-                # Multiple judge scoring - save individual scores and average
-                for judge_num, e_score in enumerate(execution_scores, 1):
-                    judge_score = models.JudgeScores(
-                        score_id=existing_score.id,
-                        judge_number=judge_num,
-                        e_score=round(e_score, 3)
-                    )
-                    db.session.add(judge_score)
-
-                existing_score.update_final_score()
-                flash(
-                    f'Multi-judge score submitted! Average E-score: '
-                    f'{existing_score.e_score:.3f}, Total: '
-                    f'{existing_score.total:.3f}',
-                    'success'
-                )
-
-        except ValueError as e:
-            flash(f'Invalid score values: {str(e)}', 'danger')
-            return redirect(url_for('main.scoring'))
-
-        db.session.commit()
-
-        # Check if this completed scoring for a gymnast
-        updated_entry = models.Entries.query.get(entry_id)
-        if updated_entry:
-            scored_apparatus_count = len(updated_entry.scores)
-            if scored_apparatus_count == len(apparatus_list):
-                gymnast_name = updated_entry.gymnasts.name
-                flash(f'✅ {gymnast_name} scoring complete!', 'info')
-
-        return redirect(url_for('main.scoring'))
+            except ValueError as e:
+                flash(f'Invalid score values: {str(e)}', 'danger')
+                return redirect(url_for('main.scoring'))
+        else:
+            # Form validation failed - show specific error messages
+            for field, errors in form.errors.items():
+                field_name = field.replace('_', ' ').title()
+                for error in errors:
+                    flash(f"{field_name}: {error}", 'danger')
 
     return render_template(
         'scoring.html',

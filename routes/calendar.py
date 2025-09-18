@@ -1,4 +1,3 @@
-
 from flask import render_template, request
 from datetime import datetime, timedelta
 import calendar
@@ -73,12 +72,29 @@ def competition_details(competition_id):
         competition_id=competition_id
     ).count()
 
-    # Get entries with gymnast and club details
+    # Level ordering case for proper sorting
+    level_order_case = db.case(
+        (models.Gymnasts.level == 'Level 1', 1),
+        (models.Gymnasts.level == 'Level 2', 2),
+        (models.Gymnasts.level == 'Level 3', 3),
+        (models.Gymnasts.level == 'Level 4', 4),
+        (models.Gymnasts.level == 'Level 5', 5),
+        (models.Gymnasts.level == 'Level 6', 6),
+        (models.Gymnasts.level == 'Level 7', 7),
+        (models.Gymnasts.level == 'Level 8', 8),
+        (models.Gymnasts.level == 'Level 9', 9),
+        (models.Gymnasts.level == 'Junior Inter', 10),
+        (models.Gymnasts.level == 'Senior Inter', 11),
+        else_=999
+    )
+
+    # Get entries with gymnast and club details, ordered by level
     entries = db.session.query(models.Entries, models.Gymnasts, models.Clubs)\
         .join(models.Gymnasts,
               models.Entries.gymnast_id == models.Gymnasts.id)\
         .join(models.Clubs, models.Gymnasts.club_id == models.Clubs.id)\
         .filter(models.Entries.competition_id == competition_id)\
+        .order_by(level_order_case, models.Gymnasts.name)\
         .all()
 
     return render_template(

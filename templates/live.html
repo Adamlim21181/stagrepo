@@ -49,6 +49,9 @@
                     <th>Rank</th>
                     <th>Gymnast</th>
                     <th>Club</th>
+                    <th>E-Score</th>
+                    <th>D-Score</th>
+                    <th>Penalty</th>
                     <th>Total</th>
                 </tr>
             </thead>
@@ -60,6 +63,9 @@
                     <td>{{ loop.index }}</td>
                     <td>{{ gymnast.name }}</td>
                     <td>{{ club.name }}</td>
+                    <td>{{ "%.3f"|format(score.e_score) }}</td>
+                    <td>{{ "%.3f"|format(score.d_score) }}</td>
+                    <td>{{ "%.3f"|format(score.penalty) }}</td>
                     <td>{{ "%.3f"|format(score.total) }}</td>
                 </tr>
                 {% endfor %}
@@ -70,6 +76,9 @@
                     <td>{{ loop.index }}</td>
                     <td>{{ gymnast_data.name}}</td>
                     <td>{{ gymnast_data.club_name }}</td>
+                    <td>{{ "%.3f"|format(gymnast_data.total_e_score) }}</td>
+                    <td>{{ "%.3f"|format(gymnast_data.total_d_score) }}</td>
+                    <td>{{ "%.3f"|format(gymnast_data.total_penalty) }}</td>
                     <td>{{ "%.3f"|format(gymnast_data.total_score) }}</td>
                 </tr>
                 {% endfor %}

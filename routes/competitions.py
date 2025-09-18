@@ -1,4 +1,3 @@
-
 from flask import render_template, redirect, url_for, session, flash
 from datetime import datetime
 from extensions import db

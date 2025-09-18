@@ -1,4 +1,15 @@
-"""Database seeding and test data creation functions."""
+"""
+This file is just for making fake data so I can test the website.
+It saves me from having to type everything in by hand, which would take forever.
+
+Right now it only makes a small set of data so things run quick and easy.
+But in the future, when people are actually using the site, there could be
+thousands or even millions of records getting added. This script is like a
+mini version of that — just enough fake stuff so I can see how things work.
+
+This does not run with the website...
+"""
+
 
 from create_app import db
 import models

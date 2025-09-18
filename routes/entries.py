@@ -1,5 +1,4 @@
-
-from flask import render_template, redirect, url_for, session, flash, request
+from flask import render_template, redirect, url_for, session, flash
 from extensions import db
 import models
 import forms
@@ -24,6 +23,7 @@ def entries():
     )
     gymnasts = (
         models.Gymnasts.query
+        .join(models.Clubs)
         .order_by(models.Gymnasts.name)
         .all()
     )
@@ -33,101 +33,8 @@ def entries():
         (comp.id, f"{comp.name} - {comp.competition_date}")
         for comp in competitions
     ]
-    form.gymnast_id.choices = [(0, 'Select Gymnast...')] + [
-        (
-            gym.id,
-            f"#{gym.id:03d} - {gym.name} - {gym.clubs.name} ({gym.level})"
-        )
-        for gym in gymnasts
-    ]
 
-    if form.validate_on_submit():
-        # Check if entry already exists
-        existing_entry = models.Entries.query.filter_by(
-            competition_id=form.competition_id.data,
-            gymnast_id=form.gymnast_id.data
-        ).first()
-
-        if existing_entry:
-            flash(
-                'This gymnast is already entered in this competition!',
-                'warning'
-            )
-        else:
-            new_entry = models.Entries(
-                competition_id=form.competition_id.data,
-                gymnast_id=form.gymnast_id.data
-            )
-            db.session.add(new_entry)
-            db.session.commit()
-            flash('Entry added successfully!', 'success')
-
-        return redirect(url_for('main.entries'))
-
-    if request.method == 'POST' and not form.validate_on_submit():
-        competition_id = request.form.get('competition_id')
-
-        if request.form.get('bulk_add'):
-            gymnast_ids = request.form.getlist('gymnast_ids')
-            added_count = 0
-            duplicate_count = 0
-
-            for gymnast_id in gymnast_ids:
-                # Check if entry already exists
-                existing_entry = models.Entries.query.filter_by(
-                    competition_id=competition_id,
-                    gymnast_id=gymnast_id
-                ).first()
-
-                if not existing_entry:
-                    new_entry = models.Entries(
-                        competition_id=competition_id,
-                        gymnast_id=gymnast_id
-                    )
-                    db.session.add(new_entry)
-                    added_count += 1
-                else:
-                    duplicate_count += 1
-
-            db.session.commit()
-
-            if added_count > 0:
-                flash(
-                    f'Added {added_count} gymnasts to the competition!',
-                    'success'
-                )
-            if duplicate_count > 0:
-                flash(
-                    (f'{duplicate_count} gymnasts were already in the '
-                     'competition.'),
-                    'info'
-                )
-
-        else:
-            gymnast_id = request.form.get('gymnast_id')
-
-            # Check if entry already exists
-            existing_entry = models.Entries.query.filter_by(
-                competition_id=competition_id,
-                gymnast_id=gymnast_id
-            ).first()
-
-            if existing_entry:
-                flash(
-                    'This gymnast is already entered in this competition!',
-                    'warning'
-                )
-            else:
-                new_entry = models.Entries(
-                    competition_id=competition_id,
-                    gymnast_id=gymnast_id
-                )
-                db.session.add(new_entry)
-                db.session.commit()
-                flash('Entry added successfully!', 'success')
-
-        return redirect(url_for('main.entries'))
-
+    # Get additional data needed for template
     clubs = models.Clubs.query.order_by(models.Clubs.name).all()
 
     # Get unique levels
@@ -159,16 +66,133 @@ def entries():
             models.Gymnasts.club_id == models.Clubs.id
         )
         .order_by(
+            models.Entries.id.desc(),  # Most recent entries first
             models.Competitions.competition_date.desc(),
             models.Gymnasts.name
         )
         .all()
     )
 
+    if form.validate_on_submit():
+        # Additional validation for competition_id
+        if form.competition_id.data == 0:
+            flash('Please select a valid competition.', 'error')
+            return render_template(
+                'entries.html',
+                competitions=competitions,
+                gymnasts=gymnasts,
+                clubs=clubs,
+                levels=levels,
+                entries=entries,
+                form=form
+            )
+
+        # Check if competition exists and is open for entries
+        selected_competition = models.Competitions.query.get(
+            form.competition_id.data
+        )
+        if not selected_competition:
+            flash('Selected competition not found.', 'error')
+            return render_template(
+                'entries.html',
+                competitions=competitions,
+                gymnasts=gymnasts,
+                clubs=clubs,
+                levels=levels,
+                entries=entries,
+                form=form
+            )
+
+        # Check competition status
+        if selected_competition.status in ['completed', 'closed']:
+            flash(
+                f'Cannot add entries to this competition. '
+                f'Status: {selected_competition.status}',
+                'error'
+            )
+            return render_template(
+                'entries.html',
+                competitions=competitions,
+                gymnasts=gymnasts,
+                clubs=clubs,
+                levels=levels,
+                entries=entries,
+                form=form
+            )
+
+        # Find gymnast by exact name (case-insensitive)
+        gymnast_name = form.gymnast_name.data.strip()
+        if not gymnast_name:
+            flash('Please enter a gymnast name.', 'error')
+            return render_template(
+                'entries.html',
+                competitions=competitions,
+                gymnasts=gymnasts,
+                clubs=clubs,
+                levels=levels,
+                entries=entries,
+                form=form
+            )
+
+        gymnast = (
+            models.Gymnasts.query
+            .filter(
+                models.Gymnasts.name.ilike(f"{gymnast_name}")
+            )
+            .first()
+        )
+
+        if not gymnast:
+            flash(
+                f'No gymnast found with the name "{gymnast_name}". '
+                'Please check the spelling or add the gymnast first.',
+                'error'
+            )
+            return render_template(
+                'entries.html',
+                competitions=competitions,
+                gymnasts=gymnasts,
+                clubs=clubs,
+                levels=levels,
+                entries=entries,
+                form=form
+            )
+
+        # Check if entry already exists
+        existing_entry = models.Entries.query.filter_by(
+            competition_id=form.competition_id.data,
+            gymnast_id=gymnast.id
+        ).first()
+
+        if existing_entry:
+            flash(
+                'This gymnast is already entered in this competition!',
+                'warning'
+            )
+        else:
+            new_entry = models.Entries(
+                competition_id=form.competition_id.data,
+                gymnast_id=gymnast.id
+            )
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Entry added successfully!', 'success')
+
+        return redirect(url_for('main.entries'))
+
+    # Convert gymnasts to JSON-serializable format for JavaScript
+    gymnasts_json = [{
+        'id': g.id,
+        'name': g.name,
+        'level': g.level,
+        'clubs': {'name': g.clubs.name}
+    } for g in gymnasts]
+
     return render_template(
         'entries.html',
         competitions=competitions,
         gymnasts=gymnasts,
+        gymnasts_json=gymnasts_json,
         clubs=clubs,
         levels=levels,
         entries=entries,

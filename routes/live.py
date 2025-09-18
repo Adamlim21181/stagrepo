@@ -1,4 +1,3 @@
-
 from flask import render_template, request
 from extensions import db
 import models
@@ -68,6 +67,9 @@ def live():
                     models.Gymnasts.name,
                     models.Gymnasts.level,
                     models.Clubs.name.label('club_name'),
+                    db.func.sum(models.Scores.e_score).label('total_e_score'),
+                    db.func.sum(models.Scores.d_score).label('total_d_score'),
+                    db.func.sum(models.Scores.penalty).label('total_penalty'),
                     db.func.sum(models.Scores.total).label('total_score')
                 )
                 .join(models.Entries,

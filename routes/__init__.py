@@ -1,4 +1,3 @@
-
 from flask import Blueprint, session
 
 # Create the main blueprint that all other route modules will use
@@ -16,6 +15,7 @@ def inject_user():
         user_id=session.get('user_id')
     )
 
+
 # Import all route modules to register them with the blueprint
 from . import home
 from . import auth
@@ -26,4 +26,4 @@ from . import live
 from . import scoring
 from . import results
 from . import admin
-from . import calendar_routes
+from . import calendar

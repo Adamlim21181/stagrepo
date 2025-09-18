@@ -1,4 +1,3 @@
-
 from flask import render_template, redirect, url_for, session, flash, request
 from extensions import db
 import models
@@ -21,6 +20,11 @@ def gymnasts():
 
     clubs = models.Clubs.query.all()
 
+    # Populate club choices dynamically - no empty option with coerce=int
+    gymnast_form.club.choices = [
+        (club.id, club.name) for club in clubs
+    ]
+
     if request.method == 'POST':
         # Check which form was submitted
         if (
@@ -29,32 +33,23 @@ def gymnasts():
             'level' in request.form
         ):
 
-            name = request.form.get('name', '').strip()
-            club_id = request.form.get('club', '')
-            level = request.form.get('level', '')
+            # Handle gymnast form with proper Flask-WTF validation
+            if gymnast_form.validate_on_submit():
+                name = gymnast_form.name.data
+                club_id = gymnast_form.club.data
+                level = gymnast_form.level.data
 
-            if not name:
-                flash('Please enter a gymnast name.', 'danger')
-            elif not club_id:
-                flash('Please select a club.', 'danger')
-            elif not level:
-                flash('Please select a level.', 'danger')
-            else:
                 try:
-                    club_id = int(club_id)
                     new_gymnast = models.Gymnasts(
                         name=name,
                         club_id=club_id,
                         level=level
                     )
-
                     db.session.add(new_gymnast)
                     db.session.commit()
 
                     flash(f'Gymnast "{name}" added successfully!', 'success')
                     return redirect(url_for('main.gymnasts'))
-                except ValueError:
-                    flash('Invalid club selection.', 'danger')
                 except Exception as e:
                     flash(f'Error adding gymnast: {str(e)}', 'danger')
 

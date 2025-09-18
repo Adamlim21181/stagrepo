@@ -1,4 +1,3 @@
-
 from flask import redirect, url_for, session, flash
 from extensions import db
 import models
