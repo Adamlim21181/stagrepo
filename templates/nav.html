@@ -6,7 +6,14 @@
 
         <ul class="nav-center">
             <li><a href="{{ url_for('main.home') }}">Home</a></li>
-            <li><a href="{{ url_for('main.results') }}">Results</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Results</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('main.results') }}">All</a>
+                    <a href="{{ url_for('main.topnz') }}">Top Scores</a>
+                </div>
+            </li>
+
             <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
 
             {% if is_admin or is_judge %}
