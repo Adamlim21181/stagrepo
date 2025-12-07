@@ -4609,3 +4609,105 @@ table .gymnast-link:hover {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+/* =============================================
+   COMPREHENSIVE MOBILE FIXES
+   ============================================= */
+
+@media (max-width: 768px) {
+  /* Force all major containers to be mobile-safe */
+  .dashboard-page,
+  .auth-page,
+  .page-container,
+  .content,
+  .table-section,
+  .form-container,
+  .card,
+  .section {
+    width: 100%;
+    overflow-x: hidden;
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    box-sizing: border-box;
+  }
+  
+  /* Fix dropdowns/modals */
+  .modal-body,
+  .modal-content {
+    width: 90vw;
+    max-width: 90vw;
+  }
+  
+  /* Fix dropdown menus */
+  .dropdown-content {
+    position: fixed !important;
+    width: 90vw !important;
+    max-width: 90vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    min-width: auto !important;
+  }
+  
+  /* Ensure selects are full width */
+  select, .form-select {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Fix any floating elements */
+  .float-left, .float-right {
+    float: none;
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Responsive text */
+  .display-4 { font-size: 2.5rem; }
+  .display-5 { font-size: 2rem; }
+  .display-6 { font-size: 1.5rem; }
+  
+  /* Fix admin panels */
+  .admin-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .admin-actions button,
+  .admin-actions a {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small phone optimizations */
+  .dashboard-page,
+  .auth-page,
+  .page-container,
+  .content {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+  
+  /* Hide unnecessary elements on tiny screens */
+  .hero-section {
+    padding: var(--spacing-md);
+  }
+  
+  /* Stack all layouts vertically */
+  .flex-row, .flex-row-wrap {
+    flex-direction: column;
+  }
+  
+  /* Larger touch targets */
+  .btn, button, a.btn {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Single column layouts */
+  [class*="col-"], [class*="grid-"] {
+    width: 100% !important;
+  }
+}

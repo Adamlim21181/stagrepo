@@ -795,6 +795,20 @@ nav {
   margin: 0 auto;
   height: 100%;
   padding: 0 var(--spacing-2xl);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 var(--spacing-md);
+  }
 }
 
 .nav-left img {
@@ -1542,6 +1556,28 @@ footer {
    RESPONSIVE DESIGN - MOBILE FIRST
    ============================================= */
 
+/* Global mobile overflow prevention */
+@media (max-width: 768px) {
+  * {
+    max-width: 100%;
+  }
+  
+  body, html {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  main, nav, footer, .content, .page-container, .container {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 /* Mobile Hamburger Menu */
 .mobile-menu-toggle {
   display: none;
@@ -1603,6 +1639,15 @@ footer {
 
 /* Tablet Styles (768px and below) */
 @media (max-width: 768px) {
+  /* Force mobile viewport settings */
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+  
+  body {
+    position: relative;
+  }
   /* Navigation */
   .nav-container {
     padding: 0 var(--spacing-lg);
@@ -1634,6 +1679,13 @@ footer {
   .page-container {
     padding: var(--spacing-md);
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
+  .page-container {
+    padding: var(--spacing-md) 0;
   }
   
   .nav-container {
@@ -1669,20 +1721,30 @@ footer {
   
   /* Tables - make them responsive */
   .table-responsive {
+    width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: var(--border-radius-md);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 calc(-1 * var(--spacing-md));
+    padding: 0 var(--spacing-md);
   }
   
   table {
-    min-width: 600px;
-    font-size: 0.85rem;
+    width: 100%;
+    min-width: 100%;
+    font-size: 0.8rem;
+    border-collapse: collapse;
   }
   
   th, td {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    white-space: nowrap;
+    padding: var(--spacing-xs) var(--spacing-xs);
+    white-space: normal;
+    word-break: break-word;
+  }
+  
+  th {
+    font-size: 0.75rem;
   }
   
   /* Stack table data on very small screens */
@@ -1735,9 +1797,20 @@ footer {
     margin-bottom: var(--spacing-lg);
   }
   
-  .form-control {
+  .form-control,
+  .form-control-select,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
     font-size: 16px; /* Prevents zoom on iOS */
     padding: var(--spacing-md);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .form-row {
@@ -1774,6 +1847,16 @@ footer {
 
 /* Mobile Phones (480px and below) */
 @media (max-width: 480px) {
+  /* Maximum mobile constraints */
+  html, body {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  main, nav, footer {
+    width: 100%;
+  }
   /* Even smaller text and spacing */
   h1 { font-size: 1.6rem; }
   h2 { font-size: 1.3rem; }
@@ -1783,6 +1866,8 @@ footer {
   .content,
   .page-container {
     padding: var(--spacing-sm);
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .nav-container {
@@ -1791,11 +1876,22 @@ footer {
   
   .card {
     padding: var(--spacing-md);
+    margin: 0 !important;
+    width: 100%;
   }
   
   .btn {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-size-base);
+    width: 100%;
+  }
+  
+  table {
+    font-size: 0.7rem;
+  }
+  
+  th, td {
+    padding: var(--spacing-xs) 2px;
   }
   
   /* Stack everything vertically */
