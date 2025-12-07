@@ -25,7 +25,7 @@ def create_admin_user():
             email='adamlimnz@gmail.com',
             first_name='Adam',
             last_name='Lim',
-            password_hash=generate_password_hash('StagScoring!'),
+            password=generate_password_hash('StagScoring!'),
             role_id=1  # 1 = Admin role
         )
         
