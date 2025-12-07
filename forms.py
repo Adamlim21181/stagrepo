@@ -136,7 +136,7 @@ class RegistorForm(FlaskForm):
 class LoginForm(FlaskForm):
     """User login form"""
 
-    username = StringField(
+    email = StringField(
         'Email Address',
         validators=[
             DataRequired('Please enter your email address'),

@@ -19,45 +19,6 @@ def login_required(f):
     return decorated_function
 
 
-def generate_unique_username(first_name, last_name, email):
-    """Generate a unique username from user details."""
-    import re
-    
-    # Clean names (remove special characters, convert to lowercase)
-    clean_first = re.sub(r'[^a-zA-Z]', '', first_name.lower())
-    clean_last = re.sub(r'[^a-zA-Z]', '', last_name.lower())
-    
-    # Try different username formats
-    username_options = [
-        f"{clean_first}{clean_last}",  # johnsmith
-        f"{clean_first}.{clean_last}",  # john.smith
-        f"{clean_first}_{clean_last}",  # john_smith
-        f"{clean_first[0]}{clean_last}",  # jsmith
-    ]
-    
-    for base_username in username_options:
-        if len(base_username) >= 3:  # Ensure minimum length
-            # Check if base username is available
-            if not Users.query.filter_by(username=base_username).first():
-                return base_username
-            
-            # Try with numbers 1-99
-            for i in range(1, 100):
-                numbered_username = f"{base_username}{i}"
-                query = Users.query.filter_by(username=numbered_username)
-                if not query.first():
-                    return numbered_username
-    
-    # Fallback: use email prefix with numbers
-    email_prefix = email.split('@')[0].lower()[:10]
-    for i in range(1, 1000):
-        fallback_username = f"{email_prefix}{i}"
-        if not Users.query.filter_by(username=fallback_username).first():
-            return fallback_username
-    
-    # Final fallback (should never happen)
-    import uuid
-    return f"user_{str(uuid.uuid4())[:8]}"
 
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -74,20 +35,12 @@ def register():
                 )
             return render_template('register.html', form=form)
 
-        # Generate unique username automatically
-        generated_username = generate_unique_username(
-            form.first_name.data,
-            form.last_name.data,
-            form.email.data
-        )
-
         # Create new user
         hashed_password = generate_password_hash(form.password.data)
         new_user = Users(
             first_name=form.first_name.data,
             last_name=form.last_name.data,
             email=form.email.data,
-            username=generated_username,
             password=hashed_password,
             role_id=3  # Regular user role
         )
@@ -112,11 +65,8 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        # Check if user exists by username or email
-        user = Users.query.filter(
-            (Users.username == form.username.data) |
-            (Users.email == form.username.data)
-        ).first()
+        # Check if user exists by email
+        user = Users.query.filter_by(email=form.email.data).first()
 
         if user and check_password_hash(user.password, form.password.data):
             # Successful login
