@@ -775,11 +775,11 @@ td:last-child {
 @media (max-width: 768px) {
   .content {
     background-color: transparent;
-    border-radius: 0;
+    border-radius: var(--border-radius-lg);
     width: 100%;
     max-width: 100%;
     margin: 0;
-    padding: var(--spacing-md) 0;
+    padding: var(--spacing-md) var(--spacing-md);
   }
 }
 
@@ -1627,17 +1627,23 @@ footer {
   display: none;
   flex-direction: column;
   cursor: pointer;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-sm) 10px;
   z-index: 1002;
   background: none;
   border: none;
   gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu-toggle:focus {
+  outline: none;
 }
 
 .mobile-menu-toggle span {
   width: 25px;
   height: 3px;
-  background: var(--text-primary);
+  background: white;
   margin: 0;
   transition: var(--transition-fast);
   border-radius: 2px;
@@ -1669,10 +1675,15 @@ footer {
   z-index: 999;
   max-height: calc(100vh - 70px);
   overflow-y: auto;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .mobile-menu.active {
   display: block !important;
+  visibility: visible;
+  opacity: 1;
 }
 
 .mobile-menu ul {
@@ -1774,6 +1785,8 @@ footer {
   .card {
     margin-bottom: var(--spacing-lg);
     padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--background-white);
   }
   
   .section {
