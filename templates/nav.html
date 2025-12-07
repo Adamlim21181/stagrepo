@@ -5,11 +5,11 @@
         </div>
 
         <!-- Mobile Hamburger Menu -->
-        <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" id="mobileMenuToggle">
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </button>
 
         <ul class="nav-center {% if not current_user.is_authenticated %}nav-center-minimal{% endif %}">
             <li>

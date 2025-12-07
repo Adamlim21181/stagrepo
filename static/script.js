@@ -456,24 +456,26 @@ document.addEventListener('DOMContentLoaded', initSearchableSelect);
  */
 function toggleMobileMenu() {
   const mobileMenu = document.getElementById('mobileMenu');
-  const navContainer = document.querySelector('.nav-container');
+  const mobileToggle = document.getElementById('mobileMenuToggle');
   
   if (mobileMenu) {
     mobileMenu.classList.toggle('active');
-    navContainer.classList.toggle('mobile-active');
+  }
+  
+  if (mobileToggle) {
+    mobileToggle.classList.toggle('active');
   }
 }
 
 // Close mobile menu when clicking outside
 document.addEventListener('click', function(event) {
   const mobileMenu = document.getElementById('mobileMenu');
-  const mobileToggle = document.querySelector('.mobile-menu-toggle');
-  const navContainer = document.querySelector('.nav-container');
+  const mobileToggle = document.getElementById('mobileMenuToggle');
   
-  if (mobileMenu && mobileToggle && navContainer) {
+  if (mobileMenu && mobileToggle) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
-      navContainer.classList.remove('mobile-active');
+      mobileToggle.classList.remove('active');
     }
   }
 });
@@ -481,10 +483,10 @@ document.addEventListener('click', function(event) {
 // Close mobile menu when window is resized to desktop
 window.addEventListener('resize', function() {
   const mobileMenu = document.getElementById('mobileMenu');
-  const navContainer = document.querySelector('.nav-container');
+  const mobileToggle = document.getElementById('mobileMenuToggle');
   
-  if (window.innerWidth > 768 && mobileMenu && navContainer) {
+  if (window.innerWidth > 768 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
-    navContainer.classList.remove('mobile-active');
+    mobileToggle.classList.remove('active');
   }
 });

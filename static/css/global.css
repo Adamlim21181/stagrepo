@@ -772,6 +772,17 @@ td:last-child {
   overflow: visible;
 }
 
+@media (max-width: 768px) {
+  .content {
+    background-color: transparent;
+    border-radius: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: var(--spacing-md) 0;
+  }
+}
+
 /* =============================================
    NAVIGATION
    ============================================= */
@@ -1617,15 +1628,32 @@ footer {
   cursor: pointer;
   padding: var(--spacing-sm);
   z-index: 1002;
+  background: none;
+  border: none;
+  gap: 4px;
 }
 
 .mobile-menu-toggle span {
   width: 25px;
   height: 3px;
   background: var(--text-primary);
-  margin: 3px 0;
+  margin: 0;
   transition: var(--transition-fast);
   border-radius: 2px;
+  display: block;
+}
+
+/* Animate hamburger on active state */
+.mobile-menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
 }
 
 /* Mobile Menu Styles */
