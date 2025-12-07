@@ -1578,6 +1578,38 @@ footer {
   }
 }
 
+/* Mobile App Aesthetic */
+@media (max-width: 768px) {
+  /* Remove excessive spacing to feel more like an app */
+  .content {
+    padding: var(--spacing-sm);
+    margin: 0;
+  }
+  
+  /* Reduce margins and padding for compact feel */
+  main {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Stack sections naturally */
+  .dashboard-section,
+  .card,
+  .section {
+    margin: 0 0 var(--spacing-md) 0;
+    border-radius: var(--border-radius-sm);
+  }
+  
+  /* Full-width cards */
+  .card {
+    width: calc(100% + var(--spacing-sm) * 2);
+    margin-left: calc(-1 * var(--spacing-sm));
+    margin-right: calc(-1 * var(--spacing-sm));
+    border-radius: 0;
+    padding: var(--spacing-md);
+  }
+}
+
 /* Mobile Hamburger Menu */
 .mobile-menu-toggle {
   display: none;
