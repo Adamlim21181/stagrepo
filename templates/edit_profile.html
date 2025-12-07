@@ -1,0 +1,253 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="auth-page edit-profile-page">
+    <div class="auth-container">
+        <!-- Header Section -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <div class="logo-circle">
+                    <span class="logo-text">SG</span>
+                </div>
+            </div>
+            <h1>Edit Your Profile</h1>
+            <p class="auth-subtitle">Update your athlete bio and achievements</p>
+        </div>
+
+        <!-- Profile Form -->
+        <form method="POST" class="auth-form profile-form">
+            {{ form.hidden_tag() }}
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <span class="flash-icon">
+                        {% if category == 'error' %}!{% elif category == 'success' %}{% else %}i{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Current Profile Info -->
+            <div class="current-profile">
+                <h3>{{ gymnast.name }}</h3>
+                <p><strong>Club:</strong> {{ gymnast.clubs.name if gymnast.clubs else 'N/A' }}</p>
+                <p><strong>Level:</strong> {{ gymnast.level }}</p>
+            </div>
+
+            <!-- Competition Info Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon"></span>
+                    Competition Details
+                </h3>
+
+                <div class="form-group">
+                    {{ form.club_name.label(class="form-label") }}
+                    {{ form.club_name(class="form-control", placeholder="Enter your club name") }}
+                    <small class="field-hint">The gymnastics club you compete for</small>
+                    {% if form.club_name.errors %}
+                    <div class="field-errors">
+                        {% for error in form.club_name.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.level.label(class="form-label") }}
+                    {{ form.level(class="form-control") }}
+                    <small class="field-hint">Your current competition level</small>
+                    {% if form.level.errors %}
+                    <div class="field-errors">
+                        {% for error in form.level.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.age.label(class="form-label") }}
+                    {{ form.age(class="form-control", placeholder="e.g. 16") }}
+                    <small class="field-hint">Your current age</small>
+                    {% if form.age.errors %}
+                    <div class="field-errors">
+                        {% for error in form.age.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Bio Details Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon"></span>
+                    Bio Details
+                </h3>
+
+                <div class="form-group">
+                    {{ form.goals.label(class="form-label") }}
+                    {{ form.goals(class="form-control", placeholder="What are your gymnastics goals and aspirations?")
+                    }}
+                    <small class="field-hint">Share your future goals and what you're working towards</small>
+                    {% if form.goals.errors %}
+                    <div class="field-errors">
+                        {% for error in form.goals.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.achievements.label(class="form-label") }}
+                    {{ form.achievements(class="form-control", placeholder="List your medals, championships, and notable
+                    achievements") }}
+                    <small class="field-hint">Highlight your proudest moments and accomplishments</small>
+                    {% if form.achievements.errors %}
+                    <div class="field-errors">
+                        {% for error in form.achievements.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.injuries.label(class="form-label") }}
+                    {{ form.injuries(class="form-control", placeholder="Any current injuries or medical notes
+                    (optional)") }}
+                    <small class="field-hint">This information helps with competition planning</small>
+                    {% if form.injuries.errors %}
+                    <div class="field-errors">
+                        {% for error in form.injuries.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Profile Visibility Info -->
+            <div class="profile-visibility-info">
+                <h4>Profile Visibility</h4>
+                <p>Your profile will be publicly visible and linked to competition results. All information you provide
+                    will be displayed on your public athlete page.</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                {{ form.submit(class="btn-register") }}
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .edit-profile-page .auth-container {
+        max-width: 600px;
+    }
+
+    .current-profile {
+        background: rgba(76, 175, 80, 0.1);
+        border: 2px solid var(--primary-green);
+        border-radius: var(--border-radius-sm);
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+        text-align: center;
+    }
+
+    .current-profile h3 {
+        color: var(--primary-green);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .current-profile p {
+        margin-bottom: var(--spacing-xs);
+        color: var(--text-muted);
+    }
+
+    .field-hint {
+        display: block;
+        color: var(--text-muted);
+        font-size: var(--font-size-xs);
+        margin-top: var(--spacing-xs);
+        font-style: italic;
+    }
+
+    .profile-visibility-info {
+        background: var(--background-light);
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        margin-bottom: var(--spacing-lg);
+        border-left: 4px solid var(--primary-green);
+    }
+
+    .profile-visibility-info h4 {
+        color: var(--primary-green);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .profile-visibility-info p {
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    /* Make text areas larger for longer content */
+    .profile-form textarea.form-control {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    /* Button styling to match athlete application */
+    .edit-profile-page .form-actions {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+        align-items: center;
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-md);
+    }
+
+    .edit-profile-page .btn-secondary {
+        background: var(--background-section);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition-fast);
+    }
+
+    .edit-profile-page .btn-secondary:hover {
+        background: var(--background-section-alt);
+        color: var(--text-dark);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .edit-profile-page .form-actions {
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .edit-profile-page .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+{% endblock %}

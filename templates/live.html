@@ -61,7 +61,11 @@
                 {% for score, gymnast, club in leaderboard_data %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ gymnast.name }}</td>
+                    <td>
+                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}" class="gymnast-link">
+                            {{ gymnast.name }}
+                        </a>
+                    </td>
                     <td>{{ club.name }}</td>
                     <td>{{ "%.3f"|format(score.e_score) }}</td>
                     <td>{{ "%.3f"|format(score.d_score) }}</td>
@@ -74,7 +78,12 @@
                 {% for gymnast_data in leaderboard_data %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ gymnast_data.name}}</td>
+                    <td>
+                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast_data.id) }}"
+                            class="gymnast-link">
+                            {{ gymnast_data.name}}
+                        </a>
+                    </td>
                     <td>{{ gymnast_data.club_name }}</td>
                     <td>{{ "%.3f"|format(gymnast_data.total_e_score) }}</td>
                     <td>{{ "%.3f"|format(gymnast_data.total_d_score) }}</td>

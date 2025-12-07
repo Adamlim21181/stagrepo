@@ -4,8 +4,16 @@
             <a href="{{ url_for('main.home') }}"><img src="/static/images/Logo.png" alt="Logo"></a>
         </div>
 
-        <ul class="nav-center">
-            <li><a href="{{ url_for('main.home') }}">Home</a></li>
+        <ul class="nav-center {% if not current_user.is_authenticated %}nav-center-minimal{% endif %}">
+            <li>
+                <a href="{{ url_for('main.home') }}">
+                    {% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}
+                </a>
+            </li>
+
+            <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
+
+            {% if current_user.is_authenticated %}
             <li class="dropdown">
                 <a href="#" class="dropbtn">Results</a>
                 <div class="dropdown-content">
@@ -14,32 +22,40 @@
                 </div>
             </li>
 
-            <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
+            <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
+            {% endif %}
 
-            {% if is_admin or is_judge %}
+            {% if current_user.is_judge_or_admin %}
             <li><a href="{{ url_for('main.scoring') }}">Score Management</a></li>
             {% endif %}
 
-            {% if is_admin %}
+            {% if current_user.is_admin %}
             <li class="dropdown">
                 <a href="#" class="dropbtn">Admin</a>
                 <div class="dropdown-content">
-                    <a href="{{ url_for('main.gymnasts') }}">Gymnast Management</a>
+                    <a href="{{ url_for('main.manage_users') }}">User Management</a>
                     <a href="{{ url_for('main.competitions') }}">Manage Competitions</a>
                     <a href="{{ url_for('main.entries') }}">Manage Entries</a>
                 </div><!-- dropdown-content -->
             </li><!-- dropdown -->
             {% endif %}
-
-            <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
         </ul><!-- nav-center -->
 
         <ul class="nav-right">
-            {% if not logged_in %}
+            {% if not current_user.is_authenticated %}
             <li><a href="{{ url_for('main.login') }}">Login</a></li>
-            {% endif %}
-            {% if logged_in %}
-            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+            <li class="signup-li"><a href="{{ url_for('main.register') }}" class="signup-btn">Sign Up</a></li>
+            {% else %}
+            <li class="dropdown user-dropdown">
+                <a href="#" class="dropbtn user-menu">
+                    <span class="user-icon">👤</span>
+                    {{ current_user.first_name }}
+                </a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('main.logout') }}">Logout</a>
+                </div>
+            </li>
             {% endif %}
         </ul><!-- nav-right -->
     </div><!-- nav-container -->

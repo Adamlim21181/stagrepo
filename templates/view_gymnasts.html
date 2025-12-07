@@ -1,0 +1,525 @@
+{% extends "layout.html" %}
+
+{% block title %}View Gymnasts - STAG{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>All Gymnasts</h1>
+        <div class="header-controls">
+            <div class="search-filter-bar">
+                <input type="text" id="gymnastSearch" placeholder="Search gymnasts..." class="search-input">
+                <select id="levelFilter" class="filter-select">
+                    <option value="">All Levels</option>
+                    <option value="Level 1">Level 1</option>
+                    <option value="Level 2">Level 2</option>
+                    <option value="Level 3">Level 3</option>
+                    <option value="Level 4">Level 4</option>
+                    <option value="Level 5">Level 5</option>
+                    <option value="Level 6">Level 6</option>
+                    <option value="Level 7">Level 7</option>
+                    <option value="Level 8">Level 8</option>
+                    <option value="Level 9">Level 9</option>
+                    <option value="Level 10">Level 10</option>
+                    <option value="Senior International">Senior International</option>
+                    <option value="Junior International">Junior International</option>
+                </select>
+                <select id="clubFilter" class="filter-select">
+                    <option value="">All Clubs</option>
+                    {% for club in clubs %}
+                    <option value="{{ club.name }}">{{ club.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="results-info">
+                <span id="resultsCount">{{ gymnasts|length }}</span> gymnast{% if gymnasts|length != 1 %}s{% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if gymnasts %}
+    <div class="gymnasts-table-container">
+        <table class="gymnasts-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Level</th>
+                    <th>Club</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody id="gymnastsTableBody">
+                {% for gymnast in gymnasts %}
+                <tr class="gymnast-row" data-name="{{ gymnast.name|lower }}" data-level="{{ gymnast.level }}"
+                    data-club="{{ gymnast.clubs.name if gymnast.clubs else '' }}"
+                    onclick="window.location='{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}'">
+                    <td class="gymnast-name-cell">
+                        <div class="gymnast-name-info">
+                            <span class="name">{{ gymnast.name }}</span>
+                            {% if gymnast.goals %}
+                            <span class="goals-preview">{{ gymnast.goals[:30] }}{% if gymnast.goals|length > 30 %}...{%
+                                endif %}</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="level-badge level-{{ gymnast.level|lower|replace(' ', '-') }}">
+                            {{ gymnast.level }}
+                        </span>
+                    </td>
+                    <td class="club-cell">
+                        {{ gymnast.clubs.name if gymnast.clubs else 'No club' }}
+                    </td>
+                    <td class="age-cell">
+                        {{ gymnast.age if gymnast.age else '-' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container" id="paginationContainer" style="display: none;">
+        <div class="pagination">
+            <button id="prevPage" class="pagination-btn">← Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" class="pagination-btn">Next →</button>
+        </div>
+        <div class="per-page-selector">
+            <label for="perPage">Show:</label>
+            <select id="perPage">
+                <option value="25">25</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+            </select>
+            <span>per page</span>
+        </div>
+    </div>
+    {% else %}
+    <div class="no-gymnasts">
+        <div class="empty-state">
+            <h3>No gymnasts yet!</h3>
+            <p>You haven't added any gymnasts to the system.</p>
+            <a href="{{ url_for('main.manage_users') }}" class="btn btn-primary">
+                ➕ Add Your First Gymnast
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Hidden form for delete confirmation -->
+<form id="deleteForm" method="POST" style="display: none;">
+</form>
+
+<script>
+    // Search and filter functionality
+    const searchInput = document.getElementById('gymnastSearch');
+    const levelFilter = document.getElementById('levelFilter');
+    const clubFilter = document.getElementById('clubFilter');
+    const tableBody = document.getElementById('gymnastsTableBody');
+    const resultsCount = document.getElementById('resultsCount');
+    const rows = Array.from(tableBody.querySelectorAll('.gymnast-row'));
+
+    let currentPage = 1;
+    let perPage = 50;
+    let filteredRows = rows;
+
+    function filterRows() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const levelValue = levelFilter.value;
+        const clubValue = clubFilter.value;
+
+        filteredRows = rows.filter(row => {
+            const nameMatch = row.dataset.name.includes(searchTerm);
+            const levelMatch = !levelValue || row.dataset.level === levelValue;
+            const clubMatch = !clubValue || row.dataset.club === clubValue;
+
+            return nameMatch && levelMatch && clubMatch;
+        });
+
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        // Hide all rows
+        rows.forEach(row => row.style.display = 'none');
+
+        // Calculate pagination
+        const totalPages = Math.ceil(filteredRows.length / perPage);
+        const startIndex = (currentPage - 1) * perPage;
+        const endIndex = startIndex + perPage;
+
+        // Show current page rows
+        const visibleRows = filteredRows.slice(startIndex, endIndex);
+        visibleRows.forEach(row => row.style.display = 'table-row');
+
+        // Update results count
+        resultsCount.textContent = filteredRows.length;
+
+        // Update pagination
+        updatePagination(totalPages);
+    }
+
+    function updatePagination(totalPages) {
+        const paginationContainer = document.getElementById('paginationContainer');
+        const pageInfo = document.getElementById('pageInfo');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+
+        if (totalPages > 1) {
+            paginationContainer.style.display = 'flex';
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        } else {
+            paginationContainer.style.display = 'none';
+        }
+    }
+
+    // Event listeners
+    searchInput.addEventListener('input', () => {
+        currentPage = 1;
+        filterRows();
+    });
+
+    levelFilter.addEventListener('change', () => {
+        currentPage = 1;
+        filterRows();
+    });
+
+    clubFilter.addEventListener('change', () => {
+        currentPage = 1;
+        filterRows();
+    });
+
+    document.getElementById('perPage').addEventListener('change', (e) => {
+        perPage = parseInt(e.target.value);
+        currentPage = 1;
+        updateDisplay();
+    });
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateDisplay();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredRows.length / perPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateDisplay();
+        }
+    });
+
+    // Delete function moved to profile page    // Initialize display
+    updateDisplay();
+</script>
+
+<div class="page-actions">
+    <a href="{{ url_for('main.manage_users') }}" class="btn btn-primary">
+        ← Back to User Management
+    </a>
+    <a href="{{ url_for('main.add_gymnast') }}" class="btn btn-secondary">
+        ➕ Add Another Gymnast
+    </a>
+</div>
+</div>
+
+<style>
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .gymnasts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .gymnast-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gymnast-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .gymnast-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .gymnast-header h3 {
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 1.3rem;
+    }
+
+    .level-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .level-1 {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
+
+    .level-2 {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .level-3 {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .level-4 {
+        background: #fce4ec;
+        color: #c2185b;
+    }
+
+    .level-5 {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .level-6 {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .gymnast-details {
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        margin-bottom: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .detail-row .label {
+        min-width: 100px;
+        font-weight: 500;
+        color: #666;
+    }
+
+    .detail-row .value {
+        flex: 1;
+        color: var(--text-color);
+    }
+
+    .bio-text {
+        line-height: 1.4;
+        font-style: italic;
+    }
+
+    .gymnast-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .no-gymnasts {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .empty-state h3 {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .clubs-section {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .clubs-section h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .clubs-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .club-item {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .club-name {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .club-count {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .page-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #1976d2;
+        color: white;
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+        border: 2px solid #1976d2;
+    }
+
+    .btn-primary:hover {
+        background: #1565c0;
+        border-color: #1565c0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    }
+
+    .btn-secondary {
+        background: #ffffff;
+        border: 2px solid #666;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary:hover {
+        background: #f5f5f5;
+        border-color: #333;
+        color: #000;
+        transform: translateY(-1px);
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-view {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .btn-view:hover {
+        background: #1976d2;
+        color: white;
+    }
+
+    .btn-edit {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .btn-edit:hover {
+        background: #f57c00;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .btn-danger:hover {
+        background: #d32f2f;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .gymnasts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        .gymnast-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-row .label {
+            min-width: auto;
+        }
+    }
+</style>
+{% endblock %}

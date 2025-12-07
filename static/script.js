@@ -14,6 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const body  = document.getElementById("modalBody");
 
   if (modal && body) {
+    // Ensure modal is hidden on page load
+    modal.classList.remove("show");
+    modal.style.display = "none";
+    document.body.classList.remove("modal-open");
+    
     document.querySelectorAll("[data-competition-id]").forEach(el => {
       el.addEventListener("click", () => {
         fetch(`/competition/${el.dataset.competitionId}`)
@@ -21,18 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
           .then(html => {
             body.innerHTML = html;
             modal.classList.add("show");
+            document.body.classList.add("modal-open");
           });
       });
     });
 
     const closeBtn = document.querySelector("#competitionModal .close");
     if (closeBtn) {
-      closeBtn.onclick = () => modal.classList.remove("show");
+      closeBtn.onclick = () => {
+        modal.classList.remove("show");
+        document.body.classList.remove("modal-open");
+      };
     }
     
     window.onclick = e => { 
       if (e.target === modal) {
         modal.classList.remove("show");
+        document.body.classList.remove("modal-open");
       }
     };
   }
@@ -189,6 +199,7 @@ function closeModal() {
   const modal = document.getElementById("competitionModal");
   if (modal) {
     modal.classList.remove("show");
+    document.body.classList.remove("modal-open");
   }
 }
 

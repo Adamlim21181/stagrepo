@@ -1,43 +1,150 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="login-page">
-    <div class="login-container">
-        <div class="login-header">
+<div class="auth-page login-page">
+    <div class="auth-container">
+        <!-- Header Section -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <div class="logo-circle">
+                    <span class="logo-text">SG</span>
+                </div>
+            </div>
             <h1>Welcome Back</h1>
-            <p>Sign in to access the gymnastics management system</p>
-        </div><!-- login-header -->
+            <p class="auth-subtitle">Sign in to your STAG gymnastics account</p>
+        </div>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="login-messages">
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div><!-- login-messages -->
-        {% endif %}
-        {% endwith %}
-
-        <form method="POST" class="login-form">
+        <!-- Login Form -->
+        <form method="POST" class="auth-form login-form" id="loginForm">
             {{ form.hidden_tag() }}
 
-            <div class="login-form-group">
-                {{ form.username.label }}
-                {{ form.username(size=32, placeholder="Enter your username") }}
-            </div><!-- login-form-group -->
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <span class="flash-icon">
+                        {% if category == 'error' %}!{% elif category == 'success' %}{% else %}i{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
 
-            <div class="login-form-group">
-                {{ form.code.label }}
-                {{ form.code(size=32, placeholder="Enter your access code") }}
-            </div><!-- login-form-group -->
+            <!-- Login Fields Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon">🔐</span>
+                    Account Access
+                </h3>
 
-            <div class="login-form-group">
-                {{ form.submit(class="login-submit-btn") }}
-            </div><!-- login-form-group -->
-        </form><!-- login-form -->
-    </div><!-- login-container -->
-</div><!-- login-page -->
+                <div class="form-group">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control", type="email", placeholder="Enter your email address") }}
+                    {% if form.username.errors %}
+                    <div class="field-errors">
+                        {% for error in form.username.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.label(class="form-label") }}
+                    <div class="password-field">
+                        {{ form.password(class="form-control", id="password", placeholder="Enter your password") }}
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <span class="eye-icon">👁</span>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                    <div class="field-errors">
+                        {% for error in form.password.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                {{ form.submit(class="submit-btn primary-btn") }}
+            </div>
+
+            <!-- Additional Links -->
+            <div class="auth-links">
+                <p class="link-text">
+                    Don't have an account?
+                    <a href="{{ url_for('main.register') }}" class="auth-link">Sign up here</a>
+                </p>
+                <p class="link-text">
+                    <a href="#" class="auth-link forgot-link">Forgot your password?</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for Enhanced UX -->
+<script>
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const eyeIcon = event.target.closest('.password-toggle').querySelector('.eye-icon');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.textContent = '🙈';
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.textContent = 'show';
+        }
+    }
+
+    function showLoading(button) {
+        button.textContent = 'Signing in...';
+        button.disabled = true;
+
+        // Re-enable after 3 seconds in case of form validation errors
+        setTimeout(() => {
+            button.textContent = 'Sign In';
+            button.disabled = false;
+        }, 3000);
+    }
+
+    // Form validation feedback and submit handling
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('loginForm');
+        const submitBtn = form.querySelector('.submit-btn');
+        const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+
+        // Handle form submission
+        form.addEventListener('submit', function (e) {
+            if (submitBtn) {
+                submitBtn.textContent = 'Signing in...';
+                submitBtn.disabled = true;
+            }
+        });
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', function () {
+                if (this.value.trim() === '') {
+                    this.classList.add('error');
+                } else {
+                    this.classList.remove('error');
+                }
+            });
+
+            input.addEventListener('input', function () {
+                this.classList.remove('error');
+            });
+        });
+    });
+</script>
 
 {% endblock %}

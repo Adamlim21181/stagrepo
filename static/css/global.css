@@ -857,6 +857,19 @@ nav {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+/* Centered navigation for minimal (unauthenticated) state */
+.nav-center-minimal {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center !important;
+  flex: none;
+}
+
+.nav-center-minimal li {
+  margin: 0 var(--spacing-md);
+}
+
 /* =============================================
    DROPDOWN NAVIGATION
    ============================================= */
@@ -1324,6 +1337,99 @@ nav {
 
 .footer-info a:hover {
   text-decoration: underline;
+}
+
+.footer-features {
+  margin-bottom: var(--spacing-lg);
+}
+
+.footer-features .footer-info {
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.footer-user,
+.footer-login {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-login a {
+  color: var(--primary-green);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-login a:hover {
+  text-decoration: underline;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.role-badge.admin {
+  background: var(--primary-green);
+  color: white;
+}
+
+.role-badge.judge {
+  background: #ff9800;
+  color: white;
+}
+
+.role-badge.athlete {
+  background: #2196f3;
+  color: white;
+}
+
+.role-badge.member {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-light);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.footer-account-info {
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-account-info .footer-info {
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.footer-tagline {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin: var(--spacing-xs) 0 var(--spacing-md) 0;
+  font-style: italic;
+}
+
+.footer-contact p {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
 }
 
 .footer-bottom {

@@ -1,0 +1,327 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="auth-page register-page">
+    <div class="auth-container">
+        <!-- Header Section -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <div class="logo-circle">
+                    <span class="logo-text">SG</span>
+                </div>
+            </div>
+            <h1>Create Your Account</h1>
+            <p class="auth-subtitle">Join the STAG gymnastics community</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form method="POST" class="auth-form register-form" id="registerForm">
+            {{ form.hidden_tag() }}
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <span class="flash-icon">
+                        {% if category == 'error' %}!{% elif category == 'success' %}{% else %}i{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon">👤</span>
+                    Personal Information
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form.first_name.label(class="form-label") }}
+                        {{ form.first_name(class="form-control", placeholder="Enter your first name") }}
+                        {% if form.first_name.errors %}
+                        <div class="field-errors">
+                            {% for error in form.first_name.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.last_name.label(class="form-label") }}
+                        {{ form.last_name(class="form-control", placeholder="Enter your last name") }}
+                        {% if form.last_name.errors %}
+                        <div class="field-errors">
+                            {% for error in form.last_name.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Details Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon">📧</span>
+                    Account Details
+                </h3>
+
+                <div class="form-group">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control", placeholder="your.email@example.com", type="email") }}
+                    {% if form.email.errors %}
+                    <div class="field-errors">
+                        {% for error in form.email.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span class="section-icon">🔒</span>
+                    Security
+                </h3>
+
+                <div class="form-group">
+                    {{ form.password.label(class="form-label") }}
+                    <div class="password-input-wrapper">
+                        {{ form.password(class="form-control", placeholder="Create a strong password", id="password") }}
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <span class="toggle-icon">👁️</span>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                    <div class="field-errors">
+                        {% for error in form.password.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-label") }}
+                    <div class="password-input-wrapper">
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm your password",
+                        id="confirmPassword") }}
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            <span class="toggle-icon">👁️</span>
+                        </button>
+                    </div>
+                    {% if form.confirm_password.errors %}
+                    <div class="field-errors">
+                        {% for error in form.confirm_password.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="password-match" id="passwordMatch"></div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <label class="checkbox-label" for="terms">
+                            {{ form.terms(id="terms", class="checkbox-input") }}
+                            <span class="checkbox-text">
+                                I agree to the <a href="#" class="terms-link" target="_blank">Terms of Service</a> and
+                                <a href="#" class="terms-link" target="_blank">Privacy Policy</a>
+                            </span>
+                        </label>
+                    </div>
+                    {% if form.terms.errors %}
+                    <div class="field-errors">
+                        {% for error in form.terms.errors %}
+                        <span class="error-message">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="btn-register" id="submitBtn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-icon">🚀</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Login Link -->
+        <div class="auth-footer">
+            <p>Already have an account?
+                <a href="{{ url_for('main.login') }}" class="auth-link">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for form validation and UX -->
+<script>
+    // Password visibility toggle
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const button = field.nextElementSibling;
+        const icon = button.querySelector('.toggle-icon');
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.textContent = '🙈';
+        } else {
+            field.type = 'password';
+            icon.textContent = 'show';
+        }
+    }
+
+    // Password strength checker - Must meet at least 3 of 5 criteria
+    document.getElementById('password').addEventListener('input', function (e) {
+        const password = e.target.value;
+        const strengthDiv = document.getElementById('passwordStrength');
+
+        if (password.length === 0) {
+            strengthDiv.innerHTML = '';
+            return;
+        }
+
+        let criteriaList = [];
+
+        // 1. At least 8 characters
+        const hasLength = password.length >= 8;
+        criteriaList.push({
+            met: hasLength,
+            text: '8+ characters',
+            icon: hasLength ? '✓' : '✗'
+        });
+
+        // 2. Uppercase letter
+        const hasUpper = /[A-Z]/.test(password);
+        criteriaList.push({
+            met: hasUpper,
+            text: 'Uppercase letter',
+            icon: hasUpper ? '✓' : '✗'
+        });
+
+        // 3. Lowercase letter
+        const hasLower = /[a-z]/.test(password);
+        criteriaList.push({
+            met: hasLower,
+            text: 'Lowercase letter',
+            icon: hasLower ? '✓' : '✗'
+        });
+
+        // 4. Number
+        const hasNumber = /[0-9]/.test(password);
+        criteriaList.push({
+            met: hasNumber,
+            text: 'Number',
+            icon: hasNumber ? '✓' : '✗'
+        });
+
+        // 5. Special character
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        criteriaList.push({
+            met: hasSpecial,
+            text: 'Special character',
+            icon: hasSpecial ? '✓' : '✗'
+        });
+
+        const criteriaCount = criteriaList.filter(c => c.met).length;
+        const isStrong = criteriaCount >= 3;
+
+        // Create criteria display
+        const criteriaHtml = criteriaList.map(criteria =>
+            `<div class="criteria-item ${criteria.met ? 'met' : 'unmet'}">
+                <span class="criteria-icon">${criteria.icon}</span>
+                <span class="criteria-text">${criteria.text}</span>
+            </div>`
+        ).join('');
+
+        strengthDiv.innerHTML = `
+            <div class="password-requirements">
+                <div class="requirements-header ${isStrong ? 'strong' : 'weak'}">
+                    Password Strength: ${isStrong ? 'Strong' : `Weak (${criteriaCount}/3 minimum)`}
+                </div>
+                <div class="requirements-list">
+                    ${criteriaHtml}
+                </div>
+            </div>
+        `;
+    });
+
+    // Password confirmation checker
+    document.getElementById('confirmPassword').addEventListener('input', function (e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = e.target.value;
+        const matchDiv = document.getElementById('passwordMatch');
+
+        if (confirmPassword.length > 0) {
+            if (password === confirmPassword) {
+                matchDiv.innerHTML = '<span class="match-success">✅ Passwords match</span>';
+            } else {
+                matchDiv.innerHTML = '<span class="match-error">❌ Passwords do not match</span>';
+            }
+        } else {
+            matchDiv.innerHTML = '';
+        }
+    });
+
+    // Form validation on submit
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const terms = document.querySelector('input[name="terms"]').checked;
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+            return false;
+        }
+
+        if (!terms) {
+            e.preventDefault();
+            alert('You must agree to the Terms of Service and Privacy Policy');
+            return false;
+        }
+
+        // Add loading state
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerHTML = '<span class="btn-text">Creating Account...</span><span class="btn-spinner">⏳</span>';
+        submitBtn.disabled = true;
+    });
+
+    // Real-time form validation styling
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('blur', function () {
+            if (this.value.trim()) {
+                this.classList.add('has-content');
+            } else {
+                this.classList.remove('has-content');
+            }
+        });
+
+        input.addEventListener('focus', function () {
+            this.classList.add('is-focused');
+        });
+
+        input.addEventListener('blur', function () {
+            this.classList.remove('is-focused');
+        });
+    });
+</script>
+
+{% endblock %}

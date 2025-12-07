@@ -1,0 +1,351 @@
+{% extends "layout.html" %}
+
+{% block title %}User Management - Admin{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>🔐 User Management</h1>
+        <p class="subtitle">Manage user roles and permissions</p>
+    </div>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <h3>{{ users|length }}</h3>
+            <span>Total Users</span>
+        </div>
+        <div class="stat-card">
+            <h3>{{ users|selectattr('1.name', 'equalto', 'admin')|list|length }}</h3>
+            <span>Admins</span>
+        </div>
+        <div class="stat-card">
+            <h3>{{ users|selectattr('1.name', 'equalto', 'judges')|list|length }}</h3>
+            <span>Judges</span>
+        </div>
+        <div class="stat-card">
+            <h3>{{ users|selectattr('1.name', 'equalto', 'user')|list|length }}</h3>
+            <span>Regular Users</span>
+        </div>
+    </div>
+
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Registered</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, role in users %}
+                <tr class="user-row {{ 'admin-user' if role.name == 'admin' else '' }}">
+                    <td>
+                        <div class="user-info">
+                            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                            <small>@{{ user.username }}</small>
+                            {% if user.is_athlete %}
+                            <span class="badge athlete-badge">Athlete</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="role-badge role-{{ role.name }}">
+                            {{ role.name.title() }}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}</td>
+                    <td>
+                        {% if role.name != 'admin' or user.id != session['user_id'] %}
+                        <div class="role-actions">
+                            {% for available_role in roles %}
+                            {% if available_role.id != role.id %}
+                            <form method="post"
+                                action="{{ url_for('main.promote_user', user_id=user.id, role_id=available_role.id) }}"
+                                style="display: inline;">
+                                <button type="submit"
+                                    class="btn btn-sm btn-{{ 'primary' if available_role.name == 'judges' else 'secondary' }}"
+                                    onclick="return confirm('Promote {{ user.first_name }} to {{ available_role.name.title() }}?')">
+                                    {% if available_role.name == 'judges' %}
+                                    Make Judge
+                                    {% elif available_role.name == 'admin' %}
+                                    👑 Make Admin
+                                    {% else %}
+                                    👤 Make User
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="text-muted">Current User</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="no-users">
+                        <p>No users found</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Quick Add Gymnast Section -->
+    <div class="quick-add-section">
+        <h3>Quick Add Gymnast</h3>
+        <p class="section-description">
+            For gymnasts who don't have computer access or need to be added immediately.
+            <br><small>If they want an account later, they can apply through the normal process.</small>
+        </p>
+
+        <div class="quick-add-card">
+            <div class="quick-add-actions">
+                <a href="{{ url_for('main.add_gymnast') }}" class="btn btn-primary">
+                    ➕ Add Gymnast Directly
+                </a>
+                <a href="{{ url_for('main.gymnasts') }}" class="btn btn-view">
+                    👀 View All Gymnasts
+                </a>
+            </div>
+            <p class="help-text">
+                <strong>Add Directly:</strong> Perfect for gymnasts without computer access or immediate setup<br>
+                <strong>View All:</strong> See current gymnasts, manage clubs, edit details
+            </p>
+        </div>
+    </div>
+
+    <div class="admin-actions">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .admin-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .stat-card h3 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .stat-card span {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .users-table-container {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .users-table th {
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .users-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .user-row.admin-user {
+        background: #fff9e6;
+    }
+
+    .user-info strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .user-info small {
+        color: var(--text-muted);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-left: 0.5rem;
+    }
+
+    .athlete-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .role-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .role-admin {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .role-judges {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .role-user {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
+
+    .role-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .btn-view {
+        background: #f8f9fa;
+        border: 2px solid #6c757d;
+        color: #495057;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-view:hover {
+        background: #6c757d;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Quick Add Gymnast Section */
+    .quick-add-section {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        margin: 2rem 0;
+        border: 2px dashed #90caf9;
+    }
+
+    .quick-add-section h3 {
+        color: #1565c0;
+        margin-bottom: 0.5rem;
+        font-size: 1.4rem;
+    }
+
+    .section-description {
+        color: #424242;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    .section-description small {
+        color: #666;
+        font-style: italic;
+    }
+
+    .quick-add-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .quick-add-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+
+
+    .help-text {
+        font-size: 0.85rem;
+        color: #666;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .help-text strong {
+        color: #333;
+    }
+
+    .no-users {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
+    }
+
+    .admin-actions {
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .users-table-container {
+            overflow-x: auto;
+        }
+
+        .role-actions {
+            flex-direction: column;
+        }
+
+        .admin-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}

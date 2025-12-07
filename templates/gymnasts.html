@@ -102,7 +102,12 @@
                         <tr>
                             <td class="id-column">{{ "%03d"|format(gymnast.id) }}</td>
                             <td>{{ gymnast.clubs.name }}</td>
-                            <td>{{ gymnast.name }}</td>
+                            <td>
+                                <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}"
+                                    class="gymnast-link">
+                                    {{ gymnast.name }}
+                                </a>
+                            </td>
                             <td class="level-column">
                                 <span class="level-badge">{{ gymnast.level }}</span>
                             </td>

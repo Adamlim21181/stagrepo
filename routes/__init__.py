@@ -28,3 +28,4 @@ from . import results
 from . import admin
 from . import calendar
 from . import topnz
+from . import profiles

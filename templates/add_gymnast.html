@@ -1,0 +1,252 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Gymnast - STAG{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>Add New Gymnast</h1>
+        <p class="subtitle">Add a gymnast directly to the system</p>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" class="gymnast-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-section">
+                <h3>Basic Information</h3>
+
+                <div class="form-group">
+                    {{ form.name.label(class="form-label") }}
+                    {{ form.name(class="form-input") }}
+                    {% if form.name.errors %}
+                    <div class="error-messages">
+                        {% for error in form.name.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.club.label(class="form-label") }}
+                    {{ form.club(class="form-select") }}
+                    {% if form.club.errors %}
+                    <div class="error-messages">
+                        {% for error in form.club.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.level.label(class="form-label") }}
+                    {{ form.level(class="form-select") }}
+                    {% if form.level.errors %}
+                    <div class="error-messages">
+                        {% for error in form.level.errors %}
+                        <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if form.age %}
+            <div class="form-section">
+                <h3>Optional Details</h3>
+                <p class="section-note">You can add these details now or update them later</p>
+
+                {% if form.age %}
+                <div class="form-group">
+                    {{ form.age.label(class="form-label") }}
+                    {{ form.age(class="form-input") }}
+                </div>
+                {% endif %}
+
+                {% if form.goals %}
+                <div class="form-group">
+                    {{ form.goals.label(class="form-label") }}
+                    {{ form.goals(class="form-textarea") }}
+                </div>
+                {% endif %}
+
+                {% if form.experience %}
+                <div class="form-group">
+                    {{ form.experience.label(class="form-label") }}
+                    {{ form.experience(class="form-textarea") }}
+                </div>
+                {% endif %}
+
+                {% if form.bio %}
+                <div class="form-group">
+                    {{ form.bio.label(class="form-label") }}
+                    {{ form.bio(class="form-textarea") }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    ➕ Add Gymnast
+                </button>
+                <a href="{{ url_for('main.manage_users') }}" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .content-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .form-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .form-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .section-note {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .error-messages {
+        margin-top: 0.5rem;
+    }
+
+    .error {
+        color: #d32f2f;
+        font-size: 0.9rem;
+        display: block;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1565c0;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f5f5f5;
+        color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

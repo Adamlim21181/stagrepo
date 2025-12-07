@@ -1,0 +1,305 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="admin-page">
+    <div class="page-header">
+        <h1>Athlete Applications</h1>
+        <p class="page-subtitle">Review and approve athlete profile applications</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <span class="flash-icon">
+                {% if category == 'error' %}!{% elif category == 'success' %}{% else %}i{% endif %}
+            </span>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="applications-container">
+        {% if applications %}
+        <div class="applications-summary">
+            <h2>Pending Applications ({{ applications|length }})</h2>
+        </div>
+
+        <div class="applications-grid">
+            {% for app in applications %}
+            <div class="application-card">
+                <div class="application-header">
+                    <h3>{{ app.user.first_name }} {{ app.user.last_name }}</h3>
+                    <div class="application-status pending">
+                        <span class="status-icon">⏳</span>
+                        <span>Pending Review</span>
+                    </div>
+                </div>
+
+                <div class="application-details">
+                    <div class="detail-item">
+                        <label>Club:</label>
+                        <span>{{ app.club_name }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Level:</label>
+                        <span>{{ app.gymnastics_level }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Years of Experience:</label>
+                        <span>{{ app.years_experience if app.years_experience else 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Coach:</label>
+                        <span>{{ app.coach_name if app.coach_name else 'N/A' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>User Account:</label>
+                        <span>{{ app.user.first_name }} {{ app.user.last_name }} ({{ app.user.email }})</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Applied:</label>
+                        <span>{{ app.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                    </div>
+                </div>
+
+                <div class="application-actions">
+                    <a href="{{ url_for('main.approve_application', app_id=app.id) }}" class="btn-approve"
+                        onclick="return confirm('Approve {{ app.user.first_name }} {{ app.user.last_name }} as an athlete? This will create their gymnast profile.')">
+                        Approve
+                    </a>
+                    <a href="{{ url_for('main.reject_application', app_id=app.id) }}" class="btn-reject"
+                        onclick="return confirm('Reject {{ app.user.first_name }} {{ app.user.last_name }}s application?')">
+                        ❌ Reject
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-applications">
+            <div class="empty-state">
+                <h2>No Pending Applications</h2>
+                <p>All athlete applications have been processed. New applications will appear here for review.</p>
+                <div class="empty-icon"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Navigation Back -->
+    <div class="admin-nav">
+        <a href="{{ url_for('main.dashboard') }}" class="btn-secondary">← Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    .admin-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--spacing-lg);
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .page-header h1 {
+        color: var(--primary-green);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .page-subtitle {
+        color: var(--text-muted);
+        font-size: var(--font-size-lg);
+    }
+
+    .applications-summary h2 {
+        color: var(--text-dark);
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--border-light);
+    }
+
+    .applications-grid {
+        display: grid;
+        gap: var(--spacing-lg);
+    }
+
+    .application-card {
+        background: var(--background-white);
+        border: 2px solid var(--border-light);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-fast);
+    }
+
+    .application-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .application-header h3 {
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .application-status {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+    }
+
+    .application-status.pending {
+        color: #ff9800;
+    }
+
+    .application-details {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: var(--spacing-xs) 0;
+        gap: var(--spacing-md);
+    }
+
+    .detail-item label {
+        font-weight: 600;
+        color: var(--text-muted);
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+
+    .detail-item span {
+        color: var(--text-dark);
+        text-align: right;
+    }
+
+    .application-actions {
+        display: flex;
+        gap: var(--spacing-md);
+        justify-content: center;
+    }
+
+    .btn-approve,
+    .btn-reject {
+        display: inline-block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-fast);
+        border: 2px solid;
+    }
+
+    .btn-approve {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+
+    .btn-approve:hover {
+        background: var(--primary-green);
+        color: white;
+    }
+
+    .btn-reject {
+        background: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border-color: #f44336;
+    }
+
+    .btn-reject:hover {
+        background: #f44336;
+        color: white;
+    }
+
+    .no-applications {
+        text-align: center;
+        padding: var(--spacing-2xl);
+    }
+
+    .empty-state h2 {
+        color: var(--text-dark);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        opacity: 0.3;
+    }
+
+    .admin-nav {
+        margin-top: var(--spacing-xl);
+        text-align: center;
+    }
+
+    .btn-secondary {
+        display: inline-block;
+        background: var(--background-light);
+        color: var(--text-dark);
+        padding: var(--spacing-sm) var(--spacing-lg);
+        border: 2px solid var(--border-light);
+        border-radius: var(--border-radius-sm);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-fast);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-light);
+    }
+
+    @media (max-width: 768px) {
+        .admin-page {
+            padding: var(--spacing-md);
+        }
+
+        .application-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+        }
+
+        .detail-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-xs);
+        }
+
+        .detail-item span {
+            text-align: left;
+        }
+
+        .application-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% endblock %}

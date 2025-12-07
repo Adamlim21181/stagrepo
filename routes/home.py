@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, session, redirect, url_for
 from datetime import datetime
 import models
 from . import main
@@ -6,6 +6,11 @@ from . import main
 
 @main.route('/')
 def home():
+    # If user is logged in, redirect to dashboard
+    if 'user_id' in session:
+        return redirect(url_for('main.dashboard'))
+    
+    # Show public homepage for non-logged in users
     upcoming_competitions = models.Competitions.query.filter(
         models.Competitions.competition_date >= datetime.now().date(),
         models.Competitions.status.in_(['draft', 'live'])

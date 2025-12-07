@@ -1,31 +1,24 @@
-from flask import render_template, request
+from flask import render_template, redirect, url_for, session, flash, request
 from extensions import db
 import models
 from . import main
 
 
-@main.route('/topnz')
-def topnz():
-    selected_level = request.args.get('level')
+@main.route('/gymnast/<int:gymnast_id>')
+def gymnast_profile(gymnast_id):
+    # Get the specific gymnast or return 404 if not found
+    gymnast = models.Gymnasts.query.get_or_404(gymnast_id)
 
-    levels = [
-        'Level 7', 'Level 8', 'Level 9',
-        'Junior International', 'Senior International'
-    ]
-
-    level = db.session.query(
-        models.Gymnasts.level
-    ).join(models.Entries
-           ).join(models.Scores
-                  ).filter(models.Gymnasts.level.in_(levels)
-                           ).distinct().order_by(models.Gymnasts.level).all()
-    level = [lvl[0] for lvl in level]
+    # TODO: Add queries for:
+    # - Best scores per apparatus
+    # - Competition history
+    # - Recent results
 
     apparatus_list = models.Apparatus.query.all()
     apparatus_data = {}
     all_around_data = []
 
-    if selected_level:
+    if gymnast.id:
 
         best_per_app = (
             db.session.query(
@@ -41,8 +34,7 @@ def topnz():
                 models.Scores,
                 models.Scores.entry_id == models.Entries.id
                 )
-            .filter(models.Gymnasts.level == selected_level)
-            .group_by(models.Gymnasts.id, models.Scores.apparatus_id)
+            .filter(models.Gymnasts.id == gymnast.id)
             .subquery()
         )
 
@@ -83,8 +75,7 @@ def topnz():
                       models.Scores.entry_id == models.Entries.id
                       )
                 .join(models.Clubs, models.Clubs.id == models.Gymnasts.club_id)
-                .filter(models.Gymnasts.level == selected_level)
-                .filter(models.Scores.apparatus_id == apparatus.id)
+                .filter(models.Gymnasts.id == gymnast.id)
                 .group_by(models.Gymnasts.id,
                           models.Gymnasts.name,
                           models.Clubs.name
@@ -94,8 +85,8 @@ def topnz():
                 .all()
             )
 
-    return render_template('topnz.html', level=level,
-                           selected_level=selected_level,
-                           all_around_data=all_around_data,
+    return render_template('profiles.html',
+                           gymnast=gymnast,
                            apparatus_data=apparatus_data,
-                           apparatus_list=apparatus_list)
+                           all_around_data=all_around_data,
+                           )

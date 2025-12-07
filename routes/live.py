@@ -1,6 +1,7 @@
 from flask import render_template, request
 from extensions import db
 import models
+from .login import login_required
 from . import main
 
 

@@ -7,9 +7,16 @@
             <h1 class="hero-title">STAG Compete</h1>
             <p class="hero-subtitle">Comprehensive gymnastics competition management and live scoring</p>
 
+            {% if not current_user.is_authenticated %}
+            <div class="hero-cta">
+                <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-large">Get Started Free</a>
+                <p class="cta-text">Join the STAG gymnastics community today</p>
+            </div>
+            {% endif %}
+
             {% if live_competitions %}
             <div class="live-alert">
-                <span class="live-badge">🔴 LIVE</span>
+                <span class="live-badge">LIVE</span>
                 {% for comp in live_competitions %}
                 <strong>{{ comp.name }} is currently running!</strong>
                 {% endfor %}
@@ -19,37 +26,84 @@
         </div><!-- hero-content -->
     </section><!-- hero-section -->
 
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-        <h2>Quick Access</h2>
+    {% if not current_user.is_authenticated %}
+    <!-- Features Overview for Visitors -->
+    <section class="features-overview">
+        <h2>What You Get with STAG Compete</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"></div>
+                <h3>Competition Results</h3>
+                <p>Access detailed competition results, rankings, and performance analytics</p>
+                <span class="members-only">Members Only</span>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"></div>
+                <h3>Live Leaderboard</h3>
+                <p>Follow ongoing competitions in real-time with live scoring updates</p>
+                <a href="{{ url_for('main.live') }}" class="btn btn-secondary">View Live</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"></div>
+                <h3>Competition Calendar</h3>
+                <p>Stay updated with upcoming competitions, dates, and registration deadlines</p>
+                <span class="members-only">Members Only</span>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"></div>
+                <h3>Gymnast Profiles</h3>
+                <p>Track your progress, achievements, and competition history</p>
+                <span class="members-only">Members Only</span>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"></div>
+                <h3>Apply to Compete</h3>
+                <p>Submit applications to participate in STAG gymnastics competitions</p>
+                <span class="members-only">Members Only</span>
+            </div>
+
+            <div class="feature-card signup-highlight">
+                <div class="feature-icon"></div>
+                <h3>Ready to Join?</h3>
+                <p>Create your free account to access all STAG features and join our gymnastics community</p>
+                <div class="signup-actions">
+                    <a href="{{ url_for('main.register') }}" class="btn btn-primary">Sign Up Free</a>
+                    <p class="login-link">Already have an account? <a href="{{ url_for('main.login') }}">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% else %}
+    <!-- Dashboard for Authenticated Users -->
+    <section class="user-dashboard-section">
+        <h2>Your Dashboard</h2>
         <div class="action-grid">
             <div class="action-card">
-                <h3>📊 Results</h3>
+                <h3>Results</h3>
                 <p>View competition results and standings</p>
                 <a href="{{ url_for('main.results') }}" class="btn btn-secondary">View Results</a>
             </div>
 
             <div class="action-card">
-                <h3>📺 Live Leaderboard</h3>
+                <h3>Live Leaderboard</h3>
                 <p>Follow ongoing competitions in real-time</p>
                 <a href="{{ url_for('main.live') }}" class="btn btn-secondary">Live Scores</a>
             </div>
 
             <div class="action-card">
-                <h3>📅 Calendar</h3>
+                <h3>Calendar</h3>
                 <p>Check upcoming competition dates</p>
                 <a href="{{ url_for('main.calendar_view') }}" class="btn btn-secondary">View Calendar</a>
             </div>
-
-            {% if not logged_in %}
-            <div class="action-card official-login">
-                <h3>🔐 Officials Login</h3>
-                <p>Access scoring and administration tools</p>
-                <a href="{{ url_for('main.login') }}" class="btn btn-primary">Login</a>
-            </div>
-            {% endif %}
-        </div><!-- action-grid -->
-    </section><!-- quick-actions -->
+        </div>
+    </section>
+    {% endif %}
 
     {% if upcoming_competitions %}
     <section class="upcoming-section">
@@ -62,7 +116,7 @@
                 </div><!-- competition-status -->
                 <h3>{{ competition.name }}</h3>
                 <div class="competition-details">
-                    <p><strong>📅 Date:</strong>
+                    <p><strong>Date:</strong>
                         {% if competition.competition_date %}
                         {{ competition.competition_date.strftime('%B %d, %Y') }}
                         {% else %}
@@ -107,54 +161,72 @@
     </section><!-- recent-results -->
     {% endif %}
 
-    <section class="system-info">
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>About STAG Compete</h3>
-                <p>STAG Compete is the competition management platform for Shoot Then Aim Gymnastics.
-                    The system provides real-time scoring, athlete tracking, and comprehensive results management
-                    for gymnastics competitions and events.</p>
-            </div>
 
-            <div class="info-card">
-                <h3>For Officials</h3>
-                <p>Authorized judges and administrators can access scoring tools, manage competitions, and oversee
-                    athlete entries. Contact your competition coordinator for login credentials.</p>
-                {% if not logged_in %}
-                <a href="{{ url_for('main.login') }}" class="btn btn-primary">Official Login</a>
+
+    {% if current_user.is_authenticated %}
+    <section class="user-panel">
+        <h2>Welcome back, {{ current_user.first_name }}! 👋</h2>
+
+        {% if current_user.is_admin %}
+        <div class="admin-dashboard">
+            <h3>Administration</h3>
+            <div class="admin-actions">
+                <a href="{{ url_for('main.admin_users') }}" class="admin-card">
+                    User Management
+                </a>
+                <a href="{{ url_for('main.competitions') }}" class="admin-card">
+                    Manage Competitions
+                </a>
+                <a href="{{ url_for('main.entries') }}" class="btn btn-primary">
+                    Manage Entries
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if current_user.is_judge_or_admin %}
+        <div class="judge-dashboard">
+            <h3>Judging Tools</h3>
+            <div class="judge-actions">
+                <a href="{{ url_for('main.scoring') }}" class="judge-card">
+                    Score Management
+                </a>
+                <a href="{{ url_for('main.live') }}" class="btn btn-secondary">
+                    Live Leaderboard
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if not current_user.is_admin and not current_user.is_judge_or_admin %}
+        <div class="user-dashboard">
+            <h3>Your STAG Experience</h3>
+            <p class="dashboard-text">Welcome to the STAG community! Explore competition results, check upcoming events,
+                and stay connected with gymnastics.</p>
+            <div class="user-actions">
+                <a href="{{ url_for('main.results') }}" class="btn btn-secondary">
+                    View Results
+                </a>
+                <a href="{{ url_for('main.calendar_view') }}" class="btn btn-secondary">
+                    Competition Calendar
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="user-info">
+            <p class="role-badge role-{{ current_user.role_id }}">
+                {% if current_user.is_admin %}
+                Administrator
+                {% elif current_user.is_judge_or_admin %}
+                Judge
+                {% else %}
+                Member
                 {% endif %}
-            </div>
-
-            <div class="info-card">
-                <h3>Features</h3>
-                <ul class="feature-list">
-                    <li>✅ Real-time live scoring</li>
-                    <li>✅ Competition management</li>
-                    <li>✅ Athlete tracking</li>
-                    <li>✅ Results publication</li>
-                    <li>✅ Calendar integration</li>
-                </ul>
-            </div>
-        </div><!-- info-grid -->
-    </section><!-- system-info -->
-
-    {% if logged_in %}
-    <section class="admin-panel">
-        <h2>Welcome back, {{ session.get('username', 'Official') }}!</h2>
-        <div class="admin-actions">
-            {% if is_admin %}
-            <a href="{{ url_for('main.gymnasts') }}" class="btn btn-primary">Manage Gymnasts</a>
-            <a href="{{ url_for('main.competitions') }}" class="btn btn-primary">Manage Competitions</a>
-            <a href="{{ url_for('main.entries') }}" class="btn btn-primary">Manage Entries</a>
-            {% endif %}
-
-            {% if is_admin or is_judge %}
-            <a href="{{ url_for('main.scoring') }}" class="btn btn-success">Score Management</a>
-            {% endif %}
-
-            <a href="{{ url_for('main.logout') }}" class="btn btn-outline">Logout</a>
-        </div><!-- admin-actions -->
-    </section><!-- admin-panel -->
+            </p>
+            <a href="{{ url_for('main.logout') }}" class="btn btn-outline btn-sm">Logout</a>
+        </div>
+    </section><!-- user-panel -->
     {% endif %}
 </div><!-- content -->
 

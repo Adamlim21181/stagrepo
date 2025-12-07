@@ -1,6 +1,7 @@
 """Database models for gymnastics competition management."""
 
 from extensions import db
+from datetime import datetime
 
 
 class Roles(db.Model):
@@ -22,19 +23,42 @@ class Users(db.Model):
         db.Integer, primary_key=True
     )
 
+    email = db.Column(
+        db.String(120), nullable=False, unique=True
+    )
+
+    email_confirmed = db.Column(
+        db.Boolean, nullable=False, default=False
+    )
+
+    first_name = db.Column(
+        db.String(50), nullable=True
+    )
+
+    last_name = db.Column(
+        db.String(50), nullable=True
+    )
+
     username = db.Column(
         db.String(50), nullable=False, unique=True
     )
 
-    code = db.Column(
-        db.String(50), nullable=True
+    password = db.Column(
+        db.String(255), nullable=False
     )
+
+    created_at = db.Column(
+            db.DateTime, nullable=False, default=db.func.current_timestamp()
+        )
 
     role_id = db.Column(
         db.Integer, db.ForeignKey('roles.id'), nullable=False
     )
 
     role = db.relationship("Roles", backref="users")
+    
+    # Relationship to gymnast profile (if user is linked to a gymnast)
+    gymnast = db.relationship("Gymnasts", backref="user", uselist=False)
 
 
 class Seasons(db.Model):
@@ -135,9 +159,21 @@ class Gymnasts(db.Model):
         db.Integer, db.ForeignKey('clubs.id'), nullable=False
     )
 
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), nullable=True
+    )
+
     name = db.Column(
         db.String(50), nullable=False
     )
+
+    age = db.Column(db.Integer, nullable=True)
+
+    goals = db.Column(db.Text, nullable=True)
+
+    achievements = db.Column(db.Text, nullable=True)
+
+    injuries = db.Column(db.Text, nullable=True)
 
     level = db.Column(
         db.String(50), nullable=False
@@ -243,3 +279,69 @@ class JudgeScores(db.Model):
     e_score = db.Column(
         db.Float, nullable=False
     )
+
+
+class AthleteApplications(db.Model):
+    __tablename__ = 'athlete_applications'
+
+    id = db.Column(
+        db.Integer, primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'), nullable=False
+    )
+
+    club_name = db.Column(
+        db.String(100), nullable=False
+    )
+
+    gymnastics_level = db.Column(
+        db.String(50), nullable=False
+    )
+
+    years_experience = db.Column(
+        db.Integer, nullable=True
+    )
+
+    coach_name = db.Column(
+        db.String(100), nullable=True
+    )
+
+    coach_contact = db.Column(
+        db.String(100), nullable=True
+    )
+
+    achievements = db.Column(
+        db.Text, nullable=True
+    )
+
+    why_join = db.Column(
+        db.Text, nullable=True
+    )
+
+    status = db.Column(
+        db.String(20), nullable=False, default='pending'
+        # Values: 'pending', 'approved', 'rejected'
+    )
+
+    submitted_at = db.Column(
+        db.DateTime, nullable=False, default=db.func.current_timestamp()
+    )
+
+    reviewed_at = db.Column(
+        db.DateTime, nullable=True
+    )
+
+    reviewed_by = db.Column(
+        db.Integer, db.ForeignKey('users.id'), nullable=True
+    )
+
+    admin_notes = db.Column(
+        db.Text, nullable=True
+    )
+
+    # Relationships
+    user = db.relationship("Users", foreign_keys=[user_id],
+                           backref="athlete_application")
+    reviewer = db.relationship("Users", foreign_keys=[reviewed_by])

@@ -10,7 +10,7 @@
     </div> <!-- no-live-competition -->
     {% else %}
     <div class="live-competition-header">
-        <h2>🔴 Scoring for: {{ live_competition.name }}</h2>
+        <h2>Scoring for: {{ live_competition.name }}</h2>
         <p>{{ live_competition.address }}</p>
     </div> <!-- live-competition-header -->
 
@@ -18,7 +18,7 @@
         <h3>
             Scoring Progress
             {% if overall_progress.is_complete %}
-            <span class="completion-badge">✅ Complete</span>
+            <span class="completion-badge">Complete</span>
             {% else %}
             <span class="progress-badge">{{ overall_progress.fully_scored }}/{{ overall_progress.total_gymnasts
                 }}</span>
@@ -149,7 +149,7 @@
                 <tr class="{% if scoring_progress[entry.id].is_complete %}complete-row{% endif %}">
                     <td>
                         {% if scoring_progress[entry.id].is_complete %}
-                        <span class="status-complete">✅</span>
+                        <span class="status-complete"></span>
                         {% else %}
                         <span class="status-progress">{{ scoring_progress[entry.id].scored_count }}/{{
                             scoring_progress[entry.id].total_count }}</span>

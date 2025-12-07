@@ -4,54 +4,64 @@
 <div class="content">
     <h1>Competition Entries Management</h1>
 
-    <div class="add-entry">
-        <h2>Add Gymnast to Competition</h2>
-        <form method="POST">
-            {{ form.hidden_tag() }}
+    <div class="add-entry-modern">
+        <div class="form-header">
+            <h2 class="form-title">
+                <span class="form-icon">➕</span>
+                Add Gymnast to Competition
+            </h2>
+            <p class="form-subtitle">Select a competition and search for a gymnast to create a new entry</p>
+        </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    {{ form.competition_id.label(for="competition_id") }}
-                    {{ form.competition_id(id="competition_id", required=True) }}
-                    {% if form.competition_id.errors %}
-                    <ul class="error-list">
-                        {% for error in form.competition_id.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div><!-- form-group -->
-            </div><!-- form-row -->
+        <div class="form-card">
+            <form method="POST" class="modern-form">
+                {{ form.hidden_tag() }}
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="gymnast_search">Search Gymnast:</label>
-                    <div class="searchable-select">
-                        {{ form.gymnast_name(
-                        id="gymnast_search",
-                        class="form-control",
-                        placeholder="Type to search gymnasts by name, club, or level...",
-                        autocomplete="off",
-                        maxlength="100",
-                        required=True
-                        ) }}
-                        <div id="gymnast-dropdown" class="dropdown-list"></div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="competition_id" class="field-label">
+                            <span class="label-icon"></span>
+                            Competition
+                        </label>
+                        {{ form.competition_id(id="competition_id", class="field-input field-select", required=True) }}
+                        {% if form.competition_id.errors %}
+                        <div class="field-errors">
+                            {% for error in form.competition_id.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
-                    {% if form.gymnast_name.errors %}
-                    <ul class="error-list">
-                        {% for error in form.gymnast_name.errors %}
-                        <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div><!-- form-group -->
-            </div><!-- form-row -->
 
-            <div class="form-actions">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
-    </div><!-- add-entry -->
+                    <div class="form-field">
+                        <label for="gymnast-search-input" class="field-label">
+                            <span class="label-icon">🔍</span>
+                            Search and Select Gymnast
+                        </label>
+                        <div class="searchable-select-container">
+                            <input type="text" id="gymnast-search-input" class="field-input searchable-input"
+                                placeholder="Start typing to find gymnasts..." autocomplete="off">
+                            <div id="gymnast-dropdown" class="search-dropdown"></div>
+                            {{ form.gymnast_id(id="gymnast_id", style="display: none;", required=True) }}
+                            <div id="selected-gymnast" class="selected-display"></div>
+                        </div>
+                        {% if form.gymnast_id.errors %}
+                        <div class="field-errors">
+                            {% for error in form.gymnast_id.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-actions-modern">
+                    {{ form.submit(class="btn-submit") }}
+                    <span class="submit-help">Entry will be added to the competition</span>
+                </div>
+            </form>
+        </div>
+    </div><!-- add-entry-modern -->
 
     <!-- Existing Entries List -->
     <div class="entries-list">
@@ -72,7 +82,11 @@
                 <tr>
                     <td>{{ competition.name }}</td>
                     <td>#{{ "%03d"|format(gymnast.id) }}</td>
-                    <td>{{ gymnast.name }}</td>
+                    <td>
+                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}" class="gymnast-link">
+                            {{ gymnast.name }}
+                        </a>
+                    </td>
                     <td>{{ club.name }}</td>
                     <td>{{ gymnast.level }}</td>
                     <td class="actions">
@@ -90,9 +104,118 @@
     </div><!-- entries-list -->
 </div><!-- content -->
 
-<!-- Pass gymnasts data to JavaScript -->
+<!-- Pass gymnasts data to JavaScript for search functionality -->
 <script id="gymnasts-data" type="application/json">
 {{ gymnasts_json|tojson }}
 </script>
+
+<script>
+    // Enhanced searchable gymnast selection
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('gymnast-search-input');
+        const dropdown = document.getElementById('gymnast-dropdown');
+        const hiddenSelect = document.getElementById('gymnast_id');
+        const selectedDisplay = document.getElementById('selected-gymnast');
+        const gymnastsDataScript = document.getElementById('gymnasts-data');
+
+        if (!searchInput || !dropdown || !hiddenSelect || !gymnastsDataScript) return;
+
+        const gymnasts = JSON.parse(gymnastsDataScript.textContent);
+        let isDropdownOpen = false;
+
+        // Search and filter gymnasts
+        function filterGymnasts(query) {
+            if (!query.trim()) return gymnasts;
+
+            const searchTerm = query.toLowerCase().trim();
+            return gymnasts.filter(gymnast =>
+                gymnast.name.toLowerCase().includes(searchTerm) ||
+                gymnast.clubs.name.toLowerCase().includes(searchTerm) ||
+                gymnast.level.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Display dropdown with filtered results
+        function showDropdown(results) {
+            dropdown.innerHTML = '';
+            dropdown.style.display = 'block';
+            isDropdownOpen = true;
+
+            if (results.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'dropdown-item no-results';
+                noResults.textContent = 'No gymnasts found';
+                dropdown.appendChild(noResults);
+                return;
+            }
+
+            results.forEach(gymnast => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.innerHTML = `
+                <div class="gymnast-info">
+                    <span class="gymnast-name">${gymnast.name}</span>
+                    <span class="gymnast-details">${gymnast.level} • ${gymnast.clubs.name}</span>
+                </div>
+            `;
+
+                item.addEventListener('click', function () {
+                    selectGymnast(gymnast);
+                });
+
+                dropdown.appendChild(item);
+            });
+        }
+
+        // Select a gymnast
+        function selectGymnast(gymnast) {
+            hiddenSelect.value = gymnast.id;
+            searchInput.value = gymnast.name;
+            selectedDisplay.innerHTML = `
+            <div class="selected-gymnast-info">
+                <span class="selected-name">${gymnast.name}</span>
+                <span class="selected-details">${gymnast.level} • ${gymnast.clubs.name}</span>
+            </div>
+        `;
+            hideDropdown();
+        }
+
+        // Hide dropdown
+        function hideDropdown() {
+            dropdown.style.display = 'none';
+            isDropdownOpen = false;
+        }
+
+        // Search input event
+        searchInput.addEventListener('input', function () {
+            const query = this.value;
+            if (query.length >= 1) {
+                const filtered = filterGymnasts(query);
+                showDropdown(filtered);
+            } else {
+                hideDropdown();
+                hiddenSelect.value = '0';
+                selectedDisplay.innerHTML = '';
+            }
+        });
+
+        // Focus events
+        searchInput.addEventListener('focus', function () {
+            if (this.value.length >= 1) {
+                const filtered = filterGymnasts(this.value);
+                showDropdown(filtered);
+            }
+        });
+
+        // Click outside to close
+        document.addEventListener('click', function (e) {
+            if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                hideDropdown();
+            }
+        });
+    });
+</script>
+
+
 
 {% endblock %}

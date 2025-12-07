@@ -1,6 +1,106 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h1>Top NZ Scores</h1>
+<div class="content topnz-page">
+    <!-- Page Title -->
+    <div class="page-title">
+        <h1>Top NZ Scores</h1>
+        <p>Top Scores this Cycle</p>
+    </div>
 
-{% endblock %}
+    <!-- Level Selection at Top -->
+    <div class="level-selector-top">
+        <form method="get">
+            {% for levels in level %}
+            <button name="level" value="{{ levels }}" class="{{ 'active' if levels == selected_level else '' }}">
+                {{ levels }}
+            </button>
+            {% endfor %}
+        </form>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-area-full">
+        {% if all_around_data or apparatus_data %}
+        <div class="results-grid">
+            <!-- All Around Box -->
+            {% if all_around_data %}
+            <div class="results-box all-around">
+                <h3>All Around (Top 24)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Gymnast</th>
+                            <th>Total Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gymnast_data in all_around_data %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast_data.id) }}"
+                                    class="gymnast-link">
+                                    <strong>{{ gymnast_data.name }}</strong>
+                                </a>
+                                <br><small style="color: #666; font-size: 0.8em;">{{ gymnast_data.club_name
+                                    }}</small>
+                            </td>
+                            <td class="score-column"><strong>{{ "%.3f"|format(gymnast_data.total_score) }}</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Individual Apparatus Boxes -->
+            {% for apparatus_name, apparatus_scores in apparatus_data.items() %}
+            {% if apparatus_scores %}
+            <div class="results-box">
+                <h3>{{ apparatus_name }} (Top 8)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Gymnast</th>
+                            <th>E-Score</th>
+                            <th>D-Score</th>
+                            <th>Penalty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in apparatus_scores %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <a href="{{ url_for('main.gymnast_profile', gymnast_id=row.id) }}" class="gymnast-link">
+                                    <strong>{{ row.name }}</strong>
+                                </a>
+                                <br><small style="color: #666; font-size: 0.8em;">{{ row.club_name }}</small>
+                            </td>
+                            <td class="score-column">{{ "%.3f"|format(row.e_score) }}</td>
+                            <td class="score-column">{{ "%.3f"|format(row.d_score) }}</td>
+                            <td class="score-column">{{ "%.3f"|format(row.penalty) }}</td>
+                            <td class="score-column"><strong>{{ "%.3f"|format(row.total) }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% elif selected_level %}
+        <div style="text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
+            <h3>No scores found for {{ selected_level }}.</h3>
+            <p>Scores will appear here once gymnasts compete at this level.</p>
+        </div>
+        {% else %}
+
+        {% endif %}
+    </div><!-- content-area-full -->
+</div><!-- content -->{% endblock %}

@@ -2,10 +2,12 @@ from flask import render_template, request
 from extensions import db
 import models
 import forms
+from .login import login_required
 from . import main
 
 
 @main.route('/results')
+@login_required
 def results():
     """Results page with search, sorting, and pagination functionality."""
     form = forms.ResultsSearchForm(request.args, meta={'csrf': False})

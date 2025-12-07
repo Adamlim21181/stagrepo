@@ -189,7 +189,12 @@
                 {% for row in results %}
                 <tr>
                     <td class="col-competition">{{ row.entry.competitions.name }}</td>
-                    <td class="col-name">{{ row.entry.gymnasts.name }} ({{ row.entry.gymnasts.id }})</td>
+                    <td class="col-name">
+                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=row.entry.gymnasts.id) }}"
+                            class="gymnast-link">
+                            {{ row.entry.gymnasts.name }}
+                        </a> ({{ row.entry.gymnasts.id }})
+                    </td>
                     <td class="col-club">{{ row.entry.gymnasts.clubs.name }}</td>
                     <td class="col-level">{{ row.entry.gymnasts.level }}</td>
                     <td class="col-apparatus">{{ row.apparatus.name }}</td>

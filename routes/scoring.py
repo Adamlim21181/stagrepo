@@ -10,6 +10,12 @@ def scoring():
 
     if 'user_id' not in session:
         return render_template('nologin.html')
+    
+    # Check if user is judge or admin (role_id 1 or 2)
+    if session.get('role_id') not in [1, 2]:
+        flash('Access denied. Only judges and administrators can access '
+              'score management.', 'error')
+        return redirect(url_for('main.home'))
 
     live_competition = models.Competitions.query.filter_by(
         status='live'
@@ -191,3 +197,30 @@ def scoring():
         overall_progress=overall_progress,
         form=form
     )
+
+
+@main.route('/scoring/delete/<int:score_id>', methods=['POST'])
+def delete_score(score_id):
+    """Delete a score."""
+    if 'user_id' not in session:
+        return render_template('nologin.html')
+    
+    # Check if user is judge or admin (role_id 1 or 2)
+    if session.get('role_id') not in [1, 2]:
+        flash('Access denied. Only judges and administrators can delete '
+              'scores.', 'error')
+        return redirect(url_for('main.scoring'))
+
+    score = models.Scores.query.get_or_404(score_id)
+    
+    # Store info for flash message
+    gymnast_name = score.entries.gymnasts.name
+    apparatus_name = score.apparatus.name
+    
+    # Delete the score
+    db.session.delete(score)
+    db.session.commit()
+    
+    flash(f'Score for {gymnast_name} on {apparatus_name} has been deleted.',
+          'success')
+    return redirect(url_for('main.scoring'))

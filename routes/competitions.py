@@ -3,17 +3,17 @@ from datetime import datetime
 from extensions import db
 import models
 import forms
+from .login import login_required
 from . import main
 
 
 @main.route('/competitions', methods=['GET', 'POST'])
+@login_required
 def competitions():
-    if 'user_id' not in session:
-        return render_template('nologin.html')
-
-    if 'admin' not in session.get('roles', []):
-        flash('Access denied', 'danger')
-        return render_template('nologin.html')
+    # Check if user has admin role (role_id 1 = admin)
+    if session.get('role_id') != 1:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('main.home'))
 
     form = forms.AddCompetitionForm()
 

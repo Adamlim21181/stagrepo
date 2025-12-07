@@ -4,107 +4,141 @@
 <div class="content">
     <h1>Competition Management</h1>
 
-    <div class="add-competition">
-        <h2>Add New Competition</h2>
-        <form method="POST">
-            {{ form.hidden_tag() }}
+    <div class="add-competition-modern">
+        <div class="form-header">
+            <h2 class="form-title">
+                <span class="form-icon"></span>
+                Add New Competition
+            </h2>
+            <p class="form-subtitle">Create a new gymnastics competition with venue and date details</p>
+        </div>
 
-            <div class="form-group">
-                {{ form.name.label(for="name") }}
-                {{ form.name(id="name", required=True) }}
-                {% if form.name.errors %}
-                <ul class="error-list">
-                    {% for error in form.name.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div><!-- form-group -->
+        <div class="form-card">
+            <form method="POST" class="modern-form">
+                {{ form.hidden_tag() }}
 
-            <div class="form-group">
-                {{ form.address.label(for="address") }}
-                {{ form.address(id="address", required=True) }}
-                {% if form.address.errors %}
-                <ul class="error-list">
-                    {% for error in form.address.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div><!-- form-group -->
-
-            <div class="form-group">
-                {{ form.competition_date.label(for="competition_date") }}
-                {{ form.competition_date(id="competition_date", required=True) }}
-                {% if form.competition_date.errors %}
-                <ul class="error-list">
-                    {% for error in form.competition_date.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div><!-- form-group -->
-
-            {{ form.submit(id="addcomp") }}
-        </form>
-    </div><!-- add-competition -->
-
-    <div class="competitions-list">
-        <h2>All Competitions</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Date</th>
-                    <th>Season</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for competition in competitions %}
-                <tr class="competition-row {{ competition.status }}">
-                    <td>{{ competition.name }}</td>
-                    <td>{{ competition.address }}</td>
-                    <td>
-                        {% if competition.competition_date %}
-                        {{ competition.competition_date.strftime('%d/%m/%Y') }}
-                        {% else %}
-                        Not set
+                <div class="form-grid competition-grid">
+                    <div class="form-field full-width">
+                        <label for="name" class="field-label">
+                            <span class="label-icon"></span>
+                            Competition Name
+                        </label>
+                        {{ form.name(id="name", class="field-input", required=True, placeholder="e.g. Auckland Regional
+                        Championships 2025") }}
+                        {% if form.name.errors %}
+                        <div class="field-errors">
+                            {% for error in form.name.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
                         {% endif %}
-                    </td>
-                    <td>
-                        {% if competition.season %}
-                        {{ competition.season.year }}
-                        {% else %}
-                        Not set
+                    </div>
+
+                    <div class="form-field">
+                        <label for="address" class="field-label">
+                            <span class="label-icon">📍</span>
+                            Venue Address
+                        </label>
+                        {{ form.address(id="address", class="field-input", required=True, placeholder="e.g. Auckland
+                        Sports Centre, 123 Main St") }}
+                        {% if form.address.errors %}
+                        <div class="field-errors">
+                            {% for error in form.address.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
                         {% endif %}
-                    </td>
+                    </div>
 
-                    <td class="actions">
-                        {% if competition.status == 'draft' %}
-                        <a href="{{ url_for('main.start_competition', competition_id=competition.id) }}"
-                            class="btn btn-success">Start Live</a>
-                        {% elif competition.status == 'live' %}
-                        <a href="{{ url_for('main.end_competition', competition_id=competition.id) }}"
-                            class="btn btn-danger">End Competition</a>
+                    <div class="form-field">
+                        <label for="competition_date" class="field-label">
+                            <span class="label-icon"></span>
+                            Competition Date
+                        </label>
+                        {{ form.competition_date(id="competition_date", class="field-input field-date", required=True)
+                        }}
+                        {% if form.competition_date.errors %}
+                        <div class="field-errors">
+                            {% for error in form.competition_date.errors %}
+                            <span class="error-message">{{ error }}</span>
+                            {% endfor %}
+                        </div>
                         {% endif %}
+                    </div>
+                </div>
 
-                        <form method="POST"
-                            action="{{ url_for('main.delete_competition', competition_id=competition.id) }}"
-                            style="display:inline"
-                            onsubmit="return confirm('Delete this competition and all related entries/scores?');">
-                            {% if csrf_token %}{{ csrf_token() }}{% endif %}
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+                <div class="form-actions-modern">
+                    {{ form.submit(class="btn-submit", id="addcomp") }}
+                    <span class="submit-help">Competition will be created in draft status</span>
+                </div>
+            </form>
+        </div>
+    </div><!-- add-competition-modern -->
+
+    <div class="competitions-list-modern">
+        <div class="list-header">
+            <h2 class="list-title">
+                <span class="list-icon"></span>
+                All Competitions
+            </h2>
+            <p class="list-subtitle">Manage your gymnastics competitions and their status</p>
+        </div>
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Date</th>
+                        <th>Season</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for competition in competitions %}
+                    <tr class="competition-row {{ competition.status }}">
+                        <td>{{ competition.name }}</td>
+                        <td>{{ competition.address }}</td>
+                        <td>
+                            {% if competition.competition_date %}
+                            {{ competition.competition_date.strftime('%d/%m/%Y') }}
+                            {% else %}
+                            Not set
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if competition.season %}
+                            {{ competition.season.year }}
+                            {% else %}
+                            Not set
+                            {% endif %}
+                        </td>
+
+                        <td class="actions">
+                            {% if competition.status == 'draft' %}
+                            <a href="{{ url_for('main.start_competition', competition_id=competition.id) }}"
+                                class="btn btn-success">Start Live</a>
+                            {% elif competition.status == 'live' %}
+                            <a href="{{ url_for('main.end_competition', competition_id=competition.id) }}"
+                                class="btn btn-danger">End Competition</a>
+                            {% endif %}
+
+                            <form method="POST"
+                                action="{{ url_for('main.delete_competition', competition_id=competition.id) }}"
+                                style="display:inline"
+                                onsubmit="return confirm('Delete this competition and all related entries/scores?');">
+                                {% if csrf_token %}{{ csrf_token() }}{% endif %}
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
 
 
-                    </td><!-- actions -->
-                </tr><!-- competition-row -->
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><!-- competitions-list -->
+                        </td><!-- actions -->
+                    </tr><!-- competition-row -->
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div><!-- table-container -->
+    </div><!-- competitions-list-modern -->
 </div><!-- content -->
 
 {% endblock %}

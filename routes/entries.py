@@ -10,8 +10,9 @@ def entries():
     if 'user_id' not in session:
         return render_template('nologin.html')
 
-    if 'admin' not in session.get('roles', []):
-        flash('Access denied', 'danger')
+    # Check if user is admin (using username check like other routes)
+    if session.get('username') != 'admin':
+        flash('Access denied - Admin privileges required', 'danger')
         return render_template('nologin.html')
 
     form = forms.AddEntryForm()
@@ -32,6 +33,11 @@ def entries():
     form.competition_id.choices = [(0, 'Select Competition...')] + [
         (comp.id, f"{comp.name} - {comp.competition_date}")
         for comp in competitions
+    ]
+    
+    form.gymnast_id.choices = [(0, 'Select Gymnast...')] + [
+        (g.id, f"{g.name} ({g.level} - {g.clubs.name})")
+        for g in gymnasts
     ]
 
     # Get additional data needed for template
@@ -74,113 +80,68 @@ def entries():
     )
 
     if form.validate_on_submit():
-        # Additional validation for competition_id
-        if form.competition_id.data == 0:
-            flash('Please select a valid competition.', 'error')
-            return render_template(
-                'entries.html',
-                competitions=competitions,
-                gymnasts=gymnasts,
-                clubs=clubs,
-                levels=levels,
-                entries=entries,
-                form=form
-            )
+        try:
+            # Additional validation for competition_id
+            if form.competition_id.data == 0:
+                flash('Please select a valid competition.', 'error')
+                return redirect(url_for('main.entries'))
 
-        # Check if competition exists and is open for entries
-        selected_competition = models.Competitions.query.get(
-            form.competition_id.data
-        )
-        if not selected_competition:
-            flash('Selected competition not found.', 'error')
-            return render_template(
-                'entries.html',
-                competitions=competitions,
-                gymnasts=gymnasts,
-                clubs=clubs,
-                levels=levels,
-                entries=entries,
-                form=form
-            )
+            # Check if competition exists and is open for entries
+            selected_competition = models.Competitions.query.get(form.competition_id.data)
+            if not selected_competition:
+                flash('Selected competition not found.', 'error')
+                return redirect(url_for('main.entries'))
 
-        # Check competition status
-        if selected_competition.status in ['completed', 'closed']:
-            flash(
-                f'Cannot add entries to this competition. '
-                f'Status: {selected_competition.status}',
-                'error'
-            )
-            return render_template(
-                'entries.html',
-                competitions=competitions,
-                gymnasts=gymnasts,
-                clubs=clubs,
-                levels=levels,
-                entries=entries,
-                form=form
-            )
+            # Check competition status
+            if selected_competition.status in ['completed', 'closed']:
+                flash(
+                    f'Cannot add entries to this competition. '
+                    f'Status: {selected_competition.status}',
+                    'error'
+                )
+                return redirect(url_for('main.entries'))
 
-        # Find gymnast by exact name (case-insensitive)
-        gymnast_name = form.gymnast_name.data.strip()
-        if not gymnast_name:
-            flash('Please enter a gymnast name.', 'error')
-            return render_template(
-                'entries.html',
-                competitions=competitions,
-                gymnasts=gymnasts,
-                clubs=clubs,
-                levels=levels,
-                entries=entries,
-                form=form
-            )
+            # Validate gymnast selection
+            if form.gymnast_id.data == 0:
+                flash('Please select a gymnast.', 'error')
+                return redirect(url_for('main.entries'))
 
-        gymnast = (
-            models.Gymnasts.query
-            .filter(
-                models.Gymnasts.name.ilike(f"{gymnast_name}")
-            )
-            .first()
-        )
+            # Get the selected gymnast
+            gymnast = models.Gymnasts.query.get(form.gymnast_id.data)
+            if not gymnast:
+                flash('Selected gymnast not found.', 'error')
+                return redirect(url_for('main.entries'))
 
-        if not gymnast:
-            flash(
-                f'No gymnast found with the name "{gymnast_name}". '
-                'Please check the spelling or add the gymnast first.',
-                'error'
-            )
-            return render_template(
-                'entries.html',
-                competitions=competitions,
-                gymnasts=gymnasts,
-                clubs=clubs,
-                levels=levels,
-                entries=entries,
-                form=form
-            )
-
-        # Check if entry already exists
-        existing_entry = models.Entries.query.filter_by(
-            competition_id=form.competition_id.data,
-            gymnast_id=gymnast.id
-        ).first()
-
-        if existing_entry:
-            flash(
-                'This gymnast is already entered in this competition!',
-                'warning'
-            )
-        else:
-            new_entry = models.Entries(
+            # Check if entry already exists
+            existing_entry = models.Entries.query.filter_by(
                 competition_id=form.competition_id.data,
-                gymnast_id=gymnast.id
-            )
-            db.session.add(new_entry)
-            db.session.commit()
-            flash('Entry added successfully!', 'success')
+                gymnast_id=form.gymnast_id.data
+            ).first()
 
+            if existing_entry:
+                flash(
+                    f'{gymnast.name} is already entered in {selected_competition.name}!',
+                    'warning'
+                )
+            else:
+                new_entry = models.Entries(
+                    competition_id=form.competition_id.data,
+                    gymnast_id=form.gymnast_id.data
+                )
+                db.session.add(new_entry)
+                db.session.commit()
+                flash(
+                    f'Successfully added {gymnast.name} to {selected_competition.name}!',
+                    'success'
+                )
+
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request. Please try again.', 'error')
+        
         return redirect(url_for('main.entries'))
 
-    # Convert gymnasts to JSON-serializable format for JavaScript
+    # Convert gymnasts to JSON for search functionality
     gymnasts_json = [{
         'id': g.id,
         'name': g.name,
@@ -198,3 +159,34 @@ def entries():
         entries=entries,
         form=form
     )
+
+
+@main.route('/entries/delete/<int:entry_id>', methods=['POST'])
+def delete_entry(entry_id):
+    """Delete an entry."""
+    if 'user_id' not in session:
+        return render_template('nologin.html')
+
+    # Check if user is admin
+    if session.get('username') != 'admin':
+        flash('Access denied - Admin privileges required', 'danger')
+        return redirect(url_for('main.entries'))
+
+    entry = models.Entries.query.get_or_404(entry_id)
+    
+    # Delete related scores first
+    scores = models.Scores.query.filter_by(entry_id=entry_id).all()
+    for score in scores:
+        db.session.delete(score)
+    
+    # Store info for flash message
+    gymnast_name = entry.gymnasts.name
+    competition_name = entry.competitions.name
+    
+    # Delete the entry
+    db.session.delete(entry)
+    db.session.commit()
+    
+    flash(f'Entry for {gymnast_name} in {competition_name} has been deleted.',
+          'success')
+    return redirect(url_for('main.entries'))

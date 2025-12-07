@@ -1,0 +1,376 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="dashboard-page">
+    <div class="page-header">
+        <h1>My Dashboard</h1>
+        <p class="page-subtitle">Manage your account and athlete profile</p>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Account Info Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Account Information</h2>
+            </div>
+            <div class="account-info">
+                <div class="info-item">
+                    <label>Name:</label>
+                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Email:</label>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Member since:</label>
+                    <span>{{ user.created_at.strftime('%B %Y') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Athlete Profile Section (only for non-admins) -->
+        {% if user.role_id != 1 %}
+        <div class="dashboard-section profile-section">
+            <div class="section-header">
+                <h2>Athlete Profile</h2>
+            </div>
+
+            {% if gymnast %}
+            <!-- User has approved athlete profile -->
+            <div class="athlete-profile-card">
+                <div class="profile-status approved">
+                    <span class="status-icon">✅</span>
+                    <span>Verified Athlete</span>
+                </div>
+                <div class="profile-details">
+                    <h3>{{ gymnast.name }}</h3>
+                    <p><strong>Club:</strong> {{ gymnast.clubs.name if gymnast.clubs else 'N/A' }}</p>
+                    <p><strong>Level:</strong> {{ gymnast.level }}</p>
+                    {% if gymnast.age %}
+                    <p><strong>Age:</strong> {{ gymnast.age }}</p>
+                    {% endif %}
+                </div>
+                <div class="profile-actions">
+                    <a href="{{ url_for('main.edit_profile') }}" class="btn-primary">Edit Profile</a>
+                    <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}" class="btn-secondary">View
+                        Public Profile</a>
+                </div>
+            </div>
+
+            {% elif user.athlete_application and user.athlete_application.status == 'pending' %}
+            <!-- User has pending application -->
+            <div class="athlete-profile-card pending">
+                <div class="profile-status pending">
+                    <span class="status-icon">⏳</span>
+                    <span>Application Under Review</span>
+                </div>
+                <div class="pending-message">
+                    <h4>Your Application Details:</h4>
+                    <div class="application-summary">
+                        <p><strong>Club:</strong> {{ user.athlete_application.club_name }}</p>
+                        <p><strong>Level:</strong> {{ user.athlete_application.gymnastics_level }}</p>
+                        {% if user.athlete_application.years_experience %}
+                        <p><strong>Experience:</strong> {{ user.athlete_application.years_experience }} years</p>
+                        {% endif %}
+                        <p><strong>Submitted:</strong> {{ user.athlete_application.submitted_at.strftime('%B %d, %Y at
+                            %I:%M %p') }}</p>
+                    </div>
+                    <div class="status-message">
+                        <p>🔍 Your athlete profile application is being reviewed by our admin team.</p>
+                        <p>📧 We'll notify you via email once your application has been processed.</p>
+                        <p class="estimated-time">⏰ Applications are typically reviewed within 1-3 business days.</p>
+                    </div>
+                </div>
+            </div>
+
+            {% elif user.athlete_application and user.athlete_application.status == 'rejected' %}
+            <!-- User's application was rejected -->
+            <div class="athlete-profile-card rejected">
+                <div class="profile-status rejected">
+                    <span class="status-icon">❌</span>
+                    <span>Application Not Approved</span>
+                </div>
+                <div class="rejected-message">
+                    <p>Your athlete profile application was not approved. If you believe this was an error, please
+                        contact us.</p>
+                </div>
+            </div>
+
+            {% elif user.role_id != 1 %}
+            <!-- Regular users can apply for athlete profile (but not admins) -->
+            <div class="athlete-profile-card no-profile">
+                <div class="no-profile-message">
+                    <h3>Apply for Athlete Profile</h3>
+                    <p>Are you a competitive gymnast? Apply for a verified athlete profile to showcase your achievements
+                        and connect with the gymnastics community.</p>
+                    <ul class="benefits-list">
+                        <li>✨ Verified athlete status</li>
+                        <li>Showcase your achievements</li>
+                        <li>Track competition results</li>
+                        <li>Connect with other athletes</li>
+                    </ul>
+                </div>
+                <div class="apply-actions">
+                    <a href="{{ url_for('main.apply_athlete') }}" class="btn-primary">Apply for Athlete Profile</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Admin Management Section -->
+        {% if user.role_id == 1 %}
+        <div class="dashboard-section admin-section">
+            <div class="section-header">
+                <h2>🔐 Admin Management</h2>
+            </div>
+            <div class="admin-tools">
+                <div class="admin-tool-card">
+                    <h3>User Management</h3>
+                    <p>Manage user roles and promote users to judges</p>
+                    <a href="{{ url_for('main.manage_users') }}" class="btn-primary">Manage Users</a>
+                </div>
+                <div class="admin-tool-card">
+                    <h3>Athlete Applications</h3>
+                    <p>Review and approve athlete profile applications</p>
+                    <a href="{{ url_for('main.review_applications') }}" class="btn-primary">Review Applications</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .dashboard-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: var(--spacing-lg);
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: var(--spacing-xl);
+    }
+
+    .page-header h1 {
+        color: var(--primary-green);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .page-subtitle {
+        color: var(--text-muted);
+        font-size: var(--font-size-lg);
+    }
+
+    .dashboard-section {
+        background: var(--background-white);
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .section-header h2 {
+        color: var(--text-dark);
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 2px solid var(--border-light);
+    }
+
+    .account-info {
+        display: grid;
+        gap: var(--spacing-sm);
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--spacing-sm) 0;
+    }
+
+    .info-item label {
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .athlete-profile-card {
+        border: 2px solid var(--border-light);
+        border-radius: var(--border-radius-md);
+        padding: var(--spacing-lg);
+    }
+
+    .athlete-profile-card.approved {
+        border-color: var(--primary-green);
+        background: rgba(76, 175, 80, 0.05);
+    }
+
+    .athlete-profile-card.pending {
+        border-color: #ff9800;
+        background: rgba(255, 152, 0, 0.05);
+    }
+
+    .athlete-profile-card.rejected {
+        border-color: #f44336;
+        background: rgba(244, 67, 54, 0.05);
+    }
+
+    .profile-status {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-md);
+        font-weight: 600;
+    }
+
+    .profile-status.approved {
+        color: var(--primary-green);
+    }
+
+    .profile-status.pending {
+        color: #ff9800;
+    }
+
+    .profile-status.rejected {
+        color: #f44336;
+    }
+
+    .application-summary {
+        background: rgba(255, 255, 255, 0.7);
+        padding: var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        margin-bottom: var(--spacing-md);
+        border-left: 4px solid #ff9800;
+    }
+
+    .application-summary p {
+        margin-bottom: var(--spacing-xs);
+        color: var(--text-secondary);
+    }
+
+    .status-message {
+        margin-top: var(--spacing-md);
+    }
+
+    .status-message p {
+        margin-bottom: var(--spacing-sm);
+        color: var(--text-muted);
+    }
+
+    .estimated-time {
+        font-style: italic;
+        color: #ff9800 !important;
+        font-weight: 500;
+    }
+
+    .profile-details h3 {
+        color: var(--text-dark);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .profile-details p {
+        margin-bottom: var(--spacing-xs);
+        color: var(--text-muted);
+    }
+
+    .profile-actions {
+        margin-top: var(--spacing-md);
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+    }
+
+    .benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: var(--spacing-md) 0;
+    }
+
+    .benefits-list li {
+        padding: var(--spacing-xs) 0;
+        color: var(--text-muted);
+    }
+
+    .apply-actions {
+        margin-top: var(--spacing-lg);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        display: inline-block;
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-fast);
+    }
+
+    .btn-primary {
+        background: var(--primary-green);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-green-dark);
+    }
+
+    .btn-secondary {
+        background: var(--background-light);
+        color: var(--text-dark);
+        border: 2px solid var(--border-light);
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-light);
+    }
+
+    /* Admin Section Styles */
+    .admin-section {
+        background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+        border: 2px solid #ffc107;
+    }
+
+    .admin-tools {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-md);
+    }
+
+    .admin-tool-card {
+        background: white;
+        padding: var(--spacing-lg);
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--shadow-sm);
+        text-align: center;
+    }
+
+    .admin-tool-card h3 {
+        color: var(--primary-green);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .admin-tool-card p {
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-md);
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-page {
+            padding: var(--spacing-md);
+        }
+
+        .info-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-xs);
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% endblock %}

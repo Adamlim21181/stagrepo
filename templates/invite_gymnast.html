@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% block title %}Invite Gymnast - STAG{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>📧 Invite Gymnast</h1>
+        <p class="subtitle">Send an invitation for someone to join as a gymnast</p>
+    </div>
+
+    <div class="invite-info">
+        <div class="info-card">
+            <h3>How This Works</h3>
+            <ul class="info-list">
+                <li><strong>Send Invitation:</strong> Provide their details below</li>
+                <li><strong>They Register:</strong> They'll create their own account</li>
+                <li><strong>Auto-Approved:</strong> No application needed - you've already invited them!</li>
+                <li><strong>Ready to Compete:</strong> They'll be immediately set up as a gymnast</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" class="invite-form">
+            <div class="form-section">
+                <h3>Gymnast Details</h3>
+
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" id="name" name="name" class="form-input" placeholder="Enter gymnast's full name"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-input"
+                        placeholder="Enter their email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="club_id" class="form-label">Suggested Club</label>
+                    <select id="club_id" name="club_id" class="form-select">
+                        <option value="">They can choose their club</option>
+                        {% for club in clubs %}
+                        <option value="{{ club.id }}">{{ club.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="help-text">Optional - they can select their club during registration</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Personal Message (Optional)</h3>
+                <div class="form-group">
+                    <label for="message" class="form-label">Custom Message</label>
+                    <textarea id="message" name="message" class="form-textarea"
+                        placeholder="Add a personal note to the invitation..."></textarea>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h3>📨 Invitation Preview</h3>
+                <div class="preview-card">
+                    <p><strong>Subject:</strong> You're Invited to Join STAG Gymnastics!</p>
+                    <div class="preview-content">
+                        <p>Hi <span class="dynamic-name">[Name]</span>,</p>
+                        <p>You've been invited to join our gymnastics competition platform! As an invited gymnast, you
+                            can:</p>
+                        <ul>
+                            <li>Skip the application process</li>
+                            <li>Enter competitions immediately</li>
+                            <li>Track your scores and progress</li>
+                            <li>Connect with your gymnastics community</li>
+                        </ul>
+                        <p><strong>Registration Link:</strong> <span class="registration-link">{{ request.url_root
+                                }}register</span></p>
+                        <div class="custom-message" style="display: none;">
+                            <p><strong>Personal Message:</strong></p>
+                            <div class="message-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    📧 Send Invitation
+                </button>
+                <a href="{{ url_for('main.admin_users') }}" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Update preview dynamically
+    document.getElementById('name').addEventListener('input', function () {
+        const name = this.value || '[Name]';
+        document.querySelector('.dynamic-name').textContent = name;
+    });
+
+    document.getElementById('message').addEventListener('input', function () {
+        const message = this.value.trim();
+        const customMessageDiv = document.querySelector('.custom-message');
+        const messageContent = document.querySelector('.message-content');
+
+        if (message) {
+            messageContent.textContent = message;
+            customMessageDiv.style.display = 'block';
+        } else {
+            customMessageDiv.style.display = 'none';
+        }
+    });
+</script>
+
+<style>
+    .content-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .invite-info {
+        margin-bottom: 2rem;
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f3e5f5 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .info-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .info-list li {
+        padding: 0.5rem 0;
+        color: #333;
+    }
+
+    .form-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .form-section:last-child {
+        border-bottom: none;
+    }
+
+    .form-section h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .help-text {
+        color: #666;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .preview-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .preview-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .preview-content {
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .dynamic-name {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .registration-link {
+        color: var(--primary-color);
+        font-family: monospace;
+        background: #f0f0f0;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+    }
+
+    .custom-message {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 3px solid var(--primary-color);
+    }
+
+    .message-content {
+        font-style: italic;
+        color: #555;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1565c0;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f5f5f5;
+        color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    @media (max-width: 768px) {
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

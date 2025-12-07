@@ -10,6 +10,10 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'secretstagkey2025!'
     app.config['DEBUG'] = True
+    
+    # Session configuration for "Remember Me" functionality
+    app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days in seconds
+    
     db.init_app(app)
 
     # Error handler for 404 (Not Found),
@@ -23,6 +27,23 @@ def create_app():
     @app.errorhandler(414)
     def url_too_long(e):
         return render_template("414.html"), 414
+
+    # Make session available in all templates
+    @app.context_processor
+    def inject_user():
+        from flask import session
+        return {
+            'current_user': {
+                'is_authenticated': 'user_id' in session,
+                'user_id': session.get('user_id'),
+                'username': session.get('username'),
+                'first_name': session.get('first_name'),
+                'role_id': session.get('role_id'),
+                'is_admin': session.get('role_id') == 1,
+                'is_judge': session.get('role_id') == 2,
+                'is_judge_or_admin': session.get('role_id') in [1, 2]
+            }
+        }
 
     # Register routes. The Blueprint system keeps routes
     # organized in separate modules

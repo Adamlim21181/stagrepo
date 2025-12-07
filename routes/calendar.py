@@ -47,6 +47,9 @@ def calendar_view():
     next_month = month + 1 if month < 12 else 1
     next_year = year if month < 12 else year + 1
 
+    # Calculate total competitions for this month
+    total_competitions = len(competitions)
+    
     return render_template(
         'calendar.html',
         calendar_data=cal,
@@ -58,7 +61,8 @@ def calendar_view():
         prev_year=prev_year,
         next_month=next_month,
         next_year=next_year,
-        today=datetime.now()
+        today=datetime.now(),
+        total_competitions=total_competitions
     )
 
 

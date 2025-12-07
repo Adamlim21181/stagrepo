@@ -1,16 +1,49 @@
+<!-- Competition Status Header -->
+<div class="competition-status-header status-{{ competition.status }}">
+    <div class="status-content">
+        <div class="status-main">
+            <div class="status-icon">
+                <div
+                    class="status-dot status-{{ competition.status }}{% if competition.status == 'live' %} pulse{% endif %}">
+                </div>
+            </div>
+            <div class="status-info">
+                <div class="status-label">{{ competition.status|title }} Competition</div>
+                <div class="status-description">
+                    {% if competition.status == 'draft' %}
+                    Setup and registration in progress
+                    {% elif competition.status == 'live' %}
+                    Competition currently in progress
+                    {% elif competition.status == 'ended' %}
+                    Competition has finished
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if competition.status == 'live' and competition.started_at %}
+        <div class="time-elapsed">
+            <small>Started {{ competition.started_at.strftime('%I:%M %p') }}</small>
+        </div>
+        {% elif competition.status == 'ended' and competition.ended_at %}
+        <div class="time-elapsed">
+            <small>Ended {{ competition.ended_at.strftime('%I:%M %p') }}</small>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
 <div class="competition-info">
     <div class="info-item">
-        <div class="info-icon">📅</div>
+        <div class="info-icon">COMP</div>
         <div>
             <strong>{{ competition.name }}</strong>
-            <br>
-            <span class="status-badge status-{{ competition.status }}">{{ competition.status }}</span>
         </div>
     </div><!-- info-item -->
 
     {% if competition.started_at %}
     <div class="info-item">
-        <div class="info-icon">⏰</div>
+        <div class="info-icon">TIME</div>
         <div>
             <strong>Date & Time:</strong><br>
             {{ competition.started_at.strftime('%A, %B %d, %Y') }}<br>
@@ -23,7 +56,7 @@
     {% endif %}
 
     <div class="info-item">
-        <div class="info-icon">📍</div>
+        <div class="info-icon">LOC</div>
         <div>
             <strong>Location:</strong><br>
             {{ competition.address }}
@@ -31,7 +64,7 @@
     </div><!-- info-item -->
 
     <div class="info-item">
-        <div class="info-icon">👥</div>
+        <div class="info-icon">PART</div>
         <div>
             <strong>Participants:</strong><br>
             {{ entries_count }} gymnasts registered
@@ -54,7 +87,11 @@
             <tbody>
                 {% for entry, gymnast, club in entries %}
                 <tr>
-                    <td>{{ gymnast.name }}</td>
+                    <td>
+                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}" class="gymnast-link">
+                            {{ gymnast.name }}
+                        </a>
+                    </td>
                     <td>{{ gymnast.level }}</td>
                     <td>{{ club.name }}</td>
                 </tr>
@@ -65,23 +102,63 @@
 </div><!-- competition-details-section -->
 {% endif %}
 
-{% if competition.status == 'live' %}
-<div class="status-alert live">
-    <strong>🔴 This competition is currently live!</strong>
-    <a href="{{ url_for('main.live') }}">View Live Results →</a>
+<!-- Enhanced Action Section -->
+<div class="competition-actions-section">
+    {% if competition.status == 'live' %}
+    <div class="action-card live">
+        <div class="action-header">
+            <span class="action-icon pulse">LIVE</span>
+            <div>
+                <strong>Live Competition</strong>
+                <div class="action-subtitle">Follow the action in real-time</div>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <a href="{{ url_for('main.live') }}" class="btn btn-primary">
+                View Live Results
+            </a>
+            <a href="{{ url_for('main.scoring') }}" class="btn btn-secondary">
+                Enter Scores
+            </a>
+        </div>
+    </div>
+    {% elif competition.status == 'draft' %}
+    <div class="action-card draft">
+        <div class="action-header">
+            <span class="action-icon">DRAFT</span>
+            <div>
+                <strong>Draft Competition</strong>
+                <div class="action-subtitle">Setup and registration phase</div>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <a href="{{ url_for('main.entries') }}" class="btn btn-primary">
+                Add Participants
+            </a>
+            {% if entries_count > 0 %}
+            <button class="btn btn-success" onclick="startCompetition({{ competition.id }})">
+                Start Competition
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% elif competition.status == 'ended' %}
+    <div class="action-card ended">
+        <div class="action-header">
+            <span class="action-icon">ENDED</span>
+            <div>
+                <strong>Completed Competition</strong>
+                <div class="action-subtitle">View final results and statistics</div>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <a href="{{ url_for('main.results') }}" class="btn btn-primary">
+                View Results
+            </a>
+            <a href="#" class="btn btn-secondary">
+                Statistics
+            </a>
+        </div>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
-
-{% if competition.status == 'draft' %}
-<div class="status-alert draft">
-    <strong>📋 This competition is in draft mode</strong>
-    <small>Registration and setup in progress</small>
-</div>
-{% endif %}
-
-{% if competition.status == 'ended' %}
-<div class="status-alert ended">
-    <strong>✅ This competition has ended</strong>
-    <a href="{{ url_for('main.results') }}">View Results →</a>
-</div>
-{% endif %}

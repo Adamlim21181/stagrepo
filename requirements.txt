@@ -1,4 +1,7 @@
 Flask
 Flask-SQLAlchemy
-mysqlclient
+Flask-WTF
+WTForms
+Werkzeug
+email_validator
 
