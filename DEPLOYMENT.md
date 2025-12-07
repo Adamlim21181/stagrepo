@@ -59,14 +59,32 @@ In a PythonAnywhere Bash console:
 ```bash
 cd ~/stagcode
 source venv/bin/activate
-python3.10 -c "
-from create_app import create_app
+
+# Create a temporary database initialization script
+cat > init_db.py << 'EOF'
 from extensions import db
-app = create_app()
+import models
+from flask import Flask
+import os
+
+# Create a minimal app for database initialization
+app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "stagdata.db")}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
 with app.app_context():
     db.create_all()
-    print('Database initialized!')
-"
+    print('Database tables created successfully!')
+EOF
+
+# Run the initialization script
+python3.10 init_db.py
+
+# Clean up the temporary script
+rm init_db.py
 ```
 
 ### 8. Set Static Files (Optional)
@@ -80,7 +98,65 @@ If you have custom static files:
 1. Click the green "Reload" button in the Web tab
 2. Visit your app at: `https://yourusername.pythonanywhere.com`
 
+## MySQL Database Setup (Paid Accounts Only)
+
+If you have a PythonAnywhere Hacker account or higher, you can use MySQL instead of SQLite:
+
+### 1. Create MySQL Database
+1. Go to the "Databases" tab in your PythonAnywhere dashboard
+2. Create a new MySQL database (e.g., `Food123$stagdata`)
+3. Note the database details provided
+
+### 2. Set Environment Variables
+In your PythonAnywhere Bash console:
+```bash
+# Add these to your .bashrc file for persistence
+echo 'export MYSQL_USER="Food123"' >> ~/.bashrc
+echo 'export MYSQL_PASSWORD="Food123$stagdata"' >> ~/.bashrc
+echo 'export MYSQL_HOST="Food123.mysql.pythonanywhere-services.com"' >> ~/.bashrc
+echo 'export MYSQL_DATABASE="Food123$default"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### 3. Initialize MySQL Database
+```bash
+cd ~/stagcode
+source venv/bin/activate
+
+# Create MySQL initialization script
+cat > init_mysql.py << 'EOF'
+from extensions import db
+import models
+from flask import Flask
+import os
+
+# Create app with MySQL configuration
+app = Flask(__name__)
+mysql_user = os.environ.get('MYSQL_USER')
+mysql_password = os.environ.get('MYSQL_PASSWORD')
+mysql_host = os.environ.get('MYSQL_HOST') 
+mysql_database = os.environ.get('MYSQL_DATABASE')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+    print('MySQL database tables created successfully!')
+EOF
+
+# Run the MySQL initialization
+python3.10 init_mysql.py
+rm init_mysql.py
+```
+
 ## Important Configuration Notes
+
+### Database Choice
+- **SQLite (Free accounts):** Simple, works great for small to medium sites
+- **MySQL (Paid accounts):** Better for larger sites, multiple concurrent users, production scaling
 
 ### Security Considerations
 - Change the `SECRET_KEY` in `create_app.py` to something more secure for production

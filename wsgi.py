@@ -10,7 +10,7 @@ import sys
 import os
 
 # Add your project directory to the Python path
-path = '/home/yourusername/stagcode'  # Replace 'yourusername' with your PythonAnywhere username
+path = '/home/Food123/stagcode'
 if path not in sys.path:
     sys.path.insert(0, path)
 

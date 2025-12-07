@@ -7,10 +7,23 @@ from extensions import db
 def create_app():
     app = Flask(__name__)
     
-    # Database configuration - use absolute path for production
+    # Database configuration
     import os
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "stagdata.db")}'
+    
+    # Check for MySQL configuration (for PythonAnywhere paid accounts)
+    mysql_user = os.environ.get('MYSQL_USER')
+    mysql_password = os.environ.get('MYSQL_PASSWORD') 
+    mysql_host = os.environ.get('MYSQL_HOST')
+    mysql_database = os.environ.get('MYSQL_DATABASE')
+    
+    if mysql_user and mysql_password and mysql_host and mysql_database:
+        # Use MySQL if environment variables are set
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}'
+    else:
+        # Fall back to SQLite
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "stagdata.db")}'
+    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'secretstagkey2025!'
     
