@@ -104,12 +104,17 @@ def logout():
 def dashboard():
     """User dashboard showing account info and linked gymnast profile"""
     current_user = Users.query.get(session['user_id'])
+    
+    # If user not found, clear session and redirect to login
+    if not current_user:
+        session.clear()
+        flash('Session expired. Please log in again.', 'warning')
+        return redirect(url_for('main.login'))
 
     # Find if user has a linked gymnast profile
     linked_gymnast = None
-    if current_user:
-        query = Gymnasts.query.filter_by(user_id=current_user.id)
-        linked_gymnast = query.first()
+    query = Gymnasts.query.filter_by(user_id=current_user.id)
+    linked_gymnast = query.first()
 
     return render_template('dashboard.html',
                            user=current_user,
