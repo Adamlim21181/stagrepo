@@ -15,15 +15,15 @@
             <span>Total Users</span>
         </div>
         <div class="stat-card">
-            <h3>{{ users|selectattr('1.name', 'equalto', 'admin')|list|length }}</h3>
+            <h3>{{ users|selectattr('1.name', 'equalto', 'Admin')|list|length }}</h3>
             <span>Admins</span>
         </div>
         <div class="stat-card">
-            <h3>{{ users|selectattr('1.name', 'equalto', 'judges')|list|length }}</h3>
+            <h3>{{ users|selectattr('1.name', 'equalto', 'Judge')|list|length }}</h3>
             <span>Judges</span>
         </div>
         <div class="stat-card">
-            <h3>{{ users|selectattr('1.name', 'equalto', 'user')|list|length }}</h3>
+            <h3>{{ users|selectattr('1.name', 'equalto', 'User')|list|length }}</h3>
             <span>Regular Users</span>
         </div>
     </div>
@@ -41,7 +41,7 @@
             </thead>
             <tbody>
                 {% for user, role in users %}
-                <tr class="user-row {{ 'admin-user' if role.name == 'admin' else '' }}">
+                <tr class="user-row {{ 'admin-user' if role.name == 'Admin' else '' }}">
                     <td>
                         <div class="user-info">
                             <strong>{{ user.first_name }} {{ user.last_name }}</strong>
@@ -59,7 +59,7 @@
                     </td>
                     <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}</td>
                     <td>
-                        {% if role.name != 'admin' or user.id != session['user_id'] %}
+                        {% if role.name != 'Admin' or user.id != session['user_id'] %}
                         <div class="role-actions">
                             {% for available_role in roles %}
                             {% if available_role.id != role.id %}
@@ -67,11 +67,11 @@
                                 action="{{ url_for('main.promote_user', user_id=user.id, role_id=available_role.id) }}"
                                 style="display: inline;">
                                 <button type="submit"
-                                    class="btn btn-sm btn-{{ 'primary' if available_role.name == 'judges' else 'secondary' }}"
+                                    class="btn btn-sm btn-{{ 'primary' if available_role.name == 'Judge' else 'secondary' }}"
                                     onclick="return confirm('Promote {{ user.first_name }} to {{ available_role.name.title() }}?')">
-                                    {% if available_role.name == 'judges' %}
-                                    Make Judge
-                                    {% elif available_role.name == 'admin' %}
+                                    {% if available_role.name == 'Judge' %}
+                                    👨‍⚖️ Make Judge
+                                    {% elif available_role.name == 'Admin' %}
                                     👑 Make Admin
                                     {% else %}
                                     👤 Make User
