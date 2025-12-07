@@ -39,10 +39,6 @@ class Users(db.Model):
         db.String(50), nullable=True
     )
 
-    username = db.Column(
-        db.String(50), nullable=False, unique=True
-    )
-
     password = db.Column(
         db.String(255), nullable=False
     )

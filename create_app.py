@@ -55,7 +55,7 @@ def create_app():
             'current_user': {
                 'is_authenticated': 'user_id' in session,
                 'user_id': session.get('user_id'),
-                'username': session.get('username'),
+                'email': session.get('email'),
                 'first_name': session.get('first_name'),
                 'role_id': session.get('role_id'),
                 'is_admin': session.get('role_id') == 1,

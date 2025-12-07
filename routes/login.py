@@ -121,7 +121,7 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             # Successful login
             session['user_id'] = user.id
-            session['username'] = user.username
+            session['email'] = user.email
             session['first_name'] = user.first_name
             session['role_id'] = user.role_id
 

@@ -10,8 +10,8 @@ def entries():
     if 'user_id' not in session:
         return render_template('nologin.html')
 
-    # Check if user is admin (using username check like other routes)
-    if session.get('username') != 'admin':
+    # Check if user is admin (using role_id check)
+    if session.get('role_id') != 1:
         flash('Access denied - Admin privileges required', 'danger')
         return render_template('nologin.html')
 
@@ -168,7 +168,7 @@ def delete_entry(entry_id):
         return render_template('nologin.html')
 
     # Check if user is admin
-    if session.get('username') != 'admin':
+    if session.get('role_id') != 1:
         flash('Access denied - Admin privileges required', 'danger')
         return redirect(url_for('main.entries'))
 

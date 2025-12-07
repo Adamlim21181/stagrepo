@@ -45,7 +45,7 @@
                     <td>
                         <div class="user-info">
                             <strong>{{ user.first_name }} {{ user.last_name }}</strong>
-                            <small>@{{ user.username }}</small>
+                            <small>{{ user.email }}</small>
                             {% if user.is_athlete %}
                             <span class="badge athlete-badge">Athlete</span>
                             {% endif %}

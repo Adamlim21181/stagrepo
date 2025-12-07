@@ -55,7 +55,7 @@
 
             <!-- Admin Actions - Positioned in bottom right -->
             {% if current_user.is_authenticated %}
-            {% if current_user.username == 'admin' %}
+            {% if current_user.is_admin %}
             <div class="admin-actions-corner">
                 <a href="{{ url_for('main.admin_edit_gymnast_bio', gymnast_id=gymnast.id) }}"
                     class="admin-btn admin-btn-primary">
