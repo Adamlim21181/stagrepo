@@ -8,6 +8,34 @@ from extensions import db
 import models
 from werkzeug.security import generate_password_hash
 
+def create_roles():
+    """Create the basic roles if they don't exist."""
+    app = create_app()
+    with app.app_context():
+        # Create Admin role
+        admin_role = models.Roles.query.filter_by(id=1).first()
+        if not admin_role:
+            admin_role = models.Roles(id=1, name='Admin')
+            db.session.add(admin_role)
+            print("Created Admin role")
+        
+        # Create Judge role
+        judge_role = models.Roles.query.filter_by(id=2).first()
+        if not judge_role:
+            judge_role = models.Roles(id=2, name='Judge')
+            db.session.add(judge_role)
+            print("Created Judge role")
+        
+        # Create User role
+        user_role = models.Roles.query.filter_by(id=3).first()
+        if not user_role:
+            user_role = models.Roles(id=3, name='User')
+            db.session.add(user_role)
+            print("Created User role")
+        
+        db.session.commit()
+        print("Roles setup complete")
+
 def create_admin_user():
     app = create_app()
     with app.app_context():
@@ -53,5 +81,6 @@ def show_all_users():
             print(f"- {user.username} ({user.email}) - Role: {role}")
 
 if __name__ == "__main__":
+    create_roles()  # Create roles first
     create_admin_user()
     show_all_users()
