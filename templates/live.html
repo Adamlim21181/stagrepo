@@ -44,7 +44,8 @@
         {% endif %}
 
         {% if leaderboard_data %}
-        <table>
+        <div class="table-responsive">
+            <table>
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -95,6 +96,7 @@
                 {% endif %}
             </tbody>
         </table>
+        </div>
         {% elif selected_level %}
         <p>No scores found for that level{% if selected_apparatus_id and selected_apparatus_id != 'all_around' %} and
             apparatus{% endif %}.</p>

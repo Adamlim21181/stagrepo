@@ -449,3 +449,42 @@ function initSearchableSelect() {
 }
 
 document.addEventListener('DOMContentLoaded', initSearchableSelect);
+
+/*
+ * MOBILE NAVIGATION TOGGLE
+ * ========================
+ */
+function toggleMobileMenu() {
+  const mobileMenu = document.getElementById('mobileMenu');
+  const navContainer = document.querySelector('.nav-container');
+  
+  if (mobileMenu) {
+    mobileMenu.classList.toggle('active');
+    navContainer.classList.toggle('mobile-active');
+  }
+}
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', function(event) {
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileToggle = document.querySelector('.mobile-menu-toggle');
+  const navContainer = document.querySelector('.nav-container');
+  
+  if (mobileMenu && mobileToggle && navContainer) {
+    if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+      mobileMenu.classList.remove('active');
+      navContainer.classList.remove('mobile-active');
+    }
+  }
+});
+
+// Close mobile menu when window is resized to desktop
+window.addEventListener('resize', function() {
+  const mobileMenu = document.getElementById('mobileMenu');
+  const navContainer = document.querySelector('.nav-container');
+  
+  if (window.innerWidth > 768 && mobileMenu && navContainer) {
+    mobileMenu.classList.remove('active');
+    navContainer.classList.remove('mobile-active');
+  }
+});
