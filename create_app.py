@@ -6,10 +6,16 @@ from extensions import db
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = ('sqlite:///stagdata.db')
+    
+    # Database configuration - use absolute path for production
+    import os
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "stagdata.db")}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = 'secretstagkey2025!'
-    app.config['DEBUG'] = True
+    
+    # Set debug mode based on environment
+    app.config['DEBUG'] = os.environ.get('FLASK_ENV') != 'production'
     
     # Session configuration for "Remember Me" functionality
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days in seconds
