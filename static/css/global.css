@@ -1665,11 +1665,11 @@ footer {
 
 /* Mobile Menu Styles */
 .mobile-menu {
-  display: none !important;
+  display: none;
   position: fixed;
   top: var(--nav-height);
   left: 0;
-  width: 100vw;
+  width: 100%;
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   z-index: 2000; /* above nav (1000) */
@@ -1681,9 +1681,14 @@ footer {
 }
 
 .mobile-menu.active {
-  display: block !important;
+  display: block;
   visibility: visible;
   opacity: 1;
+}
+
+/* Prevent page scroll when menu is open */
+body.menu-open {
+  overflow: hidden;
 }
 
 .mobile-menu ul {

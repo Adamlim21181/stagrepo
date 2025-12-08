@@ -465,6 +465,13 @@ function toggleMobileMenu() {
   if (mobileToggle) {
     mobileToggle.classList.toggle('active');
   }
+  
+  // lock body scroll when menu open
+  if (mobileMenu && mobileMenu.classList.contains('active')) {
+    document.body.classList.add('menu-open');
+  } else {
+    document.body.classList.remove('menu-open');
+  }
 }
 
 // Close mobile menu when clicking outside
@@ -476,6 +483,7 @@ document.addEventListener('click', function(event) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
       mobileToggle.classList.remove('active');
+      document.body.classList.remove('menu-open');
     }
   }
 });
@@ -488,5 +496,6 @@ window.addEventListener('resize', function() {
   if (window.innerWidth > 768 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
     mobileToggle.classList.remove('active');
+    document.body.classList.remove('menu-open');
   }
 });
