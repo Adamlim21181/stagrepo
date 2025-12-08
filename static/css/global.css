@@ -1667,13 +1667,13 @@ footer {
 .mobile-menu {
   display: none !important;
   position: fixed;
-  top: 70px;
+  top: var(--nav-height);
   left: 0;
-  width: 100%;
+  width: 100vw;
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  z-index: 999;
-  max-height: calc(100vh - 70px);
+  z-index: 2000; /* above nav (1000) */
+  max-height: calc(100vh - var(--nav-height));
   overflow-y: auto;
   visibility: hidden;
   opacity: 0;
