@@ -457,6 +457,7 @@ document.addEventListener('DOMContentLoaded', initSearchableSelect);
 function toggleMobileMenu() {
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileToggle = document.getElementById('mobileMenuToggle');
+  const navContainer = document.querySelector('.nav-container');
   
   if (mobileMenu) {
     mobileMenu.classList.toggle('active');
@@ -469,8 +470,10 @@ function toggleMobileMenu() {
   // lock body scroll when menu open
   if (mobileMenu && mobileMenu.classList.contains('active')) {
     document.body.classList.add('menu-open');
+    if (navContainer) navContainer.classList.add('mobile-active');
   } else {
     document.body.classList.remove('menu-open');
+    if (navContainer) navContainer.classList.remove('mobile-active');
   }
 }
 
@@ -478,12 +481,14 @@ function toggleMobileMenu() {
 document.addEventListener('click', function(event) {
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileToggle = document.getElementById('mobileMenuToggle');
+  const navContainer = document.querySelector('.nav-container');
   
   if (mobileMenu && mobileToggle) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
       mobileToggle.classList.remove('active');
       document.body.classList.remove('menu-open');
+      if (navContainer) navContainer.classList.remove('mobile-active');
     }
   }
 });
@@ -492,10 +497,12 @@ document.addEventListener('click', function(event) {
 window.addEventListener('resize', function() {
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileToggle = document.getElementById('mobileMenuToggle');
+  const navContainer = document.querySelector('.nav-container');
   
   if (window.innerWidth > 768 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
     mobileToggle.classList.remove('active');
     document.body.classList.remove('menu-open');
+    if (navContainer) navContainer.classList.remove('mobile-active');
   }
 });
