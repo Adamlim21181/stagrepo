@@ -1,3 +1,42 @@
+/* Mobile Menu Final Styles */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100vw;
+  z-index: 9999;
+  background: #2196f3;
+  color: white;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  padding: 0;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.mobile-menu.active {
+  display: block;
+}
+.mobile-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mobile-menu li {
+  padding: 0;
+  margin: 0;
+}
+.mobile-menu li a {
+  display: block;
+  padding: 18px 24px;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  word-break: break-word;
+  text-decoration: none;
+}
+.mobile-menu li a:hover {
+  background: rgba(255,255,255,0.12);
+}
 
 /* =============================================
    BUTTON STYLES
@@ -1683,10 +1722,7 @@ footer {
 
 @media (max-width: 768px) {
   .mobile-menu {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+    /* hidden by default, shown with .active */
   }
 }
 

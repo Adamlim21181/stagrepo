@@ -12,15 +12,7 @@
 <body>
 
     <div>
-        <div style="position:fixed;top:60px;left:0;width:100vw;z-index:9999;background:#2196f3;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);padding:0;max-height:calc(100vh - 60px);overflow-y:auto;">
-            <ul style="margin:0;padding:0;list-style:none;">
-                <li style="padding:0;margin:0;"><a href="{{ url_for('main.home') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Dashboard</a></li>
-                <li style="padding:0;margin:0;"><a href="{{ url_for('main.live') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Live Leaderboard</a></li>
-                <li style="padding:0;margin:0;"><a href="{{ url_for('main.results') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">All Results</a></li>
-                <li style="padding:0;margin:0;"><a href="{{ url_for('main.topnz') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Top Scores</a></li>
-                <li style="padding:0;margin:0;"><a href="{{ url_for('main.calendar_view') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Calendar</a></li>
-            </ul>
-        </div>
+        {% include 'nav.html' %}
         {% include 'nav.html' %}
 
         <main>{% block content %}{% endblock %}</main>

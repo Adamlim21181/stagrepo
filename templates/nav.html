@@ -68,8 +68,8 @@
     </div><!-- nav-container -->
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu" style="position:fixed;top:60px;left:0;width:100vw;z-index:9999;background:#2196f3;color:white;box-shadow:0 8px 30px rgba(0,0,0,0.3);padding:0;max-height:calc(100vh - 60px);overflow-y:auto;">
-        <ul style="margin:0;padding:0;list-style:none;">
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
             <li style="padding:0;margin:0;"><a href="{{ url_for('main.home') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
             <li style="padding:0;margin:0;"><a href="{{ url_for('main.live') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Live Leaderboard</a></li>
             {% if current_user.is_authenticated %}
