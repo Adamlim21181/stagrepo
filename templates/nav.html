@@ -67,33 +67,35 @@
         </ul><!-- nav-right -->
     </div><!-- nav-container -->
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div style="color: #fff; background: #ff00ff; padding: 24px; font-size: 1.5em; text-align: center;">TEST MENU VISIBLE</div>
-        <ul>
-            <li><a href="#" style="color: yellow; font-size: 1.2em;">Test Link</a></li>
-            <li><a href="{{ url_for('main.home') }}">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
-            <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
-            {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('main.results') }}">All Results</a></li>
-            <li><a href="{{ url_for('main.topnz') }}">Top Scores</a></li>
-            <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
-            {% endif %}
-            {% if current_user.is_judge_or_admin %}
-            <li><a href="{{ url_for('main.scoring') }}">Score Management</a></li>
-            {% endif %}
-            {% if current_user.is_admin %}
-            <li><a href="{{ url_for('main.manage_users') }}">User Management</a></li>
-            <li><a href="{{ url_for('main.competitions') }}">Manage Competitions</a></li>
-            <li><a href="{{ url_for('main.entries') }}">Manage Entries</a></li>
-            {% endif %}
-            {% if not current_user.is_authenticated %}
-            <li><a href="{{ url_for('main.login') }}">Login</a></li>
-            <li><a href="{{ url_for('main.register') }}">Sign Up</a></li>
-            {% else %}
-            <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
-            {% endif %}
-        </ul>
-    </div>
+</nav>
+
+<!-- Mobile Menu (moved outside nav-container for debug) -->
+<div class="mobile-menu" id="mobileMenu">
+    <div style="color: #fff; background: #ff00ff; padding: 24px; font-size: 1.5em; text-align: center;">TEST MENU VISIBLE</div>
+    <ul>
+        <li><a href="#" style="color: yellow; font-size: 1.2em;">Test Link</a></li>
+        <li><a href="{{ url_for('main.home') }}">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
+        <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('main.results') }}">All Results</a></li>
+        <li><a href="{{ url_for('main.topnz') }}">Top Scores</a></li>
+        <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
+        {% endif %}
+        {% if current_user.is_judge_or_admin %}
+        <li><a href="{{ url_for('main.scoring') }}">Score Management</a></li>
+        {% endif %}
+        {% if current_user.is_admin %}
+        <li><a href="{{ url_for('main.manage_users') }}">User Management</a></li>
+        <li><a href="{{ url_for('main.competitions') }}">Manage Competitions</a></li>
+        <li><a href="{{ url_for('main.entries') }}">Manage Entries</a></li>
+        {% endif %}
+        {% if not current_user.is_authenticated %}
+        <li><a href="{{ url_for('main.login') }}">Login</a></li>
+        <li><a href="{{ url_for('main.register') }}">Sign Up</a></li>
+        {% else %}
+        <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+        {% endif %}
+    </ul>
+</div>
 </nav>
