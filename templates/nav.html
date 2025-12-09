@@ -70,27 +70,27 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <ul>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.home') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.live') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Live Leaderboard</a></li>
+            <li><a href="{{ url_for('main.home') }}">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
+            <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
             {% if current_user.is_authenticated %}
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.results') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">All Results</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.topnz') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Top Scores</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.calendar_view') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Calendar</a></li>
+            <li><a href="{{ url_for('main.results') }}">All Results</a></li>
+            <li><a href="{{ url_for('main.topnz') }}">Top Scores</a></li>
+            <li><a href="{{ url_for('main.calendar_view') }}">Calendar</a></li>
             {% endif %}
             {% if current_user.is_judge_or_admin %}
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.scoring') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Score Management</a></li>
+            <li><a href="{{ url_for('main.scoring') }}">Score Management</a></li>
             {% endif %}
             {% if current_user.is_admin %}
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.manage_users') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">User Management</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.competitions') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Manage Competitions</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.entries') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Manage Entries</a></li>
+            <li><a href="{{ url_for('main.manage_users') }}">User Management</a></li>
+            <li><a href="{{ url_for('main.competitions') }}">Manage Competitions</a></li>
+            <li><a href="{{ url_for('main.entries') }}">Manage Entries</a></li>
             {% endif %}
             {% if not current_user.is_authenticated %}
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.login') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Login</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.register') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Sign Up</a></li>
+            <li><a href="{{ url_for('main.login') }}">Login</a></li>
+            <li><a href="{{ url_for('main.register') }}">Sign Up</a></li>
             {% else %}
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.dashboard') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Dashboard</a></li>
-            <li style="padding:0;margin:0;"><a href="{{ url_for('main.logout') }}" style="display:block;padding:18px 24px;color:white;font-weight:600;text-align:left;word-break:break-word;">Logout</a></li>
+            <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
             {% endif %}
         </ul>
     </div>

@@ -463,15 +463,10 @@ function toggleMobileMenu() {
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
     mobileMenu.classList.toggle('active', isOpen);
-    // inline display fallback in case CSS is overridden
-    mobileMenu.style.display = isOpen ? 'block' : 'none';
   }
-  
   if (mobileToggle) {
     mobileToggle.classList.toggle('active', isOpen);
   }
-  
-  // lock body scroll when menu open
   if (isOpen) {
     document.body.classList.add('menu-open');
     if (navContainer) navContainer.classList.add('mobile-active');
@@ -490,7 +485,6 @@ document.addEventListener('click', function(event) {
   if (mobileMenu && mobileToggle) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
-      mobileMenu.style.display = 'none';
       mobileToggle.classList.remove('active');
       document.body.classList.remove('menu-open');
       if (navContainer) navContainer.classList.remove('mobile-active');
@@ -506,7 +500,6 @@ window.addEventListener('resize', function() {
   
   if (window.innerWidth > 768 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
-    mobileMenu.style.display = 'none';
     mobileToggle.classList.remove('active');
     document.body.classList.remove('menu-open');
     if (navContainer) navContainer.classList.remove('mobile-active');
