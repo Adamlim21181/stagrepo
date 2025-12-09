@@ -26,6 +26,9 @@
   display: flex;
   transform: translateY(0);
   opacity: 1;
+  background: #222 !important;
+  border: 4px solid #ff00ff !important;
+  box-shadow: 0 0 24px 8px #ff00ff99;
 }
 .mobile-menu ul {
   width: 100%;
