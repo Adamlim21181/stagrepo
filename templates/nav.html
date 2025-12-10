@@ -53,15 +53,7 @@
             <li><a href="{{ url_for('main.login') }}">Login</a></li>
             <li class="signup-li"><a href="{{ url_for('main.register') }}" class="signup-btn">Sign Up</a></li>
             {% else %}
-            <li class="dropdown user-dropdown">
-                <a href="#" class="dropbtn user-menu">
-                    <span class="user-icon">👤</span>
-                    {{ current_user.first_name }}
-                </a>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('main.logout') }}">Logout</a>
-                </div>
-            </li>
+            <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
             {% endif %}
         </ul><!-- nav-right -->
     </div><!-- nav-container -->
@@ -90,7 +82,6 @@
         <li><a href="{{ url_for('main.login') }}">Login</a></li>
         <li><a href="{{ url_for('main.register') }}">Sign Up</a></li>
         {% else %}
-        <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
         <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
         {% endif %}
     </ul>
