@@ -2239,12 +2239,16 @@ body.modal-open .modal * {
   gap: var(--spacing-lg);
   align-items: stretch;
   flex-direction: row;
-  overflow: hidden;
+  overflow: auto;
   width: 100%;
   max-width: 100%;
   margin: 0;
   box-sizing: border-box;
-  padding: 0;
+  padding: var(--spacing-lg);
+  background: white;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-lighter);
 }
 
 @media (max-width: 768px) {
@@ -2352,8 +2356,7 @@ body.modal-open .modal * {
   flex-direction: column;
   gap: var(--spacing-lg);
   min-width: 0;
-  overflow: hidden;
-  max-width: calc(100% - 220px);
+  overflow: auto;
   box-sizing: border-box;
 }
 
@@ -2480,30 +2483,46 @@ body.modal-open .modal * {
 }
 
 .apparatus-bar {
-  background: linear-gradient(135deg, var(--background-section), var(--background-section-alt));
+  background: white;
   border-radius: var(--border-radius-md);
-  padding: var(--spacing-2xl) var(--spacing-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-lighter);
+  padding: var(--spacing-lg);
+  box-shadow: none;
+  border: 1px solid var(--border-light);
   overflow: visible;
   position: relative;
-  margin: var(--spacing-sm) 0;
+  margin: 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius-md);
+  box-sizing: border-box;
 }
 
 .live-page table {
-  background-color: var(--background-section);
+  background-color: transparent;
   border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-lighter);
-  margin: var(--spacing-lg) 0;
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .live-page table th {
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--primary-green);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  border: none;
 }
 
 .live-page table td {
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  background-color: white;
 }
 
 .live-page table td:last-child {
