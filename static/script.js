@@ -459,7 +459,10 @@ function toggleMobileMenu() {
   const mobileToggle = document.getElementById('mobileMenuToggle');
   const navContainer = document.querySelector('.nav-container');
   
-  console.log('toggleMobileMenu called');
+  // TEST: Change button background to red so we know function is called
+  if (mobileToggle) {
+    mobileToggle.style.backgroundColor = mobileToggle.style.backgroundColor === 'red' ? '' : 'red';
+  }
   
   let isOpen = false;
   if (mobileMenu) {
@@ -467,16 +470,15 @@ function toggleMobileMenu() {
     mobileMenu.classList.toggle('active', isOpen);
     // FORCE inline styles - most explicit method possible
     if (isOpen) {
-      mobileMenu.style.setProperty('visibility', 'visible', 'important');
-      mobileMenu.style.setProperty('opacity', '1', 'important');
-      mobileMenu.style.setProperty('pointer-events', 'auto', 'important');
-      mobileMenu.style.setProperty('display', 'block', 'important');
-      console.log('Menu opened - styles forced');
+      mobileMenu.style.visibility = 'visible';
+      mobileMenu.style.opacity = '1';
+      mobileMenu.style.pointerEvents = 'auto';
+      mobileMenu.style.display = 'block';
+      mobileMenu.style.zIndex = '9999';
     } else {
-      mobileMenu.style.setProperty('visibility', 'hidden', 'important');
-      mobileMenu.style.setProperty('opacity', '0', 'important');
-      mobileMenu.style.setProperty('pointer-events', 'none', 'important');
-      console.log('Menu closed - styles forced');
+      mobileMenu.style.visibility = 'hidden';
+      mobileMenu.style.opacity = '0';
+      mobileMenu.style.pointerEvents = 'none';
     }
   }
   if (mobileToggle) {
