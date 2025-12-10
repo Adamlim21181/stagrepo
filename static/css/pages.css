@@ -2273,15 +2273,13 @@ body.modal-open .modal * {
 }
 
 .live-page .sidebar button {
-  flex: 1;
-  min-width: 80px;
-  max-width: calc(50% - 4px);
-  padding: 12px 16px;
+  flex: 0 1 auto;
+  padding: 10px 14px;
   background-color: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--border-radius-md);
   color: white;
-  font-size: var(--font-size-sm);
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -2289,12 +2287,13 @@ body.modal-open .modal * {
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .live-page .sidebar button:hover {
   background-color: rgba(255, 255, 255, 0.3);
   border-color: white;
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .live-page .sidebar button.active {
@@ -2306,7 +2305,7 @@ body.modal-open .modal * {
 }
 
 .live-page .sidebar button.active:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
 }
 
 /* Main Content Area */
@@ -2343,29 +2342,27 @@ body.modal-open .modal * {
 }
 
 .live-page .apparatus-bar button {
-  flex: 1;
-  min-width: 70px;
-  max-width: calc(50% - 4px);
-  padding: 10px 12px;
+  flex: 0 1 auto;
+  padding: 8px 10px;
   background-color: #f5f5f5;
   border: 2px solid var(--border-light);
   border-radius: var(--border-radius-md);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: center;
   margin: 0;
-  white-space: normal;
-  word-wrap: break-word;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .live-page .apparatus-bar button:hover {
   background-color: #e8f5e9;
   border-color: var(--primary-green);
   color: var(--primary-green);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .live-page .apparatus-bar button.active {
