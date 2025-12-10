@@ -34,7 +34,7 @@ def scoring():
         .filter(models.Entries.competition_id == live_competition.id)\
         .all()
 
-    apparatus_list = models.Apparatus.query.all()
+    apparatus_list = models.Apparatus.query.order_by(models.Apparatus.id).all()
 
     scoring_progress = {}
     total_gymnasts = len(entries)
