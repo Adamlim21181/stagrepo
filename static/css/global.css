@@ -8,7 +8,7 @@
   width: 100vw;
   background: #222;
   color: #fff;
-  z-index: 9999;
+  z-index: 99999;
   display: none;
   flex-direction: column;
   align-items: flex-start;
