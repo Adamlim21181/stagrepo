@@ -70,6 +70,7 @@
 
 <!-- Mobile Menu - OUTSIDE NAV TAG -->
 <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" type="button" aria-label="Close menu" onclick="toggleMobileMenu()">✕</button>
     <ul>
         <li><a href="{{ url_for('main.home') }}">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
         <li><a href="{{ url_for('main.live') }}">Live Leaderboard</a></li>
