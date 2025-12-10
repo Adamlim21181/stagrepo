@@ -19,9 +19,38 @@
 }
 
 .mobile-menu.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+.mobile-menu ul {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.mobile-menu li {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu a {
+  display: block;
+  width: 100%;
+  padding: 18px 24px;
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  background: none;
+  transition: background 0.2s;
+}
+
+.mobile-menu a:active, 
+.mobile-menu a:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* MOBILE MENU STYLES REMOVED TO PREVENT CONFLICTS */
