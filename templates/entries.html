@@ -43,8 +43,8 @@
                             <input type="text" id="gymnast-search-input" class="field-input searchable-input"
                                 placeholder="Start typing to find gymnasts..." autocomplete="off">
                             <div id="gymnast-dropdown" class="search-dropdown"></div>
-                            {{ form.gymnast_id(id="gymnast_id", style="display: none;", required=True) }}
-                            <div id="selected-gymnast" class="selected-display"></div>
+                            {{ form.gymnast_ids(id="gymnast_ids", style="display: none;", required=True) }}
+                            <div id="selected-gymnasts" class="selected-display"></div>
                         </div>
                         {% if form.gymnast_id.errors %}
                         <div class="field-errors">
@@ -115,14 +115,49 @@
     document.addEventListener('DOMContentLoaded', function () {
         const searchInput = document.getElementById('gymnast-search-input');
         const dropdown = document.getElementById('gymnast-dropdown');
-        const hiddenSelect = document.getElementById('gymnast_id');
-        const selectedDisplay = document.getElementById('selected-gymnast');
+        const hiddenInput = document.getElementById('gymnast_ids');
+        const selectedDisplay = document.getElementById('selected-gymnasts');
         const gymnastsDataScript = document.getElementById('gymnasts-data');
 
-        if (!searchInput || !dropdown || !hiddenSelect || !gymnastsDataScript) return;
+        if (!searchInput || !dropdown || !hiddenInput || !gymnastsDataScript) return;
 
         const gymnasts = JSON.parse(gymnastsDataScript.textContent);
         let isDropdownOpen = false;
+        const selectedGymnasts = [];
+
+        function updateHiddenField() {
+            hiddenInput.value = selectedGymnasts.map(g => g.id).join(',');
+        }
+
+        function renderSelected() {
+            selectedDisplay.innerHTML = '';
+            if (!selectedGymnasts.length) return;
+
+            selectedGymnasts.forEach(gymnast => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'selected-gymnast-info';
+                wrapper.innerHTML = `
+                    <div>
+                        <span class="selected-name">${gymnast.name}</span>
+                        <span class="selected-details">${gymnast.level} • ${gymnast.clubs.name}</span>
+                    </div>
+                    <button type="button" class="btn btn-xs btn-secondary" data-remove-id="${gymnast.id}">Remove</button>
+                `;
+                selectedDisplay.appendChild(wrapper);
+            });
+
+            selectedDisplay.querySelectorAll('[data-remove-id]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = Number(btn.dataset.removeId);
+                    const idx = selectedGymnasts.findIndex(g => g.id === id);
+                    if (idx >= 0) {
+                        selectedGymnasts.splice(idx, 1);
+                        updateHiddenField();
+                        renderSelected();
+                    }
+                });
+            });
+        }
 
         // Search and filter gymnasts
         function filterGymnasts(query) {
@@ -168,17 +203,20 @@
             });
         }
 
-        // Select a gymnast
+        // Select a gymnast (multi-select)
         function selectGymnast(gymnast) {
-            hiddenSelect.value = gymnast.id;
-            searchInput.value = gymnast.name;
-            selectedDisplay.innerHTML = `
-            <div class="selected-gymnast-info">
-                <span class="selected-name">${gymnast.name}</span>
-                <span class="selected-details">${gymnast.level} • ${gymnast.clubs.name}</span>
-            </div>
-        `;
+            const alreadySelected = selectedGymnasts.some(g => g.id === gymnast.id);
+            if (alreadySelected) {
+                hideDropdown();
+                searchInput.value = '';
+                return;
+            }
+
+            selectedGymnasts.push(gymnast);
+            updateHiddenField();
+            renderSelected();
             hideDropdown();
+            searchInput.value = '';
         }
 
         // Hide dropdown
@@ -195,8 +233,9 @@
                 showDropdown(filtered);
             } else {
                 hideDropdown();
-                hiddenSelect.value = '0';
-                selectedDisplay.innerHTML = '';
+                hiddenInput.value = '';
+                selectedGymnasts.length = 0;
+                renderSelected();
             }
         });
 
