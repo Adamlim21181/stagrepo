@@ -1859,6 +1859,24 @@ body.menu-open {
   th {
     font-size: 0.75rem;
   }
+
+  @media (max-width: 768px) {
+    .table-responsive {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    table {
+      min-width: 100%;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: var(--spacing-xs) 6px;
+      font-size: 0.75rem;
+    }
+  }
   
   /* Stack table data on very small screens */
   @media (max-width: 480px) {

@@ -2414,6 +2414,17 @@ body.modal-open .modal * {
   z-index: 10;
 }
 
+@media (max-width: 768px) {
+  .live-page .apparatus-bar button {
+    padding: 10px 12px;
+    font-size: var(--font-size-sm);
+    min-width: auto;
+    flex: 1;
+    min-width: calc(50% - 4px);
+    text-align: center;
+  }
+}
+
 .live-page .apparatus-bar button:hover {
   background-color: #f0f8f0;
   border-color: var(--primary-green);
