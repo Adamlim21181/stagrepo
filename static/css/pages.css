@@ -2393,41 +2393,25 @@ body.modal-open .modal * {
 .live-page table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
   background: white;
 }
 
-/* Table header shown; we rely on table semantics to keep alignment */
+/* Hide header on mobile card view */
 .live-page thead {
-  display: table-header-group;
-  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
-  border-bottom: 2px solid var(--primary-green-dark);
-}
-
-.live-page thead tr {
-  display: table-row;
-}
-
-.live-page thead th {
-  display: table-cell;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 10px 6px;
-  vertical-align: middle;
+  display: none;
 }
 
 .live-page tbody {
-  display: table-row-group;
+  display: block;
 }
 
 .live-page tbody tr {
-  display: table-row;
+  display: block;
+  padding: 14px var(--spacing-md);
+  border-bottom: 1px solid var(--border-light);
   cursor: pointer;
   transition: background-color 0.2s ease;
+  background: white;
 }
 
 .live-page tbody tr:hover {
@@ -2441,44 +2425,36 @@ body.modal-open .modal * {
 /* Cell base */
 .live-page td,
 .live-page th {
-  padding: 12px 8px;
+  display: block;
+  padding: 6px 0;
   vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
-/* Rank Column */
-.live-page th:nth-child(1),
+/* Rank */
 .live-page td:nth-child(1) {
-  width: 60px;
-  max-width: 60px;
-  text-align: center;
-}
-
-.live-page td:nth-child(1) {
+  width: auto;
   font-weight: 700;
   font-size: 0.95rem;
   color: white;
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
   border-radius: 999px;
-  padding: 8px 0;
+  padding: 8px 12px;
+  display: inline-block;
+  margin-bottom: 6px;
 }
 
-/* Gymnast Name - Main Info */
-.live-page th:nth-child(2),
+/* Name */
 .live-page td:nth-child(2) {
-  width: auto;
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1rem;
   color: var(--text-dark);
+  margin-bottom: 4px;
 }
 
 /* Hide unused columns (Club, E, D, Penalty) */
-.live-page th:nth-child(3),
-.live-page th:nth-child(4),
-.live-page th:nth-child(5),
-.live-page th:nth-child(6),
 .live-page td:nth-child(3),
 .live-page td:nth-child(4),
 .live-page td:nth-child(5),
@@ -2486,18 +2462,13 @@ body.modal-open .modal * {
   display: none;
 }
 
-/* Total Score Column */
-.live-page th:nth-child(7),
-.live-page td:nth-child(7) {
-  width: 90px;
-  max-width: 90px;
-  text-align: right;
-}
-
+/* Total */
 .live-page td:nth-child(7) {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--primary-green);
+  text-align: left;
+  margin-top: 6px;
 }
 
 /* Messages */
