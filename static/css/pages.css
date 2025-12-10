@@ -2242,7 +2242,7 @@ body.modal-open .modal * {
   overflow: auto;
   width: 100%;
   max-width: 100%;
-  margin: 0;
+  margin: var(--spacing-lg) auto;
   box-sizing: border-box;
   padding: var(--spacing-lg);
   background: white;
