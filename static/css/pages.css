@@ -2639,10 +2639,7 @@ body.modal-open .modal * {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  max-width: 100% !important;
-  overflow-x: hidden;
-  margin: 0 auto;
-  padding: var(--spacing-lg);
+  width: 100%;
 }
 
 /* Page title styling */
