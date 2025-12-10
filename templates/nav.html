@@ -68,7 +68,7 @@
     </div><!-- nav-container -->
 
 <!-- Mobile Menu (moved outside nav-container for debug) -->
-<div class="mobile-menu" id="mobileMenu" style="position: fixed; top: 80px; left: 0; width: 100%; background: linear-gradient(135deg, #4CAF50, #388E3C); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); z-index: 2000; max-height: calc(100vh - 80px); overflow-y: auto; visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0.3s ease; pointer-events: none;">
+<div class="mobile-menu" id="mobileMenu" style="position: fixed !important; top: 80px !important; left: 0 !important; width: 100vw !important; background: linear-gradient(135deg, #4CAF50, #388E3C) !important; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important; z-index: 2000 !important; max-height: calc(100vh - 80px) !important; overflow-y: auto !important; visibility: hidden !important; opacity: 0 !important; transition: opacity 0.3s ease, visibility 0.3s ease !important; pointer-events: none !important; transform: translateZ(0) !important;">
     <ul style="list-style: none; padding: 0; margin: 0;">
         <li style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);"><a href="{{ url_for('main.home') }}" style="display: block; padding: 16px 24px; color: white; text-decoration: none; font-weight: 600; letter-spacing: 0.3px; transition: background 0.3s ease;">{% if current_user.is_authenticated %}Dashboard{% else %}Home{% endif %}</a></li>
         <li style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);"><a href="{{ url_for('main.live') }}" style="display: block; padding: 16px 24px; color: white; text-decoration: none; font-weight: 600; letter-spacing: 0.3px; transition: background 0.3s ease;">Live Leaderboard</a></li>
