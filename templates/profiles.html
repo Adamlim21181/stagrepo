@@ -62,7 +62,7 @@
                     class="admin-btn admin-btn-primary">
                     Edit Bio
                 </a>
-                <button onclick="deleteGymnast({{ gymnast.id }}, '{{ gymnast.name }}')"
+                <button type="button" onclick="deleteGymnast({{ gymnast.id }}, '{{ gymnast.name }}')"
                     class="admin-btn admin-btn-danger">
                     Delete
                 </button>
@@ -190,7 +190,8 @@
     function deleteGymnast(id, name) {
         if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
             const form = document.getElementById('deleteForm');
-            form.action = `/delete_gymnast/${id}`;
+            // Use the real delete route: /gymnasts/<id>/delete
+            form.action = `/gymnasts/${id}/delete`;
             form.submit();
         }
     }
