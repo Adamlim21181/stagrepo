@@ -1666,7 +1666,6 @@ footer {
 
 /* Mobile Menu Styles */
 .mobile-menu {
-  display: none;
   position: fixed;
   top: var(--nav-height);
   left: 0;
@@ -1676,12 +1675,13 @@ footer {
   z-index: 2000; /* above nav (1000) */
   max-height: calc(100vh - var(--nav-height));
   overflow-y: auto;
+  visibility: hidden;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .mobile-menu.active {
-  display: block;
+  visibility: visible;
   opacity: 1;
   pointer-events: auto;
 }
