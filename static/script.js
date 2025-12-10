@@ -515,3 +515,48 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Ensure hamburger visibility follows CSS; rely on media queries
+
+/*
+ * MOBILE TABLE RESPONSIVENESS
+ * ===========================
+ * Adds data-label attributes from table headers and toggles a stackable
+ * layout class on very small screens so tables remain readable on phones.
+ */
+function applyTableDataLabels(table) {
+  if (table.dataset.labelsBound === 'true') return;
+
+  const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+  if (!headers.length) return;
+
+  table.querySelectorAll('tbody tr').forEach(row => {
+    row.querySelectorAll('td').forEach((cell, index) => {
+      if (headers[index] && !cell.getAttribute('data-label')) {
+        cell.setAttribute('data-label', headers[index]);
+      }
+    });
+  });
+
+  table.dataset.labelsBound = 'true';
+}
+
+function setMobileTables() {
+  const stackMode = window.innerWidth <= 480;
+
+  document.querySelectorAll('table').forEach(table => {
+    if (stackMode) {
+      applyTableDataLabels(table);
+      table.classList.add('mobile-stack');
+    } else {
+      table.classList.remove('mobile-stack');
+    }
+  });
+}
+
+let tableResizeTimeout;
+function handleTableResize() {
+  clearTimeout(tableResizeTimeout);
+  tableResizeTimeout = setTimeout(setMobileTables, 150);
+}
+
+document.addEventListener('DOMContentLoaded', setMobileTables);
+window.addEventListener('resize', handleTableResize);
