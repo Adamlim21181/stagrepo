@@ -2387,33 +2387,47 @@ body.modal-open .modal * {
   border: 1px solid var(--border-light);
   padding: 0;
   margin: 0;
+  overflow-x: auto;
 }
 
 .live-page table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   background: white;
 }
 
-/* Table Header (hidden on compact list view) */
+/* Table header shown; we rely on table semantics to keep alignment */
 .live-page thead {
-  display: none;
+  display: table-header-group;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+  border-bottom: 2px solid var(--primary-green-dark);
+}
+
+.live-page thead tr {
+  display: table-row;
+}
+
+.live-page thead th {
+  display: table-cell;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 6px;
+  vertical-align: middle;
 }
 
 .live-page tbody {
-  display: block;
+  display: table-row-group;
 }
 
 .live-page tbody tr {
-  display: grid;
-  grid-template-columns: 60px 1fr auto;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: 12px var(--spacing-md);
-  border-bottom: 1px solid var(--border-light);
+  display: table-row;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background: white;
+  transition: background-color 0.2s ease;
 }
 
 .live-page tbody tr:hover {
@@ -2424,33 +2438,47 @@ body.modal-open .modal * {
   border-bottom: none;
 }
 
-/* Rank Column */
-.live-page td:nth-child(1) {
-  width: 44px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: white;
-  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
-  border-radius: 50%;
-  padding: 0;
-}
-
-/* Gymnast Name - Main Info */
-.live-page td:nth-child(2) {
-  min-width: 120px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--text-dark);
+/* Cell base */
+.live-page td,
+.live-page th {
+  padding: 12px 8px;
+  vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Hide unused columns */
+/* Rank Column */
+.live-page th:nth-child(1),
+.live-page td:nth-child(1) {
+  width: 60px;
+  max-width: 60px;
+  text-align: center;
+}
+
+.live-page td:nth-child(1) {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+  border-radius: 999px;
+  padding: 8px 0;
+}
+
+/* Gymnast Name - Main Info */
+.live-page th:nth-child(2),
+.live-page td:nth-child(2) {
+  width: auto;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+/* Hide unused columns (Club, E, D, Penalty) */
+.live-page th:nth-child(3),
+.live-page th:nth-child(4),
+.live-page th:nth-child(5),
+.live-page th:nth-child(6),
 .live-page td:nth-child(3),
 .live-page td:nth-child(4),
 .live-page td:nth-child(5),
@@ -2459,13 +2487,17 @@ body.modal-open .modal * {
 }
 
 /* Total Score Column */
+.live-page th:nth-child(7),
 .live-page td:nth-child(7) {
-  min-width: 70px;
+  width: 90px;
+  max-width: 90px;
+  text-align: right;
+}
+
+.live-page td:nth-child(7) {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--primary-green);
-  text-align: right;
-  padding: 0;
 }
 
 /* Messages */
