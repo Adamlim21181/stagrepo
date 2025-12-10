@@ -464,6 +464,15 @@ function toggleMobileMenu() {
     mobileToggle.style.backgroundColor = mobileToggle.style.backgroundColor === 'red' ? '' : 'red';
   }
   
+  // TEST: If menu exists, make it bright yellow so we can see if element exists
+  if (mobileMenu) {
+    mobileMenu.style.background = 'yellow';
+    mobileMenu.style.visibility = 'visible';
+    mobileMenu.style.opacity = '1';
+    mobileMenu.style.display = 'block';
+    mobileMenu.style.zIndex = '9999';
+  }
+  
   let isOpen = false;
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
