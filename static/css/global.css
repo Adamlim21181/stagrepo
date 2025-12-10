@@ -1666,6 +1666,7 @@ footer {
 
 /* Mobile Menu Styles */
 .mobile-menu {
+  display: block !important;
   position: fixed;
   top: var(--nav-height);
   left: 0;
@@ -1675,15 +1676,16 @@ footer {
   z-index: 2000; /* above nav (1000) */
   max-height: calc(100vh - var(--nav-height));
   overflow-y: auto;
-  visibility: hidden;
-  opacity: 0;
+  visibility: hidden !important;
+  opacity: 0 !important;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none !important;
 }
 
 .mobile-menu.active {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Prevent page scroll when menu is open */
@@ -1740,6 +1742,19 @@ body.menu-open {
   
   .mobile-menu-toggle {
     display: flex !important;
+  }
+  
+  /* Mobile Menu - explicit mobile styles */
+  .mobile-menu {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  .mobile-menu.active {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
   
   /* Show mobile menu when active */
