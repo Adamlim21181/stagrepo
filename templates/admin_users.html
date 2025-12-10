@@ -33,9 +33,9 @@
             <thead>
                 <tr>
                     <th>User</th>
-                    <th>Email</th>
-                    <th>Current Role</th>
-                    <th>Registered</th>
+                    <th class="col-email">Email</th>
+                    <th>Role</th>
+                    <th class="col-registered">Registered</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -51,14 +51,23 @@
                             {% endif %}
                         </div>
                     </td>
-                    <td>{{ user.email }}</td>
+                    <td class="col-email">{{ user.email }}</td>
                     <td>
                         <span class="role-badge role-{{ role.name }}">
                             {{ role.name.title() }}
                         </span>
                     </td>
-                    <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}</td>
-                    <td>
+                    <td class="col-registered">{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}</td>
+                    <td class="row-actions">
+                        <button type="button"
+                                class="btn btn-xs btn-view-details"
+                                data-name="{{ user.first_name }} {{ user.last_name }}"
+                                data-email="{{ user.email }}"
+                                data-role="{{ role.name.title() }}"
+                                data-registered="{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Unknown' }}"
+                                data-athlete="{{ 'Yes' if user.is_athlete else 'No' }}">
+                            Details
+                        </button>
                         {% if role.name != 'Admin' or user.id != session['user_id'] %}
                         <div class="role-actions">
                             {% for available_role in roles %}
@@ -67,7 +76,7 @@
                                 action="{{ url_for('main.promote_user', user_id=user.id, role_id=available_role.id) }}"
                                 style="display: inline;">
                                 <button type="submit"
-                                    class="btn btn-sm btn-{{ 'primary' if available_role.name == 'Judge' else 'secondary' }}"
+                                    class="btn btn-xs btn-{{ 'primary' if available_role.name == 'Judge' else 'secondary' }}"
                                     onclick="return confirm('Promote {{ user.first_name }} to {{ available_role.name.title() }}?')">
                                     {% if available_role.name == 'Judge' %}
                                     👨‍⚖️ Make Judge
@@ -251,6 +260,13 @@
         font-size: 0.8rem;
     }
 
+    .btn-xs {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.78rem;
+        line-height: 1.2;
+        border-radius: 6px;
+    }
+
     .btn-view {
         background: #f8f9fa;
         border: 2px solid #6c757d;
@@ -337,17 +353,138 @@
     }
 
     @media (max-width: 768px) {
-        .users-table-container {
-            overflow-x: auto;
-        }
+                .users-table-container {
+                        overflow: visible;
+                }
 
-        .role-actions {
-            flex-direction: column;
-        }
+                .users-table th.col-email,
+                .users-table td.col-email,
+                .users-table th.col-registered,
+                .users-table td.col-registered {
+                        display: none;
+                }
 
-        .admin-stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
+                .users-table th,
+                .users-table td {
+                        padding: 0.6rem;
+                }
+
+                .role-actions {
+                        flex-direction: row;
+                        gap: 0.35rem;
+                }
+
+                .row-actions {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        flex-wrap: wrap;
+                }
+
+                .admin-stats {
+                        grid-template-columns: repeat(2, 1fr);
+                }
     }
 </style>
+
+<!-- User detail modal -->
+<div id="userDetailModal" class="user-modal" aria-hidden="true">
+    <div class="user-modal__backdrop"></div>
+    <div class="user-modal__dialog" role="dialog" aria-modal="true">
+        <button class="user-modal__close" aria-label="Close details">×</button>
+        <h3 class="user-modal__title">User Details</h3>
+        <div class="user-modal__row"><span>Name</span><strong id="userModalName"></strong></div>
+        <div class="user-modal__row"><span>Email</span><strong id="userModalEmail"></strong></div>
+        <div class="user-modal__row"><span>Role</span><strong id="userModalRole"></strong></div>
+        <div class="user-modal__row"><span>Registered</span><strong id="userModalRegistered"></strong></div>
+        <div class="user-modal__row"><span>Athlete</span><strong id="userModalAthlete"></strong></div>
+    </div>
+</div>
+
+<style>
+    .user-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .user-modal.active { display: flex; }
+
+    .user-modal__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+    }
+
+    .user-modal__dialog {
+        position: relative;
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 12px;
+        width: min(92vw, 420px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .user-modal__title {
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
+    }
+
+    .user-modal__row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.35rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 0.95rem;
+    }
+
+    .user-modal__row span { color: #555; }
+
+    .user-modal__close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        border: none;
+        background: transparent;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('userDetailModal');
+        const closeBtn = modal.querySelector('.user-modal__close');
+        const backdrop = modal.querySelector('.user-modal__backdrop');
+
+        function openUserModal(target) {
+            document.getElementById('userModalName').textContent = target.dataset.name;
+            document.getElementById('userModalEmail').textContent = target.dataset.email;
+            document.getElementById('userModalRole').textContent = target.dataset.role;
+            document.getElementById('userModalRegistered').textContent = target.dataset.registered;
+            document.getElementById('userModalAthlete').textContent = target.dataset.athlete;
+            modal.classList.add('active');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeUserModal() {
+            modal.classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        document.querySelectorAll('.btn-view-details').forEach(btn => {
+            btn.addEventListener('click', () => openUserModal(btn));
+        });
+
+        closeBtn.addEventListener('click', closeUserModal);
+        backdrop.addEventListener('click', closeUserModal);
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeUserModal();
+        });
+    });
+</script>
 {% endblock %}
