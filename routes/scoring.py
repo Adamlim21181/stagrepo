@@ -47,7 +47,9 @@ def scoring():
 
         total_apparatus = len(apparatus_list)
         scored_count = len(scored_apparatus)
-        is_complete = scored_count == total_apparatus
+        # Treat as complete only when there is at least one apparatus
+        # and all are scored
+        is_complete = total_apparatus > 0 and scored_count == total_apparatus
 
         if is_complete:
             fully_scored_gymnasts += 1
