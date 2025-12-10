@@ -20,12 +20,14 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
 }
 .mobile-menu.active {
-  display: flex;
-  transform: translateY(0);
-  opacity: 1;
+  display: flex !important;
+  transform: translateY(0) !important;
+  opacity: 1 !important;
   background: #222 !important;
-  border: 4px solid #ff00ff !important;
-  box-shadow: 0 0 24px 8px #ff00ff99;
+  border: 8px solid #ff0000 !important;
+  box-shadow: 0 0 48px 16px #ff000099 !important;
+  z-index: 999999 !important;
+  pointer-events: all !important;
 }
 .mobile-menu ul {
   width: 100%;
