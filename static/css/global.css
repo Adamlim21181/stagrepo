@@ -2162,3 +2162,106 @@ body.menu-open {
   margin: 0 auto;
   padding: 0 var(--spacing-md);
 }
+
+/* =============================================
+   SMART STRUCTURE SECTION
+   ============================================= */
+.smart-structure-section {
+  background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e9 100%);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  margin: var(--spacing-2xl) 0;
+  border-radius: var(--border-radius-lg);
+  border-left: 5px solid var(--primary-green);
+}
+
+.smart-structure-section h2 {
+  color: var(--primary-green);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+}
+
+.smart-intro {
+  color: var(--text-dark);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+}
+
+.smart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-lg);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.smart-card {
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+  border-top: 3px solid var(--primary-green);
+}
+
+.smart-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(76, 175, 80, 0.15);
+}
+
+.smart-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  display: block;
+}
+
+.smart-card h3 {
+  color: var(--primary-green);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 700;
+}
+
+.smart-card p {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.footer-smart {
+  color: var(--text-muted);
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+}
+
+.footer-smart strong {
+  color: var(--primary-green);
+}
+
+@media (max-width: 768px) {
+  .smart-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .smart-icon {
+    font-size: 2rem;
+  }
+
+  .smart-structure-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin: var(--spacing-xl) 0;
+  }
+
+  .smart-structure-section h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .smart-intro {
+    font-size: var(--font-size-base);
+  }
+}
