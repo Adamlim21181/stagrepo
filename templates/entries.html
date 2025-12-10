@@ -46,9 +46,9 @@
                             {{ form.gymnast_ids(id="gymnast_ids", style="display: none;", required=True) }}
                             <div id="selected-gymnasts" class="selected-display"></div>
                         </div>
-                        {% if form.gymnast_id.errors %}
+                        {% if form.gymnast_ids.errors %}
                         <div class="field-errors">
-                            {% for error in form.gymnast_id.errors %}
+                            {% for error in form.gymnast_ids.errors %}
                             <span class="error-message">{{ error }}</span>
                             {% endfor %}
                         </div>
