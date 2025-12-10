@@ -511,6 +511,5 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobileMenu');
   if (mobileMenu) {
     mobileMenu.classList.remove('active');
-    mobileMenu.style.display = 'none';
   }
 });
