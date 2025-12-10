@@ -459,25 +459,11 @@ function toggleMobileMenu() {
   const mobileToggle = document.getElementById('mobileMenuToggle');
   const navContainer = document.querySelector('.nav-container');
   
-  // TEST: Change button background to red so we know function is called
-  if (mobileToggle) {
-    mobileToggle.style.backgroundColor = mobileToggle.style.backgroundColor === 'red' ? '' : 'red';
-  }
-  
-  // TEST: If menu exists, make it bright yellow so we can see if element exists
-  if (mobileMenu) {
-    mobileMenu.style.background = 'yellow';
-    mobileMenu.style.visibility = 'visible';
-    mobileMenu.style.opacity = '1';
-    mobileMenu.style.display = 'block';
-    mobileMenu.style.zIndex = '9999';
-  }
-  
   let isOpen = false;
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
     mobileMenu.classList.toggle('active', isOpen);
-    // FORCE inline styles - most explicit method possible
+    // FORCE inline styles
     if (isOpen) {
       mobileMenu.style.visibility = 'visible';
       mobileMenu.style.opacity = '1';
