@@ -1719,8 +1719,8 @@ body.menu-open {
   color: white;
 }
 
-/* Tablet Styles (768px and below) */
-@media (max-width: 768px) {
+/* Tablet Styles (900px and below) */
+@media (max-width: 900px) {
   /* Force mobile viewport settings */
   html, body {
     width: 100%;

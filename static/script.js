@@ -467,6 +467,16 @@ function toggleMobileMenu() {
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
     mobileMenu.classList.toggle('active', isOpen);
+    // Force inline styles for mobile compatibility
+    if (isOpen) {
+      mobileMenu.style.visibility = 'visible';
+      mobileMenu.style.opacity = '1';
+      mobileMenu.style.pointerEvents = 'auto';
+    } else {
+      mobileMenu.style.visibility = 'hidden';
+      mobileMenu.style.opacity = '0';
+      mobileMenu.style.pointerEvents = 'none';
+    }
     console.log('Menu is now:', isOpen ? 'OPEN' : 'CLOSED');
   }
   if (mobileToggle) {
@@ -491,6 +501,9 @@ document.addEventListener('click', function(event) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
       mobileToggle.classList.remove('active');
+      mobileMenu.style.visibility = 'hidden';
+      mobileMenu.style.opacity = '0';
+      mobileMenu.style.pointerEvents = 'none';
       document.body.classList.remove('menu-open');
       if (navContainer) navContainer.classList.remove('mobile-active');
     }
@@ -506,8 +519,47 @@ window.addEventListener('resize', function() {
   if (window.innerWidth > 768 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
     mobileToggle.classList.remove('active');
+    mobileMenu.style.visibility = 'hidden';
+    mobileMenu.style.opacity = '0';
+    mobileMenu.style.pointerEvents = 'none';
     document.body.classList.remove('menu-open');
     if (navContainer) navContainer.classList.remove('mobile-active');
+  }
+  
+  // Force hamburger button visibility based on actual window width
+  if (mobileToggle) {
+    const isMobile = window.innerWidth < 900 || window.screen.width < 900 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile || window.innerWidth <= 900) {
+      mobileToggle.style.display = 'flex';
+    } else {
+      mobileToggle.style.display = 'none';
+    }
+  }
+});
+
+// Force hamburger button visibility on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileToggle = document.getElementById('mobileMenuToggle');
+  console.log('=== HAMBURGER MENU DEBUG ===');
+  console.log('Window inner width:', window.innerWidth);
+  console.log('Window outer width:', window.outerWidth);
+  console.log('Device pixel ratio:', window.devicePixelRatio);
+  console.log('Screen width:', window.screen.width);
+  console.log('Screen available width:', window.screen.availWidth);
+  console.log('Mobile toggle element:', mobileToggle);
+  
+  // Check if device is mobile using multiple methods
+  const isMobile = window.innerWidth < 900 || window.screen.width < 900 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  console.log('Is Mobile (detected):', isMobile);
+  
+  if (mobileToggle) {
+    if (isMobile || window.innerWidth <= 900) {
+      mobileToggle.style.display = 'flex';
+      console.log('✓ Mobile mode - hamburger button shown');
+    } else {
+      mobileToggle.style.display = 'none';
+      console.log('✓ Desktop mode - hamburger button hidden');
+    }
   }
 });
 
