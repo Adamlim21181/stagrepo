@@ -463,18 +463,6 @@ function toggleMobileMenu() {
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
     mobileMenu.classList.toggle('active', isOpen);
-    // FORCE inline styles
-    if (isOpen) {
-      mobileMenu.style.visibility = 'visible';
-      mobileMenu.style.opacity = '1';
-      mobileMenu.style.pointerEvents = 'auto';
-      mobileMenu.style.display = 'block';
-      mobileMenu.style.zIndex = '9999';
-    } else {
-      mobileMenu.style.visibility = 'hidden';
-      mobileMenu.style.opacity = '0';
-      mobileMenu.style.pointerEvents = 'none';
-    }
   }
   if (mobileToggle) {
     mobileToggle.classList.toggle('active', isOpen);
@@ -498,9 +486,6 @@ document.addEventListener('click', function(event) {
     if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
       mobileMenu.classList.remove('active');
       mobileToggle.classList.remove('active');
-      mobileMenu.style.setProperty('visibility', 'hidden', 'important');
-      mobileMenu.style.setProperty('opacity', '0', 'important');
-      mobileMenu.style.setProperty('pointer-events', 'none', 'important');
       document.body.classList.remove('menu-open');
       if (navContainer) navContainer.classList.remove('mobile-active');
     }
@@ -516,44 +501,8 @@ window.addEventListener('resize', function() {
   if (window.innerWidth > 900 && mobileMenu && mobileToggle) {
     mobileMenu.classList.remove('active');
     mobileToggle.classList.remove('active');
-    mobileMenu.style.setProperty('visibility', 'hidden', 'important');
-    mobileMenu.style.setProperty('opacity', '0', 'important');
-    mobileMenu.style.setProperty('pointer-events', 'none', 'important');
     document.body.classList.remove('menu-open');
     if (navContainer) navContainer.classList.remove('mobile-active');
-  }
-  
-  // Force hamburger button visibility based on actual window width
-  if (mobileToggle) {
-    const isMobile = window.innerWidth < 900 || window.screen.width < 900 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile || window.innerWidth <= 900) {
-      mobileToggle.style.setProperty('display', 'flex', 'important');
-    } else {
-      mobileToggle.style.setProperty('display', 'none', 'important');
-    }
-  }
-});
-
-// Force hamburger button visibility on page load
-document.addEventListener('DOMContentLoaded', function() {
-  const mobileToggle = document.getElementById('mobileMenuToggle');
-  const mobileMenu = document.getElementById('mobileMenu');
-  
-  // Check if device is mobile using multiple methods
-  const isMobile = window.innerWidth < 900 || window.screen.width < 900 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (mobileToggle) {
-    if (isMobile || window.innerWidth <= 900) {
-      mobileToggle.style.setProperty('display', 'flex', 'important');
-    } else {
-      mobileToggle.style.setProperty('display', 'none', 'important');
-    }
-  }
-  
-  if (mobileMenu) {
-    mobileMenu.classList.remove('active');
-    mobileMenu.style.setProperty('visibility', 'hidden', 'important');
-    mobileMenu.style.setProperty('opacity', '0', 'important');
   }
 });
 
@@ -564,3 +513,5 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileMenu.classList.remove('active');
   }
 });
+
+// Ensure hamburger visibility follows CSS; rely on media queries

@@ -1624,7 +1624,7 @@ footer {
 
 /* Mobile Hamburger Menu */
 .mobile-menu-toggle {
-  display: flex;
+  display: none;
   flex-direction: column;
   cursor: pointer;
   padding: var(--spacing-sm) 10px;
@@ -1666,7 +1666,7 @@ footer {
 
 /* Mobile Menu Styles */
 .mobile-menu {
-  display: block !important;
+  display: none;
   position: fixed;
   top: var(--nav-height);
   left: 0;
@@ -1676,16 +1676,17 @@ footer {
   z-index: 2000; /* above nav (1000) */
   max-height: calc(100vh - var(--nav-height));
   overflow-y: auto;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  visibility: hidden;
+  opacity: 0;
   transition: opacity 0.3s ease, visibility 0.3s ease;
-  pointer-events: none !important;
+  pointer-events: none;
 }
 
 .mobile-menu.active {
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  display: block;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Prevent page scroll when menu is open */
@@ -1741,20 +1742,7 @@ body.menu-open {
   }
   
   .mobile-menu-toggle {
-    display: flex !important;
-  }
-  
-  /* Mobile Menu - explicit mobile styles */
-  .mobile-menu {
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-  
-  .mobile-menu.active {
-    visibility: visible !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+    display: flex;
   }
   
   /* Show mobile menu when active */
