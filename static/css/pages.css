@@ -2395,16 +2395,39 @@ body.modal-open .modal * {
   background: white;
 }
 
-/* Hide table headers - using list view instead */
+/* Table Header */
 .live-page thead {
-  display: none;
+  display: block;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+  border-bottom: 2px solid var(--primary-green-dark);
+}
+
+.live-page thead tr {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.live-page thead th {
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .live-page tbody {
   display: block;
 }
 
-.live-page tr {
+.live-page tbody tr {
   display: flex;
   align-items: center;
   padding: 12px var(--spacing-md);
@@ -2414,35 +2437,45 @@ body.modal-open .modal * {
   background: white;
 }
 
-.live-page tr:hover {
+.live-page tbody tr:hover {
   background-color: #fafafa;
 }
 
-.live-page tr:last-child {
+.live-page tbody tr:last-child {
   border-bottom: none;
 }
 
 /* Rank Column */
+.live-page td:nth-child(1),
+.live-page th:nth-child(1) {
+  min-width: 45px;
+  max-width: 45px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spacing-sm);
+}
+
 .live-page td:nth-child(1) {
-  min-width: 35px;
-  max-width: 35px;
   font-weight: 700;
   font-size: 1rem;
   color: white;
   background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
   border-radius: 50%;
   height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-right: var(--spacing-sm);
-  flex-shrink: 0;
-  text-align: center;
 }
 
 /* Gymnast Name - Main Info */
-.live-page td:nth-child(2) {
+.live-page td:nth-child(2),
+.live-page th:nth-child(2) {
   flex: 1;
+  min-width: 100px;
+  padding: 0 var(--spacing-sm);
+}
+
+.live-page td:nth-child(2) {
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--text-dark);
@@ -2452,7 +2485,8 @@ body.modal-open .modal * {
 }
 
 /* Club Column */
-.live-page td:nth-child(3) {
+.live-page td:nth-child(3),
+.live-page th:nth-child(3) {
   font-size: 0.8rem;
   color: var(--text-secondary);
   display: none;
@@ -2461,18 +2495,26 @@ body.modal-open .modal * {
 /* Score Columns - Hide in list view */
 .live-page td:nth-child(4),
 .live-page td:nth-child(5),
-.live-page td:nth-child(6) {
+.live-page td:nth-child(6),
+.live-page th:nth-child(4),
+.live-page th:nth-child(5),
+.live-page th:nth-child(6) {
   display: none;
 }
 
 /* Total Score Column */
-.live-page td:nth-child(7) {
+.live-page td:nth-child(7),
+.live-page th:nth-child(7) {
   min-width: 70px;
+  flex-shrink: 0;
+  padding: 0 var(--spacing-sm);
+  text-align: right;
+}
+
+.live-page td:nth-child(7) {
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--primary-green);
-  text-align: right;
-  margin-left: var(--spacing-sm);
 }
 
 /* Messages */
