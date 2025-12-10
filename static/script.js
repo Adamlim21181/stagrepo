@@ -459,10 +459,15 @@ function toggleMobileMenu() {
   const mobileToggle = document.getElementById('mobileMenuToggle');
   const navContainer = document.querySelector('.nav-container');
   
+  console.log('toggleMobileMenu called');
+  console.log('mobileMenu:', mobileMenu);
+  console.log('mobileToggle:', mobileToggle);
+  
   let isOpen = false;
   if (mobileMenu) {
     isOpen = !mobileMenu.classList.contains('active');
     mobileMenu.classList.toggle('active', isOpen);
+    console.log('Menu is now:', isOpen ? 'OPEN' : 'CLOSED');
   }
   if (mobileToggle) {
     mobileToggle.classList.toggle('active', isOpen);

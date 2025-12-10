@@ -1624,7 +1624,7 @@ footer {
 
 /* Mobile Hamburger Menu */
 .mobile-menu-toggle {
-  display: none;
+  display: flex;
   flex-direction: column;
   cursor: pointer;
   padding: var(--spacing-sm) 10px;
@@ -1735,11 +1735,11 @@ body.menu-open {
   
   .nav-center,
   .nav-right {
-    display: none;
+    display: none !important;
   }
   
   .mobile-menu-toggle {
-    display: flex;
+    display: flex !important;
   }
   
   /* Show mobile menu when active */
