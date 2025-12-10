@@ -538,9 +538,8 @@ td:last-child {
 }
 
 .gymnasts-table-container {
-  max-height: 200px;
-  overflow-y: auto;
-  overflow-x: auto;
+  max-height: none;
+  overflow: visible;
   max-width: 100%;
 }
 
