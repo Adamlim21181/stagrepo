@@ -1678,8 +1678,8 @@ footer {
   overflow-y: auto;
   visibility: hidden;
   opacity: 0;
-  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
-  transform: scale(0.99);
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
+  transform: scale(0.97);
   pointer-events: none;
 }
 
@@ -1693,8 +1693,8 @@ footer {
 
 .mobile-menu-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 16px;
   background: rgba(255, 255, 255, 0.12);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -1725,7 +1725,7 @@ body.menu-open {
 
 .mobile-menu ul {
   list-style: none;
-  padding: 0;
+  padding: 64px 0 12px 0; /* top padding clears close button */
   margin: 0;
 }
 
