@@ -170,6 +170,7 @@
 /* =============================================
    MODERN ENTRY FORM STYLING
    ============================================= */
+/* Live page relies on desktop styles on mobile; no extra mobile overrides here */
 
 .add-entry-modern {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -842,7 +843,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
-}"
+}
 
 .modal {
   display: none !important;
@@ -862,6 +863,27 @@
   display: block !important;
   visibility: visible;
   opacity: 1;
+}
+
+/* Live leaderboard modal overlay controlled by `.active` class */
+.modal-overlay {
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal-overlay.active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Prevent body scroll when modal is open */
@@ -892,9 +914,9 @@ body.modal-open .modal * {
 
 .modal-content {
   background-color: white;
-  position: fixed;
-  top: calc(50vh + 30px);
-  left: 50vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   padding: 0;
   border-radius: 8px;
@@ -905,6 +927,91 @@ body.modal-open .modal * {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Live leaderboard modal header and close button */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-gymnast-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px 8px;
+}
+
+.modal-close-btn:hover {
+  color: #334155;
+}
+
+.score-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.score-item {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .score-details {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .score-label {
+    font-size: 0.8rem;
+  }
+  .score-value {
+    font-size: 1rem;
+  }
+}
+
+.score-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.score-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.total-score-value {
+  color: #2e7d32;
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-bio-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.view-bio-link:hover {
+  text-decoration: underline;
 }
 
 @keyframes modalSlideIn {
@@ -2237,14 +2344,10 @@ body.modal-open .modal * {
 .live-page {
   display: flex;
   gap: var(--spacing-lg);
-  align-items: stretch;
+  align-items: flex-start;
   flex-direction: row;
-  overflow: hidden;
   width: 100%;
-  max-width: 100%;
-  margin: 0;
   box-sizing: border-box;
-  padding: 0;
 }
 
 @media (max-width: 768px) {
@@ -2352,9 +2455,7 @@ body.modal-open .modal * {
   flex-direction: column;
   gap: var(--spacing-lg);
   min-width: 0;
-  overflow: hidden;
-  max-width: calc(100% - 220px);
-  box-sizing: border-box;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -2480,30 +2581,45 @@ body.modal-open .modal * {
 }
 
 .apparatus-bar {
-  background: linear-gradient(135deg, var(--background-section), var(--background-section-alt));
+  background: white;
   border-radius: var(--border-radius-md);
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-lighter);
+  border: 1px solid var(--border-light);
   overflow: visible;
   position: relative;
-  margin: var(--spacing-sm) 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius-md);
+  box-sizing: border-box;
 }
 
 .live-page table {
-  background-color: var(--background-section);
+  background-color: transparent;
   border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-lighter);
-  margin: var(--spacing-lg) 0;
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .live-page table th {
-  padding: var(--spacing-lg) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--primary-green);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  border: none;
 }
 
 .live-page table td {
-  padding: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  background-color: white;
 }
 
 .live-page table td:last-child {
@@ -2630,10 +2746,7 @@ body.modal-open .modal * {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  max-width: 100% !important;
-  overflow-x: hidden;
-  margin: 0 auto;
-  padding: var(--spacing-lg);
+  width: 100%;
 }
 
 /* Page title styling */

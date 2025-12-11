@@ -45,7 +45,7 @@
 
         {% if leaderboard_data %}
         <div class="table-responsive">
-            <table>
+            <table id="leaderboard-table">
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -61,13 +61,15 @@
                 {% if selected_apparatus_id and selected_apparatus_id != 'all_around' %}
                 <!-- Individual apparatus scores -->
                 {% for score, gymnast, club in leaderboard_data %}
-                <tr>
+                <tr class="leaderboard-row" 
+                    data-gymnast-name="{{ gymnast.name }}"
+                    data-gymnast-id="{{ gymnast.id }}"
+                    data-e-score="{{ "%.3f"|format(score.e_score) }}"
+                    data-d-score="{{ "%.3f"|format(score.d_score) }}"
+                    data-penalty="{{ "%.3f"|format(score.penalty) }}"
+                    data-total="{{ "%.3f"|format(score.total) }}">
                     <td>{{ loop.index }}</td>
-                    <td>
-                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast.id) }}" class="gymnast-link">
-                            {{ gymnast.name }}
-                        </a>
-                    </td>
+                    <td>{{ gymnast.name }}</td>
                     <td>{{ club.name }}</td>
                     <td>{{ "%.3f"|format(score.e_score) }}</td>
                     <td>{{ "%.3f"|format(score.d_score) }}</td>
@@ -78,14 +80,15 @@
                 {% else %}
                 <!-- All around scores (total scores) -->
                 {% for gymnast_data in leaderboard_data %}
-                <tr>
+                <tr class="leaderboard-row"
+                    data-gymnast-name="{{ gymnast_data.name }}"
+                    data-gymnast-id="{{ gymnast_data.id }}"
+                    data-e-score="{{ "%.3f"|format(gymnast_data.total_e_score) }}"
+                    data-d-score="{{ "%.3f"|format(gymnast_data.total_d_score) }}"
+                    data-penalty="{{ "%.3f"|format(gymnast_data.total_penalty) }}"
+                    data-total="{{ "%.3f"|format(gymnast_data.total_score) }}">
                     <td>{{ loop.index }}</td>
-                    <td>
-                        <a href="{{ url_for('main.gymnast_profile', gymnast_id=gymnast_data.id) }}"
-                            class="gymnast-link">
-                            {{ gymnast_data.name}}
-                        </a>
-                    </td>
+                    <td>{{ gymnast_data.name }}</td>
                     <td>{{ gymnast_data.club_name }}</td>
                     <td>{{ "%.3f"|format(gymnast_data.total_e_score) }}</td>
                     <td>{{ "%.3f"|format(gymnast_data.total_d_score) }}</td>
@@ -107,4 +110,84 @@
     </div>
     {% endif %}
 </div>
+
+<!-- Score Details Modal -->
+<div class="modal-overlay" id="scoreModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-gymnast-name" id="modalGymnastName"></h2>
+            <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+        </div>
+
+        <div class="score-details">
+            <div class="score-item">
+                <div class="score-label">E-Score</div>
+                <div class="score-value" id="modalEScore">0.000</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">D-Score</div>
+                <div class="score-value" id="modalDScore">0.000</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Penalty</div>
+                <div class="score-value" id="modalPenalty">0.000</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Total Score</div>
+                <div class="score-value total-score-value" id="modalTotal">0.000</div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a class="view-bio-link" id="modalBioLink" href="#">View Gymnast Profile</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function closeModal() {
+    document.getElementById('scoreModal').classList.remove('active');
+}
+
+function openModal(row) {
+    const modal = document.getElementById('scoreModal');
+    const gymnastId = row.dataset.gymnastId;
+    const gymnastName = row.dataset.gymnastName;
+    const eScore = row.dataset.eScore;
+    const dScore = row.dataset.dScore;
+    const penalty = row.dataset.penalty;
+    const total = row.dataset.total;
+
+    document.getElementById('modalGymnastName').textContent = gymnastName;
+    document.getElementById('modalEScore').textContent = eScore;
+    document.getElementById('modalDScore').textContent = dScore;
+    document.getElementById('modalPenalty').textContent = penalty;
+    document.getElementById('modalTotal').textContent = total;
+    document.getElementById('modalBioLink').href = `/gymnast/${gymnastId}`;
+
+    modal.classList.add('active');
+}
+
+// Close modal when clicking overlay
+document.getElementById('scoreModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeModal();
+    }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+// Open modal on row click
+document.querySelectorAll('.leaderboard-row').forEach(row => {
+    row.addEventListener('click', function() {
+        openModal(this);
+    });
+});
+</script>
+
 {% endblock %}

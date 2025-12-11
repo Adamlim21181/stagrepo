@@ -256,13 +256,9 @@ class AddEntryForm(FlaskForm):
             validate_not_placeholder
         ]
     )
-    gymnast_id = SelectField(
-        'Gymnast',
-        coerce=int,
-        validators=[
-            DataRequired('Please select a gymnast'),
-            validate_not_placeholder
-        ]
+    gymnast_ids = HiddenField(
+        'Gymnasts',
+        validators=[DataRequired('Please select at least one gymnast')]
     )
     submit = SubmitField('Add Entry')
 

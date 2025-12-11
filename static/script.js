@@ -196,10 +196,17 @@ function initializeScoringPage() {
  * from HTML onclick attributes for modal close buttons and overlay backgrounds.
  */
 function closeModal() {
-  const modal = document.getElementById("competitionModal");
-  if (modal) {
-    modal.classList.remove("show");
+  // Close competition details modal (bootstrap-style)
+  const competitionModal = document.getElementById("competitionModal");
+  if (competitionModal) {
+    competitionModal.classList.remove("show");
     document.body.classList.remove("modal-open");
+  }
+
+  // Close live leaderboard score modal (overlay-style)
+  const scoreModal = document.getElementById("scoreModal");
+  if (scoreModal) {
+    scoreModal.classList.remove("active");
   }
 }
 

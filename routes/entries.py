@@ -35,10 +35,7 @@ def entries():
         for comp in competitions
     ]
     
-    form.gymnast_id.choices = [(0, 'Select Gymnast...')] + [
-        (g.id, f"{g.name} ({g.level} - {g.clubs.name})")
-        for g in gymnasts
-    ]
+    # gymnast choices handled client-side for multi-select; keep data for JSON
 
     # Get additional data needed for template
     clubs = models.Clubs.query.order_by(models.Clubs.name).all()
@@ -87,7 +84,9 @@ def entries():
                 return redirect(url_for('main.entries'))
 
             # Check if competition exists and is open for entries
-            selected_competition = models.Competitions.query.get(form.competition_id.data)
+            selected_competition = models.Competitions.query.get(
+                form.competition_id.data
+            )
             if not selected_competition:
                 flash('Selected competition not found.', 'error')
                 return redirect(url_for('main.entries'))
@@ -101,43 +100,68 @@ def entries():
                 )
                 return redirect(url_for('main.entries'))
 
-            # Validate gymnast selection
-            if form.gymnast_id.data == 0:
-                flash('Please select a gymnast.', 'error')
+            # Parse selected gymnasts (comma-separated ids from hidden field)
+            ids_raw = (form.gymnast_ids.data or '').strip()
+            gymnast_ids = [
+                int(x) for x in ids_raw.split(',') if x.strip().isdigit()
+            ]
+
+            if not gymnast_ids:
+                flash('Please select at least one gymnast.', 'error')
                 return redirect(url_for('main.entries'))
 
-            # Get the selected gymnast
-            gymnast = models.Gymnasts.query.get(form.gymnast_id.data)
-            if not gymnast:
-                flash('Selected gymnast not found.', 'error')
-                return redirect(url_for('main.entries'))
+            gymnast_ids = list(dict.fromkeys(gymnast_ids))
 
-            # Check if entry already exists
-            existing_entry = models.Entries.query.filter_by(
-                competition_id=form.competition_id.data,
-                gymnast_id=form.gymnast_id.data
-            ).first()
+            added, duplicates, missing = [], [], []
 
-            if existing_entry:
-                flash(
-                    f'{gymnast.name} is already entered in {selected_competition.name}!',
-                    'warning'
-                )
-            else:
+            for gid in gymnast_ids:
+                gymnast = models.Gymnasts.query.get(gid)
+                if not gymnast:
+                    missing.append(str(gid))
+                    continue
+
+                existing_entry = models.Entries.query.filter_by(
+                    competition_id=form.competition_id.data,
+                    gymnast_id=gid
+                ).first()
+
+                if existing_entry:
+                    duplicates.append(gymnast.name)
+                    continue
+
                 new_entry = models.Entries(
                     competition_id=form.competition_id.data,
-                    gymnast_id=form.gymnast_id.data
+                    gymnast_id=gid
                 )
                 db.session.add(new_entry)
+                added.append(gymnast.name)
+
+            if added:
                 db.session.commit()
                 flash(
-                    f'Successfully added {gymnast.name} to {selected_competition.name}!',
+                    f"Added {len(added)} gymnast(s) to "
+                    f"{selected_competition.name}: " + ', '.join(added),
                     'success'
+                )
+
+            if duplicates:
+                flash(
+                    f"Already entered: {', '.join(duplicates)}",
+                    'warning'
+                )
+
+            if missing:
+                flash(
+                    f"Some gymnasts were not found: {', '.join(missing)}",
+                    'error'
                 )
 
         except Exception as e:
             db.session.rollback()
-            flash('An error occurred while processing your request. Please try again.', 'error')
+            flash(
+                f'An error occurred while processing your request: {str(e)}',
+                'error'
+            )
         
         return redirect(url_for('main.entries'))
 

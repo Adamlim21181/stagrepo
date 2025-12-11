@@ -34,7 +34,7 @@ def scoring():
         .filter(models.Entries.competition_id == live_competition.id)\
         .all()
 
-    apparatus_list = models.Apparatus.query.all()
+    apparatus_list = models.Apparatus.query.order_by(models.Apparatus.id).all()
 
     scoring_progress = {}
     total_gymnasts = len(entries)
@@ -47,7 +47,9 @@ def scoring():
 
         total_apparatus = len(apparatus_list)
         scored_count = len(scored_apparatus)
-        is_complete = scored_count == total_apparatus
+        # Treat as complete only when there is at least one apparatus
+        # and all are scored
+        is_complete = total_apparatus > 0 and scored_count == total_apparatus
 
         if is_complete:
             fully_scored_gymnasts += 1

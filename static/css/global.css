@@ -758,13 +758,13 @@ td:last-child {
 
 .content {
   margin: 0 auto;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl);
   font-weight: 300;
   color: var(--text-primary);
   background-color: var(--background-white);
   border-radius: var(--border-radius-xl);
   width: 100%;
-  max-width: 95%;
+  max-width: 90%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -1592,13 +1592,13 @@ footer {
 /* Mobile App Aesthetic */
 @media (max-width: 768px) {
   /* Remove excessive spacing to feel more like an app */
-  .content {
+  .content:not(.live-page) {
     padding: var(--spacing-sm);
     margin: 0;
   }
   
   /* Reduce margins and padding for compact feel */
-  main {
+  main:not(.live-page) {
     margin: 0;
     padding: 0;
   }
