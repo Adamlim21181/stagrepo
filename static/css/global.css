@@ -799,9 +799,9 @@ nav {
   overflow: visible;
 }
 
-/* Ensure page content clears the fixed nav */
-main {
-  padding-top: calc(var(--nav-height) + var(--spacing-md));
+/* Live page: ensure content clears the fixed nav without affecting other pages */
+.content.live-page {
+  padding-top: calc(var(--nav-height) + var(--spacing-sm));
   box-sizing: border-box;
 }
 
@@ -1614,7 +1614,6 @@ footer {
   main {
     margin: 0;
     padding: 0;
-    padding-top: calc(var(--nav-height) + var(--spacing-sm));
   }
   
   /* Stack sections naturally */
