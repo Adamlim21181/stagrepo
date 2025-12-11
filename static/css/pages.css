@@ -3281,15 +3281,23 @@ body.modal-open .modal * {
     justify-content: flex-start;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    gap: 6px;
-    padding: 4px 2px;
+    gap: 8px;
+    padding: 6px 4px;
   }
+  /* Compact circular chips: show abbreviations only */
   .apparatus-bar button {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-    border-radius: 16px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 0.8rem;
+    border-radius: 50%;
     flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
+  .apparatus-bar button .app-full { display: none; }
+  .apparatus-bar button .app-short { display: inline; }
 }
 
 .apparatus-bar button:hover {
