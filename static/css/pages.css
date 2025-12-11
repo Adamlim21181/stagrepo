@@ -65,6 +65,22 @@
   padding: 8px 0;
 }
 
+/* Live levels sidebar: prevent clipping and ensure buttons fit */
+.live-page .live-sidebar,
+.live-page .sidebar {
+  overflow: visible;
+  padding-top: 8px;
+}
+.live-page .live-sidebar form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.live-page .level-btn {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Mobile: force horizontal row of 6 compact chips */
 @media (max-width: 768px) {
   .live-apparatus-bar {
