@@ -2412,33 +2412,68 @@ body.modal-open .modal * {
 }
 
 @media (max-width: 768px) {
+  /* Place levels to the left of apparatus/content */
+  .live-page {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .live-page .live-sidebar,
   .live-page .sidebar {
-    width: 100%;
-    min-width: 100%;
-    max-height: auto;
-    position: static;
-    top: auto;
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-md);
+    flex: 0 0 56px;
+    position: sticky;
+    top: 56px; /* below the nav */
+    height: max-content;
   }
-}
-
-.live-page .sidebar form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .live-page .sidebar form {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
+  .live-page .main {
+    flex: 1 1 auto;
+    width: auto;
   }
-}
+  .live-page .live-sidebar form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  /* Circular level buttons */
+  .live-page .level-btn {
+    padding: 6px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    line-height: 1;
+    margin: 0;
+  }
+
+  /* Apparatus chip row: tighter spacing and sizes on mobile */
+  .apparatus-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px 2px;
+  }
+  .apparatus-btn {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 16px;
+    min-width: 44px;
+  }
+  .apparatus-btn .app-full { display: none; }
+  .apparatus-btn .app-short { display: inline; }
+
+  /* Leaderboard table compact styles */
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+  .leaderboard-table th {
+    font-size: 0.9rem;
+  }
 
 .live-page .sidebar button {
   width: 100%;
