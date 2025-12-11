@@ -1592,13 +1592,13 @@ footer {
 /* Mobile App Aesthetic */
 @media (max-width: 768px) {
   /* Remove excessive spacing to feel more like an app */
-  .content {
+  .content:not(.live-page) {
     padding: var(--spacing-sm);
     margin: 0;
   }
   
   /* Reduce margins and padding for compact feel */
-  main {
+  main:not(.live-page) {
     margin: 0;
     padding: 0;
   }

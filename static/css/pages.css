@@ -170,6 +170,7 @@
 /* =============================================
    MODERN ENTRY FORM STYLING
    ============================================= */
+/* Live page relies on desktop styles on mobile; no extra mobile overrides here */
 
 .add-entry-modern {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
@@ -842,7 +843,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
-}"
+}
 
 .modal {
   display: none !important;
