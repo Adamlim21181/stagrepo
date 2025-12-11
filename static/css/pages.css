@@ -57,12 +57,33 @@
   .app-full { display: none; }
 }
 
-/* Ensure apparatus buttons line up horizontally and scroll on overflow */
+/* Apparatus bar defaults */
 .live-apparatus-bar {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   overflow-x: auto;
   padding: 8px 0;
+}
+
+/* Mobile: 6 buttons in one horizontal row, compact chip style */
+@media (max-width: 768px) {
+  .live-apparatus-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    overflow: hidden;
+  }
+  .live-apparatus-bar .apparatus-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 999px; /* pill chip */
+    font-size: 0.9rem;
+    line-height: 1;
+    margin: 0;
+  }
 }
 
 
