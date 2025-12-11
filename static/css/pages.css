@@ -49,6 +49,22 @@
   border-top: 1px solid var(--border-lighter);
 }
 
+/* Apparatus labels: full on desktop, short on mobile */
+.app-short { display: none; }
+.app-full { display: inline; }
+@media (max-width: 768px) {
+  .app-short { display: inline; }
+  .app-full { display: none; }
+}
+
+/* Ensure apparatus buttons line up horizontally and scroll on overflow */
+.live-apparatus-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
 
 /* =============================================
    ADMIN BUTTONS

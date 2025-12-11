@@ -31,14 +31,25 @@
                 <button name="apparatus" value="all_around"
                     class="apparatus-btn {{ 'active' if selected_apparatus_id == 'all_around' or not selected_apparatus_id }}"
                     aria-pressed="{{ 'true' if selected_apparatus_id == 'all_around' or not selected_apparatus_id else 'false' }}">
-                    All Around
+                    <span class="app-full">All Around</span>
+                    <span class="app-short">AA</span>
                 </button>
 
                 {% for app in apparatus_list %}
                 <button name="apparatus" value="{{ app.id }}"
                     class="apparatus-btn {{ 'active' if app.id|string == selected_apparatus_id }}"
                     aria-pressed="{{ 'true' if app.id|string == selected_apparatus_id else 'false' }}">
-                    {{ app.name }}
+                    <span class="app-full">{{ app.name }}</span>
+                    <span class="app-short">
+                        {% set n = app.name.lower() %}
+                        {% if 'floor' in n %}FX
+                        {% elif 'pommel' in n %}PH
+                        {% elif 'rings' in n %}SR
+                        {% elif 'vault' in n %}VT
+                        {% elif 'parallel' in n %}PB
+                        {% elif 'high bar' in n or 'highbar' in n or 'hbar' in n %}HB
+                        {% else %}{{ app.name[:2] | upper }}{% endif %}
+                    </span>
                 </button>
                 {% endfor %}
             </form>
