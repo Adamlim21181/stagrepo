@@ -1635,6 +1635,85 @@ body.modal-open .modal * {
 
 .status-content {
   display: flex;
+/* =============================================
+   LIVE LEADERBOARD STYLES
+   ============================================= */
+/* Desktop defaults: do not compact controls */
+.live-apparatus-bar {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding: var(--spacing-sm) 0;
+  scroll-snap-type: x proximity;
+}
+.live-apparatus-bar .apparatus-btn {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  padding: 12px 16px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--background-section);
+}
+.live-apparatus-bar .apparatus-btn.active {
+  background: var(--primary-green);
+  color: #fff;
+  border-color: var(--primary-green);
+}
+.live-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.live-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--background-white);
+  z-index: 5;
+}
+.leaderboard-row { cursor: pointer; }
+.leaderboard-row:hover,
+.leaderboard-row:focus {
+  background: rgba(76, 175, 80, 0.08);
+  outline: none;
+}
+
+/* Mobile compaction: only apply on small screens */
+@media (max-width: 768px) {
+  .live-page .live-sidebar {
+    position: sticky;
+    top: 0;
+    background: var(--background-white);
+    z-index: 10;
+    padding: var(--spacing-sm) 0;
+  }
+
+  .live-page .level-btn {
+    padding: 8px 10px;
+    margin: 0 4px 4px 0;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-light);
+    background: var(--background-section);
+    color: var(--text-dark);
+    line-height: 1.2;
+    font-size: 0.95rem;
+  }
+  .live-page .level-btn.active {
+    background: var(--primary-green);
+    color: #fff;
+    border-color: var(--primary-green);
+  }
+
+  .live-apparatus-bar { gap: 6px; padding: 6px 0; }
+  .live-apparatus-bar .apparatus-btn {
+    padding: 8px 10px;
+    line-height: 1.2;
+    font-size: 0.95rem;
+  }
+
+  .live-table table { font-size: 0.95rem; }
+  .live-page .main { padding: 0 var(--spacing-xs); }
+  .live-page .apparatus-bar,
+  .live-page .live-sidebar { margin-bottom: var(--spacing-sm); }
+}
   justify-content: space-between;
   align-items: center;
 }
