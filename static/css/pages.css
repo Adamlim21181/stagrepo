@@ -3276,7 +3276,8 @@ body.modal-open .modal * {
 
 /* Mobile: make apparatus chips smaller and in a single horizontal row */
 @media (max-width: 768px) {
-  .apparatus-bar form {
+  .live-page .apparatus-bar form {
+    display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
@@ -3284,8 +3285,8 @@ body.modal-open .modal * {
     gap: 8px;
     padding: 6px 4px;
   }
-  /* Compact circular chips: show abbreviations only */
-  .apparatus-bar button {
+  /* Compact circular chips: enforce with higher specificity */
+  .live-page .apparatus-bar .apparatus-btn {
     width: 36px;
     height: 36px;
     padding: 0;
@@ -3296,8 +3297,15 @@ body.modal-open .modal * {
     align-items: center;
     justify-content: center;
   }
-  .apparatus-bar button .app-full { display: none; }
-  .apparatus-bar button .app-short { display: inline; }
+  .live-page .apparatus-bar .apparatus-btn .app-full { display: none; }
+  .live-page .apparatus-bar .apparatus-btn .app-short { display: inline; }
+  /* Ensure AA chip matches shape */
+  .live-page .apparatus-bar .apparatus-btn[value="all_around"] {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+  }
 }
 
 .apparatus-bar button:hover {
