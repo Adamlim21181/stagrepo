@@ -3274,6 +3274,24 @@ body.modal-open .modal * {
   white-space: nowrap;
 }
 
+/* Mobile: make apparatus chips smaller and in a single horizontal row */
+@media (max-width: 768px) {
+  .apparatus-bar form {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding: 4px 2px;
+  }
+  .apparatus-bar button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 16px;
+    flex: 0 0 auto;
+  }
+}
+
 .apparatus-bar button:hover {
   background: var(--primary-green);
   color: white;
