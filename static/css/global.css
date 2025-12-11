@@ -751,7 +751,6 @@ td:last-child {
   justify-content: center;
   align-items: center;
   padding: var(--spacing-lg);
-  padding-top: calc(var(--nav-height) + var(--spacing-md));
   box-sizing: border-box;
   width: 100%;
   overflow: visible;
@@ -797,12 +796,6 @@ nav {
   backdrop-filter: blur(10px);
   z-index: 1000;
   overflow: visible;
-}
-
-/* Live page: ensure content clears the fixed nav without affecting other pages */
-.content.live-page {
-  padding-top: calc(var(--nav-height) + var(--spacing-sm));
-  box-sizing: border-box;
 }
 
 .nav-container {
@@ -1297,12 +1290,6 @@ nav {
   padding: var(--spacing-xl) 0;
   margin-top: auto;
   border-top: 3px solid var(--primary-green);
-}
-
-@media (max-width: 768px) {
-  .main-footer {
-    display: none;
-  }
 }
 
 .footer-content {
@@ -1871,24 +1858,6 @@ body.menu-open {
   
   th {
     font-size: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    .table-responsive {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-    }
-
-    table {
-      min-width: 100%;
-      font-size: 0.8rem;
-    }
-
-    th, td {
-      padding: var(--spacing-xs) 6px;
-      font-size: 0.75rem;
-    }
   }
   
   /* Stack table data on very small screens */
