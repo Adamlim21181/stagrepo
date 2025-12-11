@@ -1614,6 +1614,7 @@ footer {
   main {
     margin: 0;
     padding: 0;
+    padding-top: calc(var(--nav-height) + var(--spacing-sm));
   }
   
   /* Stack sections naturally */
