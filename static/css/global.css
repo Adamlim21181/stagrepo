@@ -751,6 +751,7 @@ td:last-child {
   justify-content: center;
   align-items: center;
   padding: var(--spacing-lg);
+  padding-top: calc(var(--nav-height) + var(--spacing-md));
   box-sizing: border-box;
   width: 100%;
   overflow: visible;
@@ -796,6 +797,12 @@ nav {
   backdrop-filter: blur(10px);
   z-index: 1000;
   overflow: visible;
+}
+
+/* Ensure page content clears the fixed nav */
+main {
+  padding-top: calc(var(--nav-height) + var(--spacing-md));
+  box-sizing: border-box;
 }
 
 .nav-container {
