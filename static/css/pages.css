@@ -3288,21 +3288,26 @@ body.modal-open .modal * {
   /* Compact circular chips: enforce with higher specificity */
   .live-page .apparatus-bar .apparatus-btn {
     height: 36px;
-    padding: 0 6px; /* minimal side padding for compact pill */
+    padding: 0 3px; /* ultra-compact side padding */
     font-size: 0.8rem;
     border-radius: 18px; /* pill shape */
-    flex: 0 0 auto;
+    flex: 0 0 auto; /* prevent stretching to container width */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
+    width: auto; /* ensure content-width pills */
+    box-sizing: border-box;
+    margin: 0; /* remove any extra side margins */
   }
   .live-page .apparatus-bar .apparatus-btn .app-full { display: none; }
   .live-page .apparatus-bar .apparatus-btn .app-short { display: inline; }
   /* Ensure AA chip matches shape */
   .live-page .apparatus-bar .apparatus-btn[value="all_around"] {
     height: 36px;
-    padding: 0 6px;
+    padding: 0 3px;
     border-radius: 18px;
+    width: auto;
   }
 }
 
