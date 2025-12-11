@@ -10,12 +10,14 @@
 }
 
 .live-page .level-btn {
-  padding: 10px 12px;
-  margin: 0 6px 6px 0;
+  padding: 8px 10px;
+  margin: 0 4px 4px 0;
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--border-light);
   background: var(--background-section);
   color: var(--text-dark);
+  line-height: 1.2;
+  font-size: 0.95rem;
 }
 .live-page .level-btn.active {
   background: var(--primary-green);
@@ -25,18 +27,20 @@
 
 .live-apparatus-bar {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: 6px;
   overflow-x: auto;
-  padding: var(--spacing-sm) 0;
-  scroll-snap-type: x mandatory;
+  padding: 6px 0;
+  scroll-snap-type: x proximity;
 }
 .live-apparatus-bar .apparatus-btn {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--border-light);
   background: var(--background-section);
+  line-height: 1.2;
+  font-size: 0.95rem;
 }
 .live-apparatus-bar .apparatus-btn.active {
   background: var(--primary-green);
@@ -69,6 +73,11 @@
   }
   .live-page .main {
     padding: 0 var(--spacing-xs);
+  }
+  /* Compact apparatus header card spacing if any */
+  .live-page .apparatus-bar,
+  .live-page .live-sidebar {
+    margin-bottom: var(--spacing-sm);
   }
 }
 
