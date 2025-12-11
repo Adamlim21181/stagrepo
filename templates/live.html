@@ -118,7 +118,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2 class="modal-gymnast-name" id="modalGymnastName"></h2>
-            <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+            <button class="modal-close-btn" onclick="closeScoreModal()">&times;</button>
         </div>
 
         <div class="score-details">
@@ -147,8 +147,11 @@
 </div>
 
 <script>
-function closeModal() {
-    document.getElementById('scoreModal').classList.remove('active');
+function closeScoreModal() {
+    var modal = document.getElementById('scoreModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
 }
 
 function openModal(row) {
@@ -173,14 +176,14 @@ function openModal(row) {
 // Close modal when clicking overlay
 document.getElementById('scoreModal').addEventListener('click', function(e) {
     if (e.target === this) {
-        closeModal();
+        closeScoreModal();
     }
 });
 
 // Close modal on Escape key
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        closeModal();
+        closeScoreModal();
     }
 });
 
