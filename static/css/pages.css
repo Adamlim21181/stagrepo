@@ -65,22 +65,25 @@
   padding: 8px 0;
 }
 
-/* Mobile: 6 buttons in one horizontal row, compact chip style */
+/* Mobile: force horizontal row of 6 compact chips */
 @media (max-width: 768px) {
   .live-apparatus-bar {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 6px;
-    overflow: hidden;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 4px;
+    overflow-x: hidden;
   }
   .live-apparatus-bar .apparatus-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    padding: 6px 8px;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    padding: 4px 6px;
     border-radius: 999px; /* pill chip */
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1;
     margin: 0;
   }
