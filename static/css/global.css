@@ -33,17 +33,18 @@
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
 }
 
-.btn-danger {
-  background: linear-gradient(135deg, var(--error-color), #c82333);
-  color: white;
-  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  h1 { font-size: 1.3rem; }
+  h2 { font-size: 1.15rem; }
+  h3 { font-size: 1.05rem; }
+  .btn { padding: 8px 10px; font-size: 0.9rem; }
+  input, select, textarea { font-size: 0.9rem; padding: 8px 10px; }
+  .card { padding: 10px; }
 }
 
-.btn-danger:hover {
-  background: linear-gradient(135deg, #c82333, var(--error-color));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-}
 
 .btn-success {
   background-color: var(--success-color);
