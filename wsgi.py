@@ -1,26 +1,23 @@
-#!/var/www/yourusername_pythonanywhere_com_wsgi.py
-"""
-WSGI configuration for Flask application on PythonAnywhere.
+"""WSGI configuration for PythonAnywhere deployment.
 
-This file contains the WSGI callable as a module-level variable named 'application'.
-Replace 'yourusername' in the paths below with your actual PythonAnywhere username.
+This exposes the Flask WSGI callable as `application`.
+Ensure the `PROJECT_PATH` points to your project folder.
 """
 
-import sys
 import os
+import sys
 
-# Add your project directory to the Python path
-path = '/home/Food123/stagcode'
-if path not in sys.path:
-    sys.path.insert(0, path)
+# Configure project path
+PROJECT_PATH = os.environ.get('PROJECT_PATH', '/home/yourusername/stagcode')
+if PROJECT_PATH not in sys.path:
+    sys.path.insert(0, PROJECT_PATH)
 
-# Set environment variables if needed
+# Production environment defaults
 os.environ.setdefault('FLASK_ENV', 'production')
+os.environ.setdefault('FLASK_DEBUG', '0')
 
-# Import your Flask application
 from create_app import create_app
 
-# Create the application instance
 application = create_app()
 
 if __name__ == "__main__":

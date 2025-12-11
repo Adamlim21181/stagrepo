@@ -1,71 +1,79 @@
 """Flask application factory and configuration."""
 
+import os
+from datetime import timedelta
 from flask import Flask, render_template
 from extensions import db
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+
+def _build_database_uri() -> str:
+    """Return SQLAlchemy DB URI from env, defaulting to SQLite."""
+    mysql_user = os.environ.get("MYSQL_USER")
+    mysql_password = os.environ.get("MYSQL_PASSWORD")
+    mysql_host = os.environ.get("MYSQL_HOST")
+    mysql_database = os.environ.get("MYSQL_DATABASE")
+
+    if all([mysql_user, mysql_password, mysql_host, mysql_database]):
+        uri = (
+            "mysql+pymysql://"
+            f"{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}"
+        )
+        return uri
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    return f"sqlite:///{os.path.join(basedir, 'stagdata.db')}"
 
 
 def create_app():
+    # Load environment from .env if available
+    if load_dotenv:
+        load_dotenv()
+
     app = Flask(__name__)
-    
-    # Database configuration
-    import os
-    
-    # Check for MySQL configuration (for PythonAnywhere paid accounts)
-    mysql_user = os.environ.get('MYSQL_USER')
-    mysql_password = os.environ.get('MYSQL_PASSWORD') 
-    mysql_host = os.environ.get('MYSQL_HOST')
-    mysql_database = os.environ.get('MYSQL_DATABASE')
-    
-    if mysql_user and mysql_password and mysql_host and mysql_database:
-        # Use MySQL if environment variables are set
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}'
-    else:
-        # Fall back to SQLite
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "stagdata.db")}'
-    
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'secretstagkey2025!'
-    
-    # Set debug mode based on environment
-    app.config['DEBUG'] = os.environ.get('FLASK_ENV') != 'production'
-    
-    # Session configuration for "Remember Me" functionality
-    app.config['PERMANENT_SESSION_LIFETIME'] = 86400 * 30  # 30 days in seconds
-    
+
+    # Core configuration
+    app.config.update(
+        SQLALCHEMY_DATABASE_URI=_build_database_uri(),
+        SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        SECRET_KEY=os.environ.get("SECRET_KEY", "change-me-in-prod"),
+        DEBUG=os.environ.get("FLASK_DEBUG", "0") in {"1", "true", "True"},
+        PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+    )
+
     db.init_app(app)
 
-    # Error handler for 404 (Not Found),
-    # reroutes the user to a 404 page when an error occurs with the URL
+    # Error handlers
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template("404.html"), 404
 
-    # Error handler for 414 (Request-URI Too Long),
-    # reroutes the user to a 414 page when the URL is too long
     @app.errorhandler(414)
     def url_too_long(e):
         return render_template("414.html"), 414
 
-    # Make session available in all templates
+    # Template context: current user session
     @app.context_processor
     def inject_user():
         from flask import session
+        role_id = session.get("role_id")
         return {
-            'current_user': {
-                'is_authenticated': 'user_id' in session,
-                'user_id': session.get('user_id'),
-                'email': session.get('email'),
-                'first_name': session.get('first_name'),
-                'role_id': session.get('role_id'),
-                'is_admin': session.get('role_id') == 1,
-                'is_judge': session.get('role_id') == 2,
-                'is_judge_or_admin': session.get('role_id') in [1, 2]
+            "current_user": {
+                "is_authenticated": "user_id" in session,
+                "user_id": session.get("user_id"),
+                "email": session.get("email"),
+                "first_name": session.get("first_name"),
+                "role_id": role_id,
+                "is_admin": role_id == 1,
+                "is_judge": role_id == 2,
+                "is_judge_or_admin": role_id in [1, 2],
             }
         }
 
-    # Register routes. The Blueprint system keeps routes
-    # organized in separate modules
+    # Blueprints
     from routes import main
     app.register_blueprint(main)
 
@@ -83,8 +91,6 @@ def initialize_seasons():
     current_year = datetime.now().year
     created_count = 0
 
-    # Loop through current year + 5 future years
-    # This is to pre-create seasons so competitions can be assigned to them
     for year in range(current_year, current_year + 6):
         existing = models.Seasons.query.filter_by(year=year).first()
         if not existing:

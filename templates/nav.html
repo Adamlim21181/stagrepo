@@ -1,7 +1,7 @@
 <nav>
     <div class="nav-container">
         <div class="nav-left">
-            <a href="{{ url_for('main.home') }}"><img src="/static/images/Logo.png" alt="Logo"></a>
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Logo"></a>
         </div>
 
         <!-- Mobile Hamburger Menu -->
