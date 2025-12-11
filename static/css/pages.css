@@ -81,6 +81,44 @@
   box-sizing: border-box;
 }
 
+/* Level label visibility: full on desktop, short on mobile */
+.level-short { display: none; }
+.level-full { display: inline; }
+
+@media (max-width: 768px) {
+  .level-short { display: inline; }
+  .level-full { display: none; }
+
+  /* Mobile: sidebar as a narrow left column */
+  .live-page {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+  .live-page .live-sidebar,
+  .live-page .sidebar {
+    position: sticky;
+    top: 56px; /* below the nav */
+    height: max-content;
+  }
+  .live-page .live-sidebar form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .live-page .level-btn {
+    padding: 6px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 0.85rem;
+    min-width: 0;
+  }
+  .live-page .main {
+    width: 100%;
+  }
+}
+
 /* Mobile: force horizontal row of 6 compact chips */
 @media (max-width: 768px) {
   .live-apparatus-bar {

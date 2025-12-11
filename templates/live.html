@@ -15,7 +15,13 @@
         <form method="get">
             {% for level in levels %}
             <button name="level" value="{{ level }}" class="level-btn {{ 'active' if level == selected_level else '' }}" aria-pressed="{{ 'true' if level == selected_level else 'false' }}">
-                {{ level }}
+                <span class="level-full">{{ level }}</span>
+                <span class="level-short">
+                    {% set lname = level|lower %}
+                    {% if 'senior' in lname or 'international' in lname %}SI
+                    {% elif 'level' in lname %}{{ level|replace('Level','')|trim }}
+                    {% else %}{{ level[:2] | upper }}{% endif %}
+                </span>
             </button>
             {% endfor %}
         </form>
