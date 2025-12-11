@@ -971,7 +971,14 @@ body.modal-open .modal * {
 
 @media (max-width: 600px) {
   .score-details {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .score-label {
+    font-size: 0.8rem;
+  }
+  .score-value {
+    font-size: 1rem;
   }
 }
 
