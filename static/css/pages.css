@@ -959,13 +959,20 @@ body.modal-open .modal * {
 }
 
 .score-details {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   padding: 16px 20px;
 }
 
 .score-item {
   flex: 1;
+}
+
+@media (max-width: 600px) {
+  .score-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .score-label {
