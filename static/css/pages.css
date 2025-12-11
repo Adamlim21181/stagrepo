@@ -3287,11 +3287,10 @@ body.modal-open .modal * {
   }
   /* Compact circular chips: enforce with higher specificity */
   .live-page .apparatus-bar .apparatus-btn {
-    width: 36px;
     height: 36px;
-    padding: 0;
+    padding: 0 6px; /* minimal side padding for compact pill */
     font-size: 0.8rem;
-    border-radius: 50%;
+    border-radius: 18px; /* pill shape */
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
@@ -3301,10 +3300,9 @@ body.modal-open .modal * {
   .live-page .apparatus-bar .apparatus-btn .app-short { display: inline; }
   /* Ensure AA chip matches shape */
   .live-page .apparatus-bar .apparatus-btn[value="all_around"] {
-    width: 36px;
     height: 36px;
-    padding: 0;
-    border-radius: 50%;
+    padding: 0 6px;
+    border-radius: 18px;
   }
 }
 
