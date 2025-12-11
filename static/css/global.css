@@ -163,8 +163,10 @@ button[type="submit"]:hover {
 
 .form-group label {
   display: block;
+  margin-bottom: 8px;
   margin-bottom: var(--spacing-xs);
-  font-weight: 600;
+  font-weight: 500;
+  font-weight: bold;
   color: var(--text-muted);
   font-size: var(--font-size-base);
 }
@@ -396,78 +398,6 @@ button[type="submit"]:hover {
 .table-container::-webkit-scrollbar,
 .tables::-webkit-scrollbar {
   height: 8px;
-}
-
-/* =============================================
-   MOBILE OPTIMIZATIONS
-   ============================================= */
-@media (max-width: 768px) {
-  :root {
-    --font-size-base: 16px;
-  }
-
-  body {
-    padding: var(--spacing-sm);
-  }
-
-  /* Increase touch targets */
-  .btn,
-  input[type="submit"],
-  button[type="submit"] {
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: 1rem;
-  }
-
-  .form-control {
-    padding: 14px 16px;
-    font-size: 1rem;
-  }
-
-  /* Collapse form grid to single column */
-  .forms-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
-  }
-
-  .forms {
-    padding: var(--spacing-md);
-  }
-
-  .section-card {
-    padding: var(--spacing-xl);
-  }
-
-  .section-title,
-  .forms-header {
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-xl);
-  }
-
-  /* Navigation adjustments */
-  .nav-container {
-    padding: 0 var(--spacing-sm);
-  }
-
-  .nav-right li a,
-  .nav-center li a {
-    padding: 10px 8px;
-  }
-
-  /* Tables: improve readability */
-  table,
-  .tables table {
-    font-size: 0.95rem;
-  }
-
-  .table-container,
-  .tables {
-    padding: var(--spacing-sm);
-  }
-
-  /* Dropdowns: full width on mobile */
-  .dropdown-content {
-    min-width: 100%;
-  }
 }
 
 .table-container::-webkit-scrollbar-track,
@@ -1662,13 +1592,13 @@ footer {
 /* Mobile App Aesthetic */
 @media (max-width: 768px) {
   /* Remove excessive spacing to feel more like an app */
-  .content:not(.live-page) {
+  .content {
     padding: var(--spacing-sm);
     margin: 0;
   }
   
   /* Reduce margins and padding for compact feel */
-  main:not(.live-page) {
+  main {
     margin: 0;
     padding: 0;
   }
