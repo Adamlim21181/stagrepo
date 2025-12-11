@@ -3309,6 +3309,24 @@ body.modal-open .modal * {
   box-shadow: 0 6px 16px rgba(255, 165, 0, 0.4);
 }
 
+/* Apparatus label display: desktop shows full text, mobile shows abbreviations */
+.apparatus-btn .app-full { display: inline; }
+.apparatus-btn .app-short { display: none; }
+
+@media (max-width: 768px) {
+  .apparatus-btn .app-full { display: none; }
+  .apparatus-btn .app-short { display: inline; }
+}
+
+/* Level label display: desktop shows full text, mobile shows abbreviations */
+.level-btn .level-full { display: inline; }
+.level-btn .level-short { display: none; }
+
+@media (max-width: 768px) {
+  .level-btn .level-full { display: none; }
+  .level-btn .level-short { display: inline; }
+}
+
 /* Rankings table styling */
 .topnz-page table {
   width: 100%;
