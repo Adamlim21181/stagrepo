@@ -11,10 +11,10 @@
     </div><!-- no-live-competition -->
     {% else %}
 
-    <div class="sidebar">
+    <div class="sidebar live-sidebar">
         <form method="get">
             {% for level in levels %}
-            <button name="level" value="{{ level }}" class="{{ 'active' if level == selected_level else '' }}">
+            <button name="level" value="{{ level }}" class="level-btn {{ 'active' if level == selected_level else '' }}" aria-pressed="{{ 'true' if level == selected_level else 'false' }}">
                 {{ level }}
             </button>
             {% endfor %}
@@ -24,18 +24,20 @@
     <div class="main">
 
         {% if selected_level %}
-        <div class="apparatus-bar">
+        <div class="apparatus-bar live-apparatus-bar" role="tablist">
             <form method="get">
                 <input type="hidden" name="level" value="{{ selected_level }}">
 
                 <button name="apparatus" value="all_around"
-                    class="{{ 'active' if selected_apparatus_id == 'all_around' or not selected_apparatus_id }}">
+                    class="apparatus-btn {{ 'active' if selected_apparatus_id == 'all_around' or not selected_apparatus_id }}"
+                    aria-pressed="{{ 'true' if selected_apparatus_id == 'all_around' or not selected_apparatus_id else 'false' }}">
                     All Around
                 </button>
 
                 {% for app in apparatus_list %}
                 <button name="apparatus" value="{{ app.id }}"
-                    class="{{ 'active' if app.id|string == selected_apparatus_id }}">
+                    class="apparatus-btn {{ 'active' if app.id|string == selected_apparatus_id }}"
+                    aria-pressed="{{ 'true' if app.id|string == selected_apparatus_id else 'false' }}">
                     {{ app.name }}
                 </button>
                 {% endfor %}
@@ -44,8 +46,8 @@
         {% endif %}
 
         {% if leaderboard_data %}
-        <div class="table-responsive">
-            <table id="leaderboard-table">
+        <div class="table-responsive live-table">
+            <table id="leaderboard-table" aria-live="polite">
             <thead>
                 <tr>
                     <th>Rank</th>
@@ -61,7 +63,7 @@
                 {% if selected_apparatus_id and selected_apparatus_id != 'all_around' %}
                 <!-- Individual apparatus scores -->
                 {% for score, gymnast, club in leaderboard_data %}
-                <tr class="leaderboard-row" 
+                <tr class="leaderboard-row" tabindex="0"
                     data-gymnast-name="{{ gymnast.name }}"
                     data-gymnast-id="{{ gymnast.id }}"
                     data-e-score="{{ "%.3f"|format(score.e_score) }}"
@@ -80,7 +82,7 @@
                 {% else %}
                 <!-- All around scores (total scores) -->
                 {% for gymnast_data in leaderboard_data %}
-                <tr class="leaderboard-row"
+                <tr class="leaderboard-row" tabindex="0"
                     data-gymnast-name="{{ gymnast_data.name }}"
                     data-gymnast-id="{{ gymnast_data.id }}"
                     data-e-score="{{ "%.3f"|format(gymnast_data.total_e_score) }}"
