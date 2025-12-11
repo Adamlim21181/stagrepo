@@ -5,8 +5,8 @@ from datetime import timedelta
 from flask import Flask, render_template
 from extensions import db
 try:
-    from dotenv import load_dotenv
-except ImportError:
+    from dotenv import load_dotenv  # type: ignore
+except Exception:
     load_dotenv = None
 
 

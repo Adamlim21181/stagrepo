@@ -163,10 +163,8 @@ button[type="submit"]:hover {
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
   margin-bottom: var(--spacing-xs);
-  font-weight: 500;
-  font-weight: bold;
+  font-weight: 600;
   color: var(--text-muted);
   font-size: var(--font-size-base);
 }
