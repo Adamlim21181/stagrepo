@@ -6,12 +6,13 @@ Ensure the `PROJECT_PATH` points to your project folder.
 
 import os
 import sys
-from create_app import create_app
 
 # Configure project path
-PROJECT_PATH = os.environ.get('PROJECT_PATH', '/home/yourusername/stagcode')
-if PROJECT_PATH not in sys.path:
+PROJECT_PATH = os.environ.get('PROJECT_PATH', '/home/Food123/stagcode')
+if PROJECT_PATH and PROJECT_PATH not in sys.path:
     sys.path.insert(0, PROJECT_PATH)
+
+from create_app import create_app
 
 # Production environment defaults
 os.environ.setdefault('FLASK_ENV', 'production')

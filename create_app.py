@@ -78,7 +78,19 @@ def create_app():
     app.register_blueprint(main)
 
     with app.app_context():
-        initialize_seasons()
+        # Ensure tables exist before any initialization that queries them
+        try:
+            from extensions import db
+            db.create_all()
+        except Exception:
+            pass
+
+        # Initialize default seasons if the table is present
+        try:
+            initialize_seasons()
+        except Exception:
+            # Avoid hard failure on startup if DB is empty or not ready
+            pass
 
     return app
 

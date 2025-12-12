@@ -67,7 +67,7 @@ Notes
 ### 3. Set Up Virtual Environment
 In a PythonAnywhere Bash console:
 ```bash
-cd ~/stagcode
+cd ~/stagcode  
 python3.10 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
