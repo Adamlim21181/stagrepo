@@ -11,21 +11,24 @@ except Exception:
 
 
 def _build_database_uri() -> str:
-    """Return SQLAlchemy DB URI from env; require MySQL on production."""
-    mysql_user = os.environ.get("MYSQL_USER")
-    mysql_password = os.environ.get("MYSQL_PASSWORD")
-    mysql_host = os.environ.get("MYSQL_HOST")
-    mysql_database = os.environ.get("MYSQL_DATABASE")
+    """Return SQLAlchemy DB URI from env; require MySQL on production.
+    Adds diagnostic output to help identify missing variables on PythonAnywhere.
+    """
+    keys = ["MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_HOST", "MYSQL_DATABASE"]
+    values = {k: os.environ.get(k) for k in keys}
 
-    if not all([mysql_user, mysql_password, mysql_host, mysql_database]):
+    missing = [k for k, v in values.items() if not v]
+    if missing:
+        print("[startup] MySQL env check:", {k: ("SET" if values[k] else "MISSING") for k in keys})
         raise RuntimeError(
-            "MySQL environment variables are missing: set MYSQL_USER, MYSQL_PASSWORD, "
-            "MYSQL_HOST, and MYSQL_DATABASE in your environment."
+            "MySQL environment variables are missing: set "
+            + ", ".join(missing)
+            + " in your environment."
         )
 
     return (
         "mysql+pymysql://"
-        f"{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}"
+        f"{values['MYSQL_USER']}:{values['MYSQL_PASSWORD']}@{values['MYSQL_HOST']}/{values['MYSQL_DATABASE']}"
     )
 
 
