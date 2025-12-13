@@ -33,9 +33,15 @@ def _build_database_uri() -> str:
 
 
 def create_app():
-    # Load environment from .env if available
+    # Load environment from .env located next to this file, regardless of CWD
     if load_dotenv:
-        load_dotenv()
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        env_path = os.path.join(basedir, ".env")
+        try:
+            load_dotenv(env_path)
+        except Exception:
+            # Fallback to default search if explicit path fails
+            load_dotenv()
 
     app = Flask(__name__)
 
