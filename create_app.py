@@ -11,21 +11,22 @@ except Exception:
 
 
 def _build_database_uri() -> str:
-    """Return SQLAlchemy DB URI from env, defaulting to SQLite."""
+    """Return SQLAlchemy DB URI from env; require MySQL on production."""
     mysql_user = os.environ.get("MYSQL_USER")
     mysql_password = os.environ.get("MYSQL_PASSWORD")
     mysql_host = os.environ.get("MYSQL_HOST")
     mysql_database = os.environ.get("MYSQL_DATABASE")
 
-    if all([mysql_user, mysql_password, mysql_host, mysql_database]):
-        uri = (
-            "mysql+pymysql://"
-            f"{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}"
+    if not all([mysql_user, mysql_password, mysql_host, mysql_database]):
+        raise RuntimeError(
+            "MySQL environment variables are missing: set MYSQL_USER, MYSQL_PASSWORD, "
+            "MYSQL_HOST, and MYSQL_DATABASE in your environment."
         )
-        return uri
 
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    return f"sqlite:///{os.path.join(basedir, 'stagdata.db')}"
+    return (
+        "mysql+pymysql://"
+        f"{mysql_user}:{mysql_password}@{mysql_host}/{mysql_database}"
+    )
 
 
 def create_app():
@@ -80,7 +81,7 @@ def create_app():
     with app.app_context():
         # Ensure tables exist before any initialization that queries them
         try:
-            from extensions import db
+            # Use the module-level `db` imported from extensions to avoid shadowing
             db.create_all()
         except Exception:
             pass

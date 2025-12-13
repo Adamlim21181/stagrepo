@@ -1,43 +1,3 @@
-Deployment Guide
-
-Local Development
-- Create virtual environment: `python -m venv env`
-- Activate (PowerShell): `./env/Scripts/Activate.ps1`
-- Install deps: `pip install -r requirements.txt`
-- Optional env vars:
-   - `FLASK_DEBUG=1` to enable debug
-   - `FLASK_HOST=0.0.0.0` and `FLASK_PORT=5000` to customize run
-   - `SECRET_KEY` set to a strong random value
-- Run app: `python run.py`
-
-.env Support
-- Create a `.env` file in project root to store secrets safely (not committed):
-   - Example:
-      - `SECRET_KEY=super-long-random-string`
-      - `FLASK_DEBUG=1`
-      - `MYSQL_USER=...`, `MYSQL_PASSWORD=...`, `MYSQL_HOST=...`, `MYSQL_DATABASE=...`
-- `create_app.py` will auto-load `.env` if `python-dotenv` is installed.
-
-Database Configuration
-- MySQL (PythonAnywhere paid): set env vars `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_HOST`, `MYSQL_DATABASE`
-- SQLite fallback: created at `stagdata.db` in project root
-
-PythonAnywhere Deployment
-- Set `PROJECT_PATH` env to your project directory (e.g., `/home/<username>/stagcode`)
-- Ensure `FLASK_ENV=production` and `FLASK_DEBUG=0`
-- WSGI file uses `create_app()` from `create_app.py`
-- After updating code, reload the web app via PythonAnywhere dashboard
-
-Environment Variables Reference
-- `SECRET_KEY`: required in production; do not hardcode
-- `FLASK_DEBUG`: `0` or `1`
-- `FLASK_HOST`, `FLASK_PORT`: local run overrides
-- `PROJECT_PATH`: PythonAnywhere project path
-- `MYSQL_*`: MySQL connection settings for production
-
-Notes
-- Avoid committing secrets; use environment or platform config.
-- Ensure `requirements.txt` is up to date after adding packages.
 # Deploying Your Flask App to PythonAnywhere
 
 ## Step-by-Step Deployment Guide
@@ -67,7 +27,7 @@ Notes
 ### 3. Set Up Virtual Environment
 In a PythonAnywhere Bash console:
 ```bash
-cd ~/stagcode  
+cd ~/stagcode
 python3.10 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -152,9 +112,9 @@ In your PythonAnywhere Bash console:
 ```bash
 # Add these to your .bashrc file for persistence
 echo 'export MYSQL_USER="Food123"' >> ~/.bashrc
-echo 'export MYSQL_PASSWORD="Food123$stagdata"' >> ~/.bashrc
+echo 'export MYSQL_PASSWORD="@1pHa`123"' >> ~/.bashrc
 echo 'export MYSQL_HOST="Food123.mysql.pythonanywhere-services.com"' >> ~/.bashrc
-echo 'export MYSQL_DATABASE="Food123$default"' >> ~/.bashrc
+echo 'export MYSQL_DATABASE="Food123$stagdata"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
