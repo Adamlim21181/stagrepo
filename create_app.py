@@ -2,6 +2,7 @@
 
 import os
 from datetime import timedelta
+from urllib.parse import quote_plus
 from flask import Flask, render_template
 from extensions import db
 try:
@@ -26,9 +27,14 @@ def _build_database_uri() -> str:
             + " in your environment."
         )
 
+    user = quote_plus(values['MYSQL_USER'])
+    pw = quote_plus(values['MYSQL_PASSWORD'])
+    host = values['MYSQL_HOST']
+    dbname = values['MYSQL_DATABASE']
+
     return (
         "mysql+pymysql://"
-        f"{values['MYSQL_USER']}:{values['MYSQL_PASSWORD']}@{values['MYSQL_HOST']}/{values['MYSQL_DATABASE']}"
+        f"{user}:{pw}@{host}/{dbname}"
     )
 
 
